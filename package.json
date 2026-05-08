@@ -1,7 +1,7 @@
 {
   "name": "siverif-rhl-license-server",
-  "version": "1.0.0",
-  "description": "SiVerif RHL License & User Management Server",
+  "version": "3.0.0",
+  "description": "SiVerif RHL License Management Server",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
