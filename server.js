@@ -69,6 +69,30 @@ app.post('/api/admin/login', (req, res) => {
   res.status(401).json({ error: 'Password Admin Salah' });
 });
 
+app.post('/api/agency/login', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const { data, error } = await supabase
+      .from('agency_admins')
+      .select('*')
+      .eq('username', username)
+      .single();
+    
+    if (error || !data) return res.status(401).json({ error: 'Username atau Password salah' });
+    
+    // Check password (hashed)
+    if (data.password === hashPass(password)) {
+      return res.json({ 
+        success: true, 
+        name: data.name, 
+        agency: data.instansi,
+        instansi: data.instansi
+      });
+    }
+    res.status(401).json({ error: 'Username atau Password salah' });
+  } catch (e) { res.status(500).json({ error: 'Koneksi database terputus' }); }
+});
+
 // ── ADMIN: AGENCY & ADMINS ──
 
 app.get('/api/admin/agency/settings', verifyAdmin, async (req, res) => {
