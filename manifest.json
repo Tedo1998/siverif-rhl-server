@@ -1,7 +1,7 @@
 {
   "version": "12.1.2",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.2.zip",
-  "changelog": "Fix: Waktu jam 25, Tabulasi Editable, Pop-up Foto Peta, Input Lokasi KML/KMZ/GPX, Button Valid Fixed.",
+  "patch_url": "",
+  "changelog": "Sistem stabil v12.1.2. Seluruh perbaikan Engine & UI sudah diterapkan dalam Installer dasar.",
   "required": false,
   "released_at": "2026-05-16"
 }
