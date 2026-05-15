@@ -1,7 +1,7 @@
 {
-  "version": "12.1.3",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.3.zip",
-  "changelog": "Perbaikan 13 bug UI, AI Scan, dan penambahan fitur Map Transparency.",
+  "version": "12.1.4",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.4.zip",
+  "changelog": "Fix: Reset Session, Pindahkan Terpilih, Zoom Foto, AI Scan reactivity, Input Lokasi KML/GPX, Bibit otomatis & bulk, Statistik bibit di sidebar, Tabulasi manual, Admin panel detail lisensi.",
   "required": false,
   "released_at": "2026-05-16"
 }
