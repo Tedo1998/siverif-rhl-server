@@ -98,6 +98,15 @@ async function initDB() {
   )`);
 
   // Index untuk performa
+  // Tabel akun admin audit per instansi
+  db.run(`CREATE TABLE IF NOT EXISTS agency_admins (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    name       TEXT NOT NULL,
+    username   TEXT UNIQUE NOT NULL,
+    password   TEXT NOT NULL,
+    created_at TEXT DEFAULT (datetime('now','localtime'))
+  )`);
+
   db.run(`CREATE INDEX IF NOT EXISTS idx_lic_key    ON licenses(license_key)`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_lic_status ON licenses(status)`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_log_key    ON activity_log(license_key)`);
@@ -647,6 +656,138 @@ app.post('/api/admin/reset-password', verifyAdmin, (req, res) => {
     new_password_hash: hashPass(new_password)
   });
 });
+
+// ══════════════════════════════════════════════════════════════
+// AGENCY ADMINS — Akun Admin Audit per Instansi
+// ══════════════════════════════════════════════════════════════
+
+// GET semua akun admin audit + settings instansi
+app.get('/api/admin/agency/settings', verifyAdmin, (req, res) => {
+  const admins = dbAll(`SELECT id, name, username, created_at FROM agency_admins ORDER BY created_at DESC`);
+  res.json({ success: true, admins });
+});
+
+// GET daftar akun admin audit saja
+app.get('/api/admin/agency/admins', verifyAdmin, (req, res) => {
+  const admins = dbAll(`SELECT id, name, username, created_at FROM agency_admins ORDER BY created_at DESC`);
+  res.json({ success: true, admins });
+});
+
+// POST tambah akun admin audit baru
+app.post('/api/admin/agency/admins', verifyAdmin, (req, res) => {
+  const { name, username, password } = req.body;
+  if (!name?.trim() || !username?.trim() || !password?.trim())
+    return res.status(400).json({ success: false, error: 'Nama, username, dan password wajib diisi' });
+
+  const existing = dbGet(`SELECT id FROM agency_admins WHERE username=?`, [username.trim()]);
+  if (existing)
+    return res.status(400).json({ success: false, error: 'Username sudah digunakan, pilih username lain' });
+
+  const hashedPass = hashPass(password.trim());
+  dbRun(`INSERT INTO agency_admins (name, username, password) VALUES (?, ?, ?)`,
+    [name.trim(), username.trim(), hashedPass]);
+
+  logActivity('AGENCY', 'ADMIN_ADDED', req, `${name} (${username})`);
+  res.json({ success: true, message: `Akun ${username} berhasil ditambahkan` });
+});
+
+// DELETE hapus akun admin audit
+app.delete('/api/admin/agency/admins/:username', verifyAdmin, (req, res) => {
+  const admin = dbGet(`SELECT id FROM agency_admins WHERE username=?`, [req.params.username]);
+  if (!admin) return res.status(404).json({ success: false, error: 'Akun tidak ditemukan' });
+
+  dbRun(`DELETE FROM agency_admins WHERE username=?`, [req.params.username]);
+  logActivity('AGENCY', 'ADMIN_DELETED', req, req.params.username);
+  res.json({ success: true, message: `Akun ${req.params.username} berhasil dihapus` });
+});
+
+// POST login untuk admin audit (dari aplikasi SiVerif)
+app.post('/api/agency/login', (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password)
+    return res.status(400).json({ success: false, error: 'Username dan password wajib diisi' });
+
+  const admin = dbGet(`SELECT * FROM agency_admins WHERE username=?`, [username.trim()]);
+  if (!admin || admin.password !== hashPass(password.trim())) {
+    logActivity('AGENCY', 'AGENCY_LOGIN_FAIL', req, username);
+    return res.status(401).json({ success: false, error: 'Username atau password salah' });
+  }
+
+  logActivity('AGENCY', 'AGENCY_LOGIN_OK', req, username);
+  res.json({ success: true, name: admin.name, username: admin.username });
+});
+
+// ══════════════════════════════════════════════════════════════
+// SISTEM UPDATE & MAINTENANCE ONLINE
+// ══════════════════════════════════════════════════════════════
+
+// Variabel in-memory (bisa juga disimpan di DB/env)
+let SYS_STATE = {
+  maintenance_mode: false,
+  maintenance_message: 'Sistem sedang dalam pemeliharaan. Silakan coba beberapa saat lagi.',
+  maintenance_eta: '',          // ETA selesai, format ISO atau kosong
+  current_version: process.env.APP_VERSION || '5.0.0',
+  min_version: process.env.MIN_VERSION || '5.0.0',    // versi minimum yg diizinkan
+  update_url: process.env.UPDATE_URL || '',            // link download versi baru
+  update_message: '',
+  update_mandatory: false,      // jika true, paksa update sebelum bisa login
+  announcement: '',             // pengumuman umum (muncul sebagai banner)
+  updated_at: new Date().toISOString()
+};
+
+// ── GET /api/system — public, tidak perlu auth ──────────────────
+// Dipanggil oleh EXE saat startup dan saat login
+app.get('/api/system', (req, res) => {
+  const clientVer = req.query.version || '0.0.0';
+  const isOld = isVersionOlder(clientVer, SYS_STATE.min_version);
+  res.json({
+    ok: true,
+    maintenance: SYS_STATE.maintenance_mode,
+    maintenance_message: SYS_STATE.maintenance_message,
+    maintenance_eta: SYS_STATE.maintenance_eta,
+    current_version: SYS_STATE.current_version,
+    min_version: SYS_STATE.min_version,
+    client_version: clientVer,
+    update_available: isVersionOlder(clientVer, SYS_STATE.current_version),
+    update_mandatory: isOld || SYS_STATE.update_mandatory,
+    update_url: SYS_STATE.update_url,
+    update_message: SYS_STATE.update_message,
+    announcement: SYS_STATE.announcement,
+    server_time: new Date().toISOString()
+  });
+});
+
+// ── GET /api/admin/system — baca status sistem ──────────────────
+app.get('/api/admin/system', verifyAdmin, (req, res) => {
+  res.json({ ok: true, state: SYS_STATE });
+});
+
+// ── POST /api/admin/system — update status sistem ───────────────
+app.post('/api/admin/system', verifyAdmin, (req, res) => {
+  const allowed = [
+    'maintenance_mode','maintenance_message','maintenance_eta',
+    'current_version','min_version','update_url','update_message',
+    'update_mandatory','announcement'
+  ];
+  allowed.forEach(k => {
+    if (req.body[k] !== undefined) SYS_STATE[k] = req.body[k];
+  });
+  SYS_STATE.updated_at = new Date().toISOString();
+  logActivity('SUPERADMIN', 'SYSTEM_STATE_UPDATED', req,
+    JSON.stringify({ maintenance: SYS_STATE.maintenance_mode, version: SYS_STATE.current_version }));
+  res.json({ ok: true, state: SYS_STATE });
+});
+
+// ── Helper: bandingkan versi semver sederhana ───────────────────
+function isVersionOlder(v1, v2) {
+  // Returns true jika v1 < v2
+  const parse = v => (v||'0.0.0').split('.').map(n => parseInt(n)||0);
+  const [a1,b1,c1] = parse(v1);
+  const [a2,b2,c2] = parse(v2);
+  if (a1 !== a2) return a1 < a2;
+  if (b1 !== b2) return b1 < b2;
+  return c1 < c2;
+}
 
 // ── START ─────────────────────────────────────────────────────────
 initDB().then(() => {
