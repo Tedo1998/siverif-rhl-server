@@ -1,7 +1,7 @@
 {
-  "version": "12.1.2",
-  "patch_url": "",
-  "changelog": "Sistem stabil v12.1.2. Seluruh perbaikan Engine & UI sudah diterapkan dalam Installer dasar.",
+  "version": "12.1.3",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.3.zip",
+  "changelog": "Perbaikan 13 bug UI, AI Scan, dan penambahan fitur Map Transparency.",
   "required": false,
   "released_at": "2026-05-16"
 }
