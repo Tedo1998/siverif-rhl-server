@@ -41,6 +41,14 @@ app.get('/', (req, res) => {
   res.json({ status: 'ok', engine: 'Supabase-JS SDK', connected: !!supabase });
 });
 
+app.get('/api/system', (req, res) => {
+  res.json({
+    current_version: '12.1.1',
+    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.1.zip',
+    changelog: 'Fix: Pesan error pendaftaran tidak lagi menampilkan \'undefined\''
+  });
+});
+
 // Diagnostic
 app.get('/api/test-db', async (req, res) => {
   const { count, error } = await supabase
