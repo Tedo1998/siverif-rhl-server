@@ -1,0 +1,7 @@
+{
+  "version": "12.1.0",
+  "patchUrl": "https://github.com/Tedo1998/siverif-rhl-server/raw/main/SiVerif_RHL_Patch_v12.1.0_Final.zip",
+  "changelog": "Fix panel peta tertinggal + fix loading stuck 0%",
+  "releaseDate": "2026-05-15",
+  "mandatory": false
+}
