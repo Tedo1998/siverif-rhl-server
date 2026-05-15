@@ -1,7 +1,7 @@
 {
-  "version": "12.1.0",
-  "patchUrl": "https://github.com/Tedo1998/siverif-rhl-server/raw/main/SiVerif_RHL_Patch_v12.1.0_Final.zip",
-  "changelog": "Fix panel peta tertinggal + fix loading stuck 0%",
-  "releaseDate": "2026-05-15",
-  "mandatory": false
+  "version": "12.1.1",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.1.zip",
+  "changelog": "Fix: Pesan error pendaftaran tidak lagi menampilkan 'undefined'",
+  "required": false,
+  "released_at": "2026-05-15"
 }
