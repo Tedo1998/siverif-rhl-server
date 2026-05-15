@@ -104,8 +104,10 @@ async function initDB() {
     name       TEXT NOT NULL,
     username   TEXT UNIQUE NOT NULL,
     password   TEXT NOT NULL,
+    instansi   TEXT DEFAULT '',
     created_at TEXT DEFAULT (datetime('now','localtime'))
   )`);
+  try { db.run(`ALTER TABLE agency_admins ADD COLUMN instansi TEXT DEFAULT ''`); } catch(e) {}
 
   db.run(`CREATE INDEX IF NOT EXISTS idx_lic_key    ON licenses(license_key)`);
   db.run(`CREATE INDEX IF NOT EXISTS idx_lic_status ON licenses(status)`);
@@ -663,19 +665,19 @@ app.post('/api/admin/reset-password', verifyAdmin, (req, res) => {
 
 // GET semua akun admin audit + settings instansi
 app.get('/api/admin/agency/settings', verifyAdmin, (req, res) => {
-  const admins = dbAll(`SELECT id, name, username, created_at FROM agency_admins ORDER BY created_at DESC`);
+  const admins = dbAll(`SELECT id, name, username, instansi, created_at FROM agency_admins ORDER BY created_at DESC`);
   res.json({ success: true, admins });
 });
 
 // GET daftar akun admin audit saja
 app.get('/api/admin/agency/admins', verifyAdmin, (req, res) => {
-  const admins = dbAll(`SELECT id, name, username, created_at FROM agency_admins ORDER BY created_at DESC`);
+  const admins = dbAll(`SELECT id, name, username, instansi, created_at FROM agency_admins ORDER BY created_at DESC`);
   res.json({ success: true, admins });
 });
 
 // POST tambah akun admin audit baru
 app.post('/api/admin/agency/admins', verifyAdmin, (req, res) => {
-  const { name, username, password } = req.body;
+  const { name, username, password, instansi } = req.body;
   if (!name?.trim() || !username?.trim() || !password?.trim())
     return res.status(400).json({ success: false, error: 'Nama, username, dan password wajib diisi' });
 
@@ -684,8 +686,8 @@ app.post('/api/admin/agency/admins', verifyAdmin, (req, res) => {
     return res.status(400).json({ success: false, error: 'Username sudah digunakan, pilih username lain' });
 
   const hashedPass = hashPass(password.trim());
-  dbRun(`INSERT INTO agency_admins (name, username, password) VALUES (?, ?, ?)`,
-    [name.trim(), username.trim(), hashedPass]);
+  dbRun(`INSERT INTO agency_admins (name, username, password, instansi) VALUES (?, ?, ?, ?)`,
+    [name.trim(), username.trim(), hashedPass, instansi?.trim() || '']);
 
   logActivity('AGENCY', 'ADMIN_ADDED', req, `${name} (${username})`);
   res.json({ success: true, message: `Akun ${username} berhasil ditambahkan` });
@@ -714,7 +716,7 @@ app.post('/api/agency/login', (req, res) => {
   }
 
   logActivity('AGENCY', 'AGENCY_LOGIN_OK', req, username);
-  res.json({ success: true, name: admin.name, username: admin.username });
+  res.json({ success: true, name: admin.name, username: admin.username, instansi: admin.instansi || '' });
 });
 
 // ══════════════════════════════════════════════════════════════
