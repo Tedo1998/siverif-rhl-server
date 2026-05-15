@@ -142,6 +142,65 @@ app.post('/api/admin/licenses', verifyAdmin, async (req, res) => {
   res.json({ success: true, license_key: key });
 });
 
+// ── PENDAFTARAN USER (Client) ──
+app.post('/api/register', async (req, res) => {
+  const { user_name, instansi, email, whatsapp, device_id } = req.body;
+  if (!user_name || !email) return res.status(400).json({ success: false, error: 'Nama dan email wajib diisi' });
+  try {
+    const { error } = await supabase
+      .from('pending_registrations')
+      .insert([{ user_name, instansi: instansi || 'Umum', email, whatsapp: whatsapp || '', device_id: device_id || '', status: 'pending' }]);
+    if (error) return res.status(500).json({ success: false, error: error.message });
+    res.json({ success: true, message: 'Pendaftaran berhasil dikirim, menunggu persetujuan admin.' });
+  } catch (e) { res.status(500).json({ success: false, error: e.message }); }
+});
+
+// ── MANAJEMEN PENDING REGISTRATIONS (Admin) ──
+app.get('/api/admin/pending', verifyAdmin, async (req, res) => {
+  const { data, error } = await supabase
+    .from('pending_registrations')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ data });
+});
+
+app.post('/api/admin/pending/:id/approve', verifyAdmin, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const { data: reg } = await supabase.from('pending_registrations').select('*').eq('id', id).single();
+    if (!reg) return res.status(404).json({ error: 'Data tidak ditemukan' });
+    const key = `SVR-${crypto.randomBytes(3).toString('hex').toUpperCase()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+    await supabase.from('licenses').insert([{
+      license_key: key, user_name: reg.user_name, instansi: reg.instansi,
+      email: reg.email, whatsapp: reg.whatsapp, device_id: reg.device_id,
+      tier: 'full', status: 'active'
+    }]);
+    await supabase.from('pending_registrations').update({ status: 'approved' }).eq('id', id);
+    res.json({ success: true, license_key: key });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.post('/api/admin/pending/:id/reject', verifyAdmin, async (req, res) => {
+  const { error } = await supabase.from('pending_registrations').update({ status: 'rejected' }).eq('id', req.params.id);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ success: true });
+});
+
+// ── UPDATE & DELETE LISENSI (Admin) ──
+app.put('/api/admin/licenses/:id', verifyAdmin, async (req, res) => {
+  const { user_name, instansi, status, tier, valid_until, notes } = req.body;
+  const { error } = await supabase.from('licenses').update({ user_name, instansi, status, tier, valid_until, notes }).eq('id', req.params.id);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ success: true });
+});
+
+app.delete('/api/admin/licenses/:id', verifyAdmin, async (req, res) => {
+  const { error } = await supabase.from('licenses').delete().eq('id', req.params.id);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ success: true });
+});
+
 // Validasi Lisensi (Client)
 app.post('/api/validate', async (req, res) => {
   const { license_key } = req.body;
