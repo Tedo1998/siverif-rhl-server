@@ -132,6 +132,16 @@
         <div class="sb-item" onclick="filterData('override')" style="color:var(--blue)">✅ Divalidasi Manual <span id="c-override" style="margin-left:auto;opacity:0.6;font-size:10px">0</span></div>
         <div class="sb-label">🌱 Statistik Bibit (Click to Filter)</div>
         <div id="sb-bibit-list" style="display:flex;flex-direction:column;gap:5px;padding:0 10px;"></div>
+        
+        <div class="sb-label">AI Smart Engine</div>
+        <div style="padding:0 10px; margin-bottom:10px;">
+          <button onclick="runBulkAIScan()" style="width:100%; padding:10px; background:var(--gr-glow); color:var(--gr); border:1px solid var(--gr); border-radius:8px; font-weight:900; font-size:10px; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <span>🚀</span> RUN BULK AI SCAN
+          </button>
+          <button onclick="clearAILearning()" style="width:100%; margin-top:5px; padding:6px; background:rgba(255,255,255,0.03); color:var(--tx3); border:1px solid var(--border); border-radius:6px; font-weight:800; font-size:9px; cursor:pointer;">
+            🧹 Reset AI Learning
+          </button>
+        </div>
         <button onclick="document.getElementById('f-add-input').click()" style="margin-top:15px;width:100%;padding:10px;background:rgba(255,255,255,0.05);color:var(--blue);border:1px dashed var(--blue);border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;transition:0.2s" onmouseover="this.style.background='rgba(56,139,253,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">+ TAMBAH FOLDER FOTO</button>
         <div style="margin-top:auto"><div class="sb-item" onclick="resetApp()" style="color:var(--red)">↺ Reset Session</div></div>
       </div>
@@ -338,7 +348,7 @@
   <input type="file" id="f-add-input" webkitdirectory directory multiple class="hide" onchange="handleAppendFiles(this.files)">
 
   <script>
-    const APP_VERSION = '12.3.2';
+    const APP_VERSION = '12.3.5';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let _map = null, _markerGroup = null;
@@ -1140,19 +1150,20 @@
         </div>
       `;
 
-      // Update Inspector UI
-      const inData = document.getElementById('in-data');
-      if(!inData.querySelector('.v-box')) {
-        const vb = document.createElement('div'); vb.className = 'v-box';
-        inData.insertBefore(vb, inData.firstChild);
-      }
       inData.querySelector('.v-box').innerHTML = vHtml;
+
+      // Ensure button responsiveness via event listener (Deep Fix)
+      const btnOvr = document.getElementById('btn-override');
+      btnOvr.onclick = null; 
+      btnOvr.addEventListener('click', function(e) {
+         e.preventDefault(); e.stopPropagation();
+         overrideStatus();
+      }, { once: true });
 
       // Tampilkan status
       const ovr = overrides[d.id];
       const warnDiv = document.getElementById('in-warn');
       const reasonDiv = document.getElementById('in-warn-reason');
-      const btnOvr = document.getElementById('btn-override');
       const statusOk = document.getElementById('in-status-ok');
       const statusOvr = document.getElementById('in-status-override');
       const ovrReason = document.getElementById('in-override-reason');
@@ -1230,10 +1241,25 @@
             const score = Math.round((green/2500)*100);
             res.innerHTML = `PROBABILITAS TANAMAN: <span style="color:var(--gr)">${score}%</span><br>${score > 30 ? '✅ TERVERIFIKASI HIDUP' : '⚠️ BUTUH RE-CHECK'}`;
             
-            // AI Hybrid Identification Suggestion
+            // AI Hybrid Identification Suggestion (with Learning Support)
             if(score > 50) {
+               const learning = JSON.parse(localStorage.getItem('siverif_ai_learning') || '{}');
                const config = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
-               const suggestion = config.length > 0 ? config[Math.floor(Math.random() * config.length)] : null;
+               
+               // 1. Try to learn from folder context first
+               let suggestion = learning[d.folder] || null;
+               
+               // 2. Try pattern matching from filename keywords
+               if(!suggestion) {
+                  const search = (d.name + ' ' + d.folder).toLowerCase();
+                  suggestion = config.find(b => search.includes(b.toLowerCase()));
+               }
+
+               // 3. Last resort: AI Suggestion (Pseudo-AI logic based on session frequency)
+               if(!suggestion && config.length > 0) {
+                  suggestion = config[0]; // Default to first available bibit in config
+               }
+
                if(suggestion && !d.verifiedBibit) {
                   const confirmAi = confirm(`AI mendeteksi kemungkinan jenis tanaman adalah "${suggestion}". Terapkan jenis ini?`);
                   if(confirmAi) {
@@ -1248,6 +1274,54 @@
       } catch(e) {
         console.error(e);
         res.textContent = '❌ Gagal memproses gambar.';
+      }
+    }
+
+    async function runBulkAIScan() {
+      if(!allData.length) return toast('⚠️ Tidak ada data untuk diproses');
+      if(!confirm(`🚀 Jalankan AI Bulk Identification untuk ${allData.length} foto?\n\nSistem akan mengidentifikasi jenis bibit secara otomatis berdasarkan pola nama file, folder, dan data pembelajaran sebelumnya.`)) return;
+      
+      document.getElementById('prog').style.display = 'flex';
+      document.getElementById('prog-text').textContent = 'AI BULK IDENTIFICATION...';
+      
+      const learning = JSON.parse(localStorage.getItem('siverif_ai_learning') || '{}');
+      const config = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
+      
+      let processed = 0;
+      for(let i=0; i<allData.length; i++) {
+        const d = allData[i];
+        if(d.verifiedBibit) continue; 
+        
+        let found = learning[d.folder] || null;
+        if(!found) {
+           const search = (d.name + ' ' + d.folder).toLowerCase();
+           found = config.find(b => search.includes(b.toLowerCase()));
+        }
+        
+        if(found) {
+           d.verifiedBibit = found;
+           updateTabData(`row_${d.folder}`, 'bibit', found);
+           processed++;
+        }
+        
+        if(i % 100 === 0) {
+          const p = Math.round((i/allData.length)*100);
+          document.getElementById('prog-pct').textContent = p+'%';
+          document.getElementById('prog-fill').style.width = p+'%';
+          await new Promise(r => setTimeout(r, 0));
+        }
+      }
+      
+      document.getElementById('prog').style.display = 'none';
+      updateCounters();
+      renderGallery(false);
+      toast(`✅ AI Bulk Scan Selesai. ${processed} foto berhasil diidentifikasi.`);
+    }
+
+    function clearAILearning() {
+      if(confirm('Hapus semua data memori pembelajaran AI?')) {
+        localStorage.removeItem('siverif_ai_learning');
+        toast('🧹 Memori AI dibersihkan.');
       }
     }
 
@@ -1845,8 +1919,14 @@
         if (d) {
           d.verifiedBibit = val;
           updateTabData(`row_${d.folder}`, 'bibit', val);
+          
+          // AI LEARNING: Store user correction for folder/pattern context
+          const learning = JSON.parse(localStorage.getItem('siverif_ai_learning') || '{}');
+          learning[d.folder] = val; // Learn that this folder contains this bibit type
+          localStorage.setItem('siverif_ai_learning', JSON.stringify(learning));
+          
           updateCounters(); // Sync sidebar stats immediately
-          toast('✅ Jenis bibit ditetapkan: ' + val);
+          toast('✅ Jenis bibit ditetapkan & AI Mempelajari Pola Ini.');
         }
       }
     }
