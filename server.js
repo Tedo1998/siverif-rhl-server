@@ -7,6 +7,7 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const START_TIME = Date.now();
 // Environment Variables
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
@@ -39,15 +40,69 @@ const verifyAdmin = (req, res, next) => {
 // ── PUBLIC ENDPOINTS ──
 
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', engine: 'Supabase-JS SDK', connected: !!supabase });
+  const uptime = Math.floor((Date.now() - START_TIME) / 1000);
+  res.json({
+    status: 'ok',
+    version: '12.1.4',
+    uptime_seconds: uptime,
+    uptime_human: `${Math.floor(uptime/3600)}j ${Math.floor((uptime%3600)/60)}m`,
+    connected: !!supabase
+  });
 });
 
 app.get('/api/system', (req, res) => {
   res.json({
     current_version: '12.1.4',
     update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.4.zip',
-    changelog: 'Update v12.1.4: Fix Layout, AI Scan, High-Res Zoom, and Admin Panel Control.'
+    changelog: 'Update v12.1.4: Fix Layout, AI Scan, High-Res Zoom, and Admin Panel Control Sync.'
   });
+});
+
+// ── ADMIN: DASHBOARD ──
+
+app.get('/api/admin/dashboard', verifyAdmin, async (req, res) => {
+  try {
+    const today = new Date(); today.setHours(0,0,0,0);
+    const lastWeek = new Date(); lastWeek.setDate(lastWeek.getDate() - 7);
+    const nextWeek = new Date(); nextWeek.setDate(nextWeek.getDate() + 7);
+
+    const [
+      { count: total },
+      { count: active },
+      { count: inactive },
+      { count: suspended },
+      { count: expired },
+      { count: soon },
+      { count: pending },
+      { data: recent_active },
+      { data: recent_logs },
+      { count: val_today },
+      { count: val_week }
+    ] = await Promise.all([
+      supabase.from('licenses').select('*', { count: 'exact', head: true }),
+      supabase.from('licenses').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+      supabase.from('licenses').select('*', { count: 'exact', head: true }).eq('status', 'inactive'),
+      supabase.from('licenses').select('*', { count: 'exact', head: true }).eq('status', 'suspended'),
+      supabase.from('licenses').select('*', { count: 'exact', head: true }).eq('status', 'expired'),
+      supabase.from('licenses').select('*', { count: 'exact', head: true }).gte('valid_until', new Date().toISOString()).lte('valid_until', nextWeek.toISOString()),
+      supabase.from('pending_registrations').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabase.from('licenses').select('*').order('last_check', { ascending: false }).limit(5),
+      supabase.from('activity_log').select('*').order('created_at', { ascending: false }).limit(10),
+      supabase.from('activity_log').select('*', { count: 'exact', head: true }).eq('action', 'VALIDATE_OK').gte('created_at', today.toISOString()),
+      supabase.from('activity_log').select('*', { count: 'exact', head: true }).eq('action', 'VALIDATE_OK').gte('created_at', lastWeek.toISOString())
+    ]);
+
+    res.json({
+      licenses: { 
+        total: total||0, active: active||0, inactive: inactive||0, 
+        suspended: suspended||0, expired: expired||0, expire_soon: soon||0 
+      },
+      pending: pending||0,
+      recent_active: recent_active||[],
+      recent_logs: recent_logs||[],
+      activity: { validate_today: val_today||0, validate_week: val_week||0, validate_month: 0 }
+    });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/test-db', async (req, res) => {
