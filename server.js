@@ -162,8 +162,9 @@ app.post('/api/admin/licenses', verifyAdmin, async (req, res) => {
 });
 
 app.put('/api/admin/licenses/:key', verifyAdmin, async (req, res) => {
+  const { key } = req.params;
   const { user_name, instansi, email, whatsapp, tier, max_photos, valid_until, device_locked, notes } = req.body;
-  const { error } = await supabase.from('licenses').update({ user_name, instansi, email, whatsapp, tier, max_photos, valid_until, device_locked: !!device_locked, notes }).eq('license_key', req.params.key);
+  const { error } = await supabase.from('licenses').update({ user_name, instansi, email, whatsapp, tier, max_photos, valid_until, device_locked, notes }).eq('license_key', key);
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
@@ -175,7 +176,7 @@ app.patch('/api/admin/licenses/:key/status', verifyAdmin, async (req, res) => {
 });
 
 app.patch('/api/admin/licenses/:key/reset-device', verifyAdmin, async (req, res) => {
-  const { error } = await supabase.from('licenses').update({ device_id: null, device_locked: false }).eq('license_key', req.params.key);
+  const { error } = await supabase.from('licenses').update({ device_id: null, device_locked: 0 }).eq('license_key', req.params.key);
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
