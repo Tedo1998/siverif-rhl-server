@@ -1,7 +1,7 @@
 {
-  "version": "12.7.0",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.7.0.zip",
-  "changelog": "v12.7.0: Integrasi Claude AI untuk analisis forensik foto bibit RHL, Layer Manager Peta, Verifikasi Bibit lengkap, Tabulasi LULUS/RE-AUDIT.",
-  "required": false,
-  "released_at": "2026-05-17"
+  "version": "12.7.2",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.7.2.zip",
+  "changelog": "v12.7.2 MASTERPIECE ULTIMATE: Integration of Claude AI Forensics, restored 12.3.9 foundation, fixed Vercel login API, toggle-off overrideStatus, and stable Layer Manager.",
+  "required": true,
+  "released_at": "2026-05-18"
 }
