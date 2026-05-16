@@ -1,7 +1,7 @@
 {
-  "version": "12.2.2",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.2.zip",
-  "changelog": "v12.2.2 Masterpiece: FIX TOMBOL SIGN IN, Enter-to-Login, Hapus Pendaftaran & Integrasi WhatsApp.",
+  "version": "12.2.3",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.3.zip",
+  "changelog": "v12.2.3 Masterpiece: PERBAIKAN TOTAL LAPISAN KLIK. Z-Index 999.999. [Critical Fix]",
   "required": true,
   "released_at": "2026-05-16"
 }

@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
   const uptime = Math.floor((Date.now() - START_TIME) / 1000);
   res.json({
     status: 'ok',
-    version: '12.2.2',
+    version: '12.2.3',
     uptime_seconds: uptime,
     uptime_human: `${Math.floor(uptime/3600)}j ${Math.floor((uptime%3600)/60)}m`,
     connected: !!supabase
@@ -52,9 +52,9 @@ app.get('/', (req, res) => {
 
 app.get('/api/system', (req, res) => {
   res.json({
-    current_version: '12.2.2',
-    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.2.zip',
-    changelog: 'v12.2.2 Masterpiece: Fixed Sign In responsiveness, added Enter-to-Login, and finalized WA/Delete features.'
+    current_version: '12.2.3',
+    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.3.zip',
+    changelog: 'v12.2.3 Masterpiece: ULTIMATE CLICK FIX. Increased z-index for login layer to prevent blocking.'
   });
 });
 
