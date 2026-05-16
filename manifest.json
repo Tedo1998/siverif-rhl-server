@@ -1,7 +1,7 @@
 {
-  "version": "12.2.3",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.3.zip",
-  "changelog": "v12.2.3 Masterpiece: PERBAIKAN TOTAL LAPISAN KLIK. Z-Index 999.999. [Critical Fix]",
+  "version": "12.2.4",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.4.zip",
+  "changelog": "v12.2.4 Masterpiece: PERBAIKAN DETEKSI UPDATE OTOMATIS. Anti-Cache & Fixed Alerts. [Stable Release]",
   "required": true,
   "released_at": "2026-05-16"
 }
