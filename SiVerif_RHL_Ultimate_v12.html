@@ -86,7 +86,7 @@
       <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Professional AI Edition</div>
       <input type="text" id="l-user" value="admin" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;">
       <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:1.5rem;">
-      <button onclick="doLogin()" style="width:100%;padding:16px;background:var(--gr);color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer;">PROFESSIONAL SIGN IN &rarr;</button>
+      <button id="login-btn" onclick="doLogin()" style="width:100%;padding:16px;background:var(--gr);color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer;">PROFESSIONAL SIGN IN &rarr;</button>
     </div>
   </div>
 
@@ -252,6 +252,7 @@
   <input type="file" id="f-add-input" webkitdirectory multiple class="hide" onchange="handleAppendFiles(this.files)">
 
   <script>
+    console.log('SiVerif v12.6.1 Script Loaded');
     const APP_VERSION = '12.6.1';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
@@ -267,16 +268,29 @@
     }
 
     async function doLogin() {
-      const u = document.getElementById('l-user').value;
-      const p = document.getElementById('l-pass').value;
-      const btn = document.querySelector('#login-wrap button');
+      console.log('Login attempt initiated...');
+      const uEl = document.getElementById('l-user');
+      const pEl = document.getElementById('l-pass');
+      const btn = document.getElementById('login-btn');
+      
+      if (!uEl || !pEl || !btn) {
+        alert('Sistem Error: Elemen login tidak ditemukan.');
+        return;
+      }
+
+      const u = uEl.value.trim();
+      const p = pEl.value.trim();
+      
       if (!u || !p) return alert('Username dan Password wajib diisi');
       
-      btn.disabled = true; btn.textContent = 'AUTHENTICATING...';
+      btn.disabled = true; 
+      const originalText = btn.textContent;
+      btn.textContent = 'AUTHENTICATING...';
       
       try {
+        console.log('Connecting to SiVerif Cloud...');
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
         
         const r = await fetch('https://siverif-rhl-server.vercel.app/api/agency/login', {
           method: 'POST',
@@ -291,21 +305,22 @@
           localStorage.setItem('siverif_saved_user', u);
           localStorage.setItem('siverif_saved_pass', p);
           if (d.name) {
-            document.getElementById('instansi-tag').textContent = d.name;
+            const tag = document.getElementById('instansi-tag');
+            if(tag) tag.textContent = d.name;
             localStorage.setItem('siverif_agency_cache', d.name);
           }
           document.getElementById('login-wrap').style.display = 'none';
           document.getElementById('app').classList.add('active');
           initApp();
-          toast('✅ Autentikasi Berhasil. Selamat Datang!');
+          toast('✅ Autentikasi Berhasil');
         } else {
-          toast('❌ ' + (d.message || 'Login Gagal: Periksa kredensial Anda'));
+          alert('❌ ' + (d.message || 'Login Gagal: Periksa kredensial Anda'));
         }
       } catch (e) {
         console.error('Login Error:', e);
-        toast('❌ Gagal menghubungi server. Periksa koneksi internet.');
+        alert('❌ Gagal menghubungi server: ' + e.message + '\n\nPastikan koneksi internet aktif.');
       } finally {
-        btn.disabled = false; btn.textContent = 'PROFESSIONAL SIGN IN \u2192';
+        btn.disabled = false; btn.textContent = originalText;
       }
     }
 
@@ -321,13 +336,17 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      const uEl = document.getElementById('l-user');
+      const pEl = document.getElementById('l-pass');
       const savedUser = localStorage.getItem('siverif_saved_user');
       const savedPass = localStorage.getItem('siverif_saved_pass');
-      if (savedUser) document.getElementById('l-user').value = savedUser;
-      if (savedPass) document.getElementById('l-pass').value = savedPass;
+      
+      if (uEl && savedUser) uEl.value = savedUser;
+      if (pEl && savedPass) pEl.value = savedPass;
       
       const cachedAgency = localStorage.getItem('siverif_agency_cache');
-      if (cachedAgency) document.getElementById('instansi-tag').textContent = cachedAgency;
+      const tag = document.getElementById('instansi-tag');
+      if (cachedAgency && tag) tag.textContent = cachedAgency;
       
       checkSystemStatus();
     });
