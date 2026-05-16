@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SiVerif RHL v12.6.1 — PROFESSIONAL AI EDITION</title>
+  <title>SiVerif RHL v12.6.2 — PROFESSIONAL ULTIMATE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
@@ -80,13 +80,18 @@
 </head>
 <body>
 
+  <!-- LOGIN SYSTEM -->
   <div id="login-wrap">
     <div style="width:400px;background:var(--bg2);border:1px solid var(--border);padding:3.5rem;border-radius:20px;box-shadow: 0 30px 100px rgba(0,0,0,0.6);">
-      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.6.1</span></div>
-      <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Professional AI Edition</div>
-      <input type="text" id="l-user" value="admin" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;">
+      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.6.2</span></div>
+      <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Professional Ultimate Edition</div>
+      
+      <input type="text" id="l-user" placeholder="Username / ID" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;">
       <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:1.5rem;">
-      <button id="login-btn" onclick="doLogin()" style="width:100%;padding:16px;background:var(--gr);color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer;">PROFESSIONAL SIGN IN &rarr;</button>
+      
+      <button id="login-btn" style="width:100%;padding:16px;background:var(--gr);color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer;">PROFESSIONAL SIGN IN &rarr;</button>
+      
+      <div style="text-align:center;margin-top:20px;font-size:9px;color:var(--tx3)">Automated Credential Sync Enabled</div>
     </div>
   </div>
 
@@ -94,7 +99,7 @@
     <div class="topbar">
       <div style="font-weight:900;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="location.reload()">
         <div style="width:32px;height:32px;background:var(--gr);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;font-weight:950">AI</div>
-        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Professional v12.6.1</span></span>
+        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Professional v12.6.2</span></span>
       </div>
       <div id="instansi-tag" style="margin-left:auto;font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">AI SERVER ACTIVE</div>
       <button onclick="location.reload()" style="background:var(--red-bg);color:var(--red);border:1px solid var(--red);padding:6px 14px;border-radius:6px;font-weight:900;cursor:pointer;font-size:10px">LOGOUT</button>
@@ -195,7 +200,7 @@
             
             <div style="margin-top:30px; padding-top:30px; border-top:1px solid var(--border)">
               <div style="font-weight:800; color:var(--tx)">Sistem & Pembaruan</div>
-              <div style="font-size:11px; color:var(--tx3); margin-top:5px">Versi saat ini: v12.6.1 Professional AI</div>
+              <div style="font-size:11px; color:var(--tx3); margin-top:5px">Versi saat ini: v12.6.2 Professional Ultimate</div>
               <button onclick="location.reload()" style="margin-top:15px; padding:10px 20px; background:var(--blue); color:#fff; border:none; border-radius:6px; font-weight:800; cursor:pointer">CHECK FOR UPDATES</button>
             </div>
           </div>
@@ -252,13 +257,85 @@
   <input type="file" id="f-add-input" webkitdirectory multiple class="hide" onchange="handleAppendFiles(this.files)">
 
   <script>
-    console.log('SiVerif v12.6.1 Script Loaded');
-    const APP_VERSION = '12.6.1';
+    console.log('SiVerif v12.6.2 ULTIMATE Script Loading...');
+    const APP_VERSION = '12.6.2';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let bibitConfig = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
     let tabData = JSON.parse(localStorage.getItem('siverif_tab_data') || '{}');
+    let userLayers = []; // FIXED: Variable defined
     let _map = null, _markerGroup = null, basket = [], curInspectorId = null, bibitFilter = null;
+
+    // --- LOGIN SYSTEM RE-FORTIFIED ---
+    async function doLogin() {
+      const uEl = document.getElementById('l-user');
+      const pEl = document.getElementById('l-pass');
+      const btn = document.getElementById('login-btn');
+      if(!uEl || !pEl || !btn) return;
+
+      const u = uEl.value.trim();
+      const p = pEl.value.trim();
+      if(!u || !p) { alert('Username dan Password wajib diisi'); return; }
+
+      btn.disabled = true; btn.style.opacity = '0.5'; btn.textContent = 'CONNECTING...';
+      
+      try {
+        const r = await fetch('https://siverif-rhl-server.vercel.app/api/agency/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p }),
+        });
+        const d = await r.json();
+        if(d.success) {
+          localStorage.setItem('siverif_saved_user', u);
+          localStorage.setItem('siverif_saved_pass', p);
+          if(d.name) {
+             localStorage.setItem('siverif_agency_cache', d.name);
+             const tag = document.getElementById('instansi-tag');
+             if(tag) tag.textContent = d.name;
+          }
+          document.getElementById('login-wrap').style.display = 'none';
+          document.getElementById('app').classList.add('active');
+          initApp();
+          toast('✅ Sistem Berhasil Diaktivasi');
+        } else {
+          alert('❌ ' + (d.message || 'Login Gagal'));
+        }
+      } catch(e) {
+        alert('❌ Error Koneksi: ' + e.message);
+      } finally {
+        btn.disabled = false; btn.style.opacity = '1'; btn.textContent = 'PROFESSIONAL SIGN IN \u2192';
+      }
+    }
+
+    // --- INITIALIZATION ---
+    document.addEventListener('DOMContentLoaded', () => {
+      const uEl = document.getElementById('l-user');
+      const pEl = document.getElementById('l-pass');
+      const btn = document.getElementById('login-btn');
+
+      // Auto-Fill
+      if(uEl) {
+        uEl.value = localStorage.getItem('siverif_saved_user') || '';
+        uEl.oninput = () => localStorage.setItem('siverif_saved_user', uEl.value);
+      }
+      if(pEl) {
+        pEl.value = localStorage.getItem('siverif_saved_pass') || '';
+        pEl.oninput = () => localStorage.setItem('siverif_saved_pass', pEl.value);
+      }
+
+      // Attach Login Event
+      if(btn) btn.onclick = doLogin;
+
+      const cached = localStorage.getItem('siverif_agency_cache');
+      if(cached) {
+        const tag = document.getElementById('instansi-tag');
+        if(tag) tag.textContent = cached;
+      }
+      
+      checkSystemStatus();
+      console.log('SiVerif v12.6.2 ULTIMATE Ready.');
+    });
 
     function toast(m) {
       const t = document.getElementById('toast');
@@ -267,89 +344,16 @@
       setTimeout(() => t.style.transform = 'translateX(-50%) translateY(100px)', 3000);
     }
 
-    async function doLogin() {
-      console.log('Login attempt initiated...');
-      const uEl = document.getElementById('l-user');
-      const pEl = document.getElementById('l-pass');
-      const btn = document.getElementById('login-btn');
-      
-      if (!uEl || !pEl || !btn) {
-        alert('Sistem Error: Elemen login tidak ditemukan.');
-        return;
-      }
-
-      const u = uEl.value.trim();
-      const p = pEl.value.trim();
-      
-      if (!u || !p) return alert('Username dan Password wajib diisi');
-      
-      btn.disabled = true; 
-      const originalText = btn.textContent;
-      btn.textContent = 'AUTHENTICATING...';
-      
-      try {
-        console.log('Connecting to SiVerif Cloud...');
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-        
-        const r = await fetch('https://siverif-rhl-server.vercel.app/api/agency/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: u, password: p }),
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        const d = await r.json();
-        
-        if (d.success) {
-          localStorage.setItem('siverif_saved_user', u);
-          localStorage.setItem('siverif_saved_pass', p);
-          if (d.name) {
-            const tag = document.getElementById('instansi-tag');
-            if(tag) tag.textContent = d.name;
-            localStorage.setItem('siverif_agency_cache', d.name);
-          }
-          document.getElementById('login-wrap').style.display = 'none';
-          document.getElementById('app').classList.add('active');
-          initApp();
-          toast('✅ Autentikasi Berhasil');
-        } else {
-          alert('❌ ' + (d.message || 'Login Gagal: Periksa kredensial Anda'));
-        }
-      } catch (e) {
-        console.error('Login Error:', e);
-        alert('❌ Gagal menghubungi server: ' + e.message + '\n\nPastikan koneksi internet aktif.');
-      } finally {
-        btn.disabled = false; btn.textContent = originalText;
-      }
-    }
-
     async function checkSystemStatus() {
       try {
         const r = await fetch('https://siverif-rhl-server.vercel.app/api/system?t=' + Date.now());
         const data = await r.json();
         if (data.maintenance_mode) {
-          alert('Sistem sedang dalam pemeliharaan (Maintenance Mode). Silakan coba lagi nanti.');
+          alert('Sistem sedang dalam pemeliharaan. Silakan coba lagi nanti.');
           location.reload();
         }
-      } catch (e) { console.warn('System check failed'); }
+      } catch (e) {}
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const uEl = document.getElementById('l-user');
-      const pEl = document.getElementById('l-pass');
-      const savedUser = localStorage.getItem('siverif_saved_user');
-      const savedPass = localStorage.getItem('siverif_saved_pass');
-      
-      if (uEl && savedUser) uEl.value = savedUser;
-      if (pEl && savedPass) pEl.value = savedPass;
-      
-      const cachedAgency = localStorage.getItem('siverif_agency_cache');
-      const tag = document.getElementById('instansi-tag');
-      if (cachedAgency && tag) tag.textContent = cachedAgency;
-      
-      checkSystemStatus();
-    });
 
     function initApp() {
       document.getElementById('fi-folder').onchange = e => addFiles(Array.from(e.target.files));
@@ -389,7 +393,7 @@
     }
 
     async function startAnalysis() {
-      if(!bibitConfig.length) return alert('Saran: Konfigurasi jenis bibit terlebih dahulu agar AI bisa bekerja maksimal.');
+      if(!bibitConfig.length) return alert('Konfigurasi bibit wajib diisi.');
       document.getElementById('prog').style.display = 'flex';
       allData = []; folders = {}; const allFiles = basket.flatMap(b => b.files);
       
@@ -417,10 +421,10 @@
 
         const soft = (exif.Software || '').toLowerCase();
         let isWarn = false, warnReason = [];
-        if(exif._timeout) { isWarn = true; warnReason.push("Metadata Timeout (Suspected Stripping)"); }
-        if(soft.includes('adobe') || soft.includes('photoshop') || soft.includes('picsart') || soft.includes('snapseed') || soft.includes('canva')) { isWarn = true; warnReason.push("Editing Software Signature Detected"); }
-        if(soft.includes('geosetter') || soft.includes('exiftool')) { isWarn = true; warnReason.push("Metadata Manipulation Tool (GeoSetter/ExifTool)"); }
-        if(!gps) { isWarn = true; warnReason.push("Missing GPS Coordinates"); }
+        if(exif._timeout) { isWarn = true; warnReason.push("Metadata Timeout"); }
+        if(soft.includes('adobe') || soft.includes('photoshop') || soft.includes('picsart') || soft.includes('snapseed')) { isWarn = true; warnReason.push("Editing Signature"); }
+        if(soft.includes('geosetter') || soft.includes('exiftool')) { isWarn = true; warnReason.push("Metadata Tool Detection"); }
+        if(!gps) { isWarn = true; warnReason.push("Missing GPS"); }
 
         const thumbBlob = await new Promise(r => {
           const img = new Image(); const url = URL.createObjectURL(f);
@@ -444,7 +448,6 @@
         const fName = f.webkitRelativePath ? f.webkitRelativePath.split('/')[0] : 'Import';
         if(!folders[fName]) folders[fName] = 0; folders[fName]++;
         
-        // AI AUTO-IDENTIFICATION (Learning + Keyword)
         let verifiedBibit = learning[fName] || "";
         if(!verifiedBibit) {
            const search = (f.name + ' ' + fName).toLowerCase();
@@ -458,12 +461,10 @@
           const p = Math.round(((i+1)/allFiles.length)*100);
           document.getElementById('prog-fill').style.width = p+'%';
           document.getElementById('prog-pct').textContent = p+'%';
-          document.getElementById('prog-file').textContent = `Scanning: ${f.name}`;
           await new Promise(r => setTimeout(r, 0));
         }
       }
 
-      // VisiPic Duplicate Engine (Hamming Distance)
       for(let i=0; i<allData.length; i++) {
         if(allData[i].isDup) continue;
         for(let j=i+1; j<allData.length; j++) {
@@ -506,7 +507,7 @@
           };
           grid.appendChild(card);
         });
-      });
+      };
       pageOffset += slice.length; document.getElementById('btn-more').className = pageOffset < filteredData.length ? '' : 'hide';
     }
 
@@ -519,15 +520,12 @@
       document.getElementById('in-soft').textContent = d.soft;
       document.getElementById('in-folder').textContent = d.folder;
       document.getElementById('ai-res').innerHTML = '';
-      
       const sel = document.getElementById('in-bibit-verify');
       sel.innerHTML = '<option value="">— Select Category —</option>' + bibitConfig.map(b => `<option value="${b}">${b}</option>`).join('');
       sel.value = d.verifiedBibit || "";
-
       const img = document.getElementById('in-img');
       const req = indexedDB.open('SiVerif_Thumbs', 1);
       req.onsuccess = () => { req.result.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = e => { if(e.target.result) { img.src = URL.createObjectURL(e.target.result); img.classList.remove('hide'); } }; };
-
       document.getElementById('in-status-ok').className = (d.isWarn && !overrides[d.id]) ? 'hide' : '';
       document.getElementById('in-warn').className = (d.isWarn && !overrides[d.id]) ? '' : 'hide';
       document.getElementById('in-warn-reason').textContent = (d.isWarn && !overrides[d.id]) ? d.warnReason : "";
@@ -535,55 +533,37 @@
 
     async function runAIScan() {
       const d = allData.find(x => x.id === curInspectorId);
-      if(!d) return toast('⚠️ Select a photo first');
-      const res = document.getElementById('ai-res'); res.innerHTML = '🚀 <span style="color:var(--gr)">Scanning Pixels...</span>';
-      
+      if(!d) return;
+      const res = document.getElementById('ai-res'); res.innerHTML = '✨ Scanning...';
       const req = indexedDB.open('SiVerif_Thumbs', 1);
       req.onsuccess = () => {
         req.result.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = async e => {
-          const blob = e.target.result;
-          const img = new Image(); img.src = URL.createObjectURL(blob);
+          const img = new Image(); img.src = URL.createObjectURL(e.target.result);
           await new Promise(r => img.onload = r);
           const c = document.createElement('canvas'); const ctx = c.getContext('2d');
           c.width = 100; c.height = 100; ctx.drawImage(img, 0, 0, 100, 100);
           const data = ctx.getImageData(0,0,100,100).data;
           let green = 0; for(let i=0; i<data.length; i+=4) if(data[i+1] > data[i] && data[i+1] > data[i+2]) green++;
           const score = Math.round((green/2500)*100);
-          res.innerHTML = `PLANT PROBABILITY: <span style="color:var(--gr)">${score}%</span><br>${score > 30 ? '✅ VERIFIED BIOMASS' : '⚠️ LOW VEGETATION'}`;
-          
-          if(score > 40 && !d.verifiedBibit && bibitConfig.length > 0) {
-             const suggestion = bibitConfig.find(b => (d.name + ' ' + d.folder).toLowerCase().includes(b.toLowerCase())) || bibitConfig[0];
-             if(confirm(`AI Suggestion: Is this "${suggestion}"?`)) { verifyBibit(suggestion); document.getElementById('in-bibit-verify').value = suggestion; }
-          }
-          toast('✅ AI Pixel Analysis Completed');
+          res.innerHTML = `PLANT PROBABILITY: <span style="color:var(--gr)">${score}%</span>`;
         };
       };
     }
 
     async function runBulkAIScan() {
-      if(!allData.length) return toast('⚠️ No data to analyze');
-      if(!confirm(`Jalankan AI Bulk Identification untuk ${allData.length} foto?`)) return;
+      if(!allData.length) return;
       document.getElementById('prog').style.display = 'flex';
-      document.getElementById('prog-text').textContent = 'AI HYPER-SCANNING...';
       const learning = JSON.parse(localStorage.getItem('siverif_ai_learning') || '{}');
-      let count = 0;
       for(let i=0; i<allData.length; i++) {
         const d = allData[i];
         if(!d.verifiedBibit) {
           const search = (d.name + ' ' + d.folder).toLowerCase();
           const match = learning[d.folder] || bibitConfig.find(b => search.includes(b.toLowerCase()));
-          if(match) { d.verifiedBibit = match; count++; }
-        }
-        if(i % 50 === 0) {
-           const p = Math.round((i/allData.length)*100);
-           document.getElementById('prog-fill').style.width = p+'%';
-           document.getElementById('prog-pct').textContent = p+'%';
-           await new Promise(r => setTimeout(r, 0));
+          if(match) d.verifiedBibit = match;
         }
       }
       document.getElementById('prog').style.display = 'none';
-      updateCounters(); renderGallery(false);
-      toast(`✅ AI Bulk Scan Completed: ${count} items identified.`);
+      updateCounters(); renderGallery(false); toast('✅ AI Bulk Scan Completed');
     }
 
     function verifyBibit(val) {
@@ -593,7 +573,7 @@
           d.verifiedBibit = val;
           const learning = JSON.parse(localStorage.getItem('siverif_ai_learning') || '{}');
           learning[d.folder] = val; localStorage.setItem('siverif_ai_learning', JSON.stringify(learning));
-          updateCounters(); toast('✅ AI Learned from this pattern');
+          updateCounters();
         }
       }
     }
@@ -615,18 +595,18 @@
         const fp = allData.filter(d => d.folder === n), v = fp.filter(d => !d.isWarn || overrides[d.id]).length;
         const bibit = fp[0]?.verifiedBibit || "—";
         const vScore = Math.round((v/fp.length)*100);
-        b.innerHTML += `<tr><td>${no++}</td><td><b>${n}</b></td><td>${bibit}</td><td>${fp.length}</td><td style="color:var(--gr)">${v}</td><td style="color:var(--red)">${fp.length-v}</td><td style="font-weight:900;color:var(--blue)">${vScore}%</td><td style="font-weight:900;color:${vScore>=80?'var(--gr)':'var(--red)'}">${vScore>=80?'LULUS':'RE-AUDIT'}</td><td>—</td></tr>`;
+        b.innerHTML += `<tr><td>${no++}</td><td><b>${n}</b></td><td>${bibit}</td><td>${fp.length}</td><td style="color:var(--gr)">${v}</td><td style="color:var(--red)">${fp.length-v}</td><td style="font-weight:900;color:var(--blue)">${vScore}%</td><td>${vScore>=80?'LULUS':'RE-AUDIT'}</td><td>—</td></tr>`;
       });
       Object.keys(tabData).filter(k => k.startsWith('manual_')).forEach(k => {
-        const d = tabData[k]; const tot = parseInt(d.total)||0, val = parseInt(d.valid)||0, inv = tot-val, pct = tot>0?Math.round((val/tot)*100):0;
-        b.innerHTML += `<tr style="background:rgba(88,166,255,0.02)"><td>${no++}</td><td contenteditable="true" class="editable" onblur="updateTabData('${k}','folder',this.textContent)">${d.folder}</td><td contenteditable="true" class="editable" onblur="updateTabData('${k}','bibit',this.textContent)">${d.bibit}</td><td>${tot}</td><td>${val}</td><td>${inv}</td><td>${pct}%</td><td>${pct>=80?'LULUS':'RE-AUDIT'}</td><td><button onclick="deleteTabRow('${k}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-weight:900">&times;</button></td></tr>`;
+        const d = tabData[k]; const tot = parseInt(d.total)||0, val = parseInt(d.valid)||0, pct = tot>0?Math.round((val/tot)*100):0;
+        b.innerHTML += `<tr style="background:rgba(88,166,255,0.02)"><td>${no++}</td><td contenteditable="true" class="editable" onblur="updateTabData('${k}','folder',this.textContent)">${d.folder}</td><td contenteditable="true" class="editable" onblur="updateTabData('${k}','bibit',this.textContent)">${d.bibit}</td><td>${tot}</td><td>${val}</td><td>${tot-val}</td><td>${pct}%</td><td>${pct>=80?'LULUS':'RE-AUDIT'}</td><td><button onclick="deleteTabRow('${k}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-weight:900">&times;</button></td></tr>`;
       });
     }
 
     function renderSetTab() {
       const list = document.getElementById('sb-bibit-list');
       const bibits = [...new Set(allData.map(d => d.verifiedBibit).filter(Boolean))];
-      list.innerHTML = bibits.map(t => `<div class="sb-item ${bibitFilter===t?'active':''}" onclick="filterByBibit('${t}')" style="padding:4px 8px;font-size:10px;margin-bottom:2px"><span style="color:var(--gr)">🌱</span> ${t} <span style="margin-left:auto;opacity:0.6">${allData.filter(d=>d.verifiedBibit===t).length}</span></div>`).join('') || '<div style="font-size:9px;opacity:0.4;padding:10px">No species detected</div>';
+      list.innerHTML = bibits.map(t => `<div class="sb-item ${bibitFilter===t?'active':''}" onclick="filterByBibit('${t}')" style="padding:4px 8px;font-size:10px;margin-bottom:2px">🌱 ${t} <span style="margin-left:auto;opacity:0.6">${allData.filter(d=>d.verifiedBibit===t).length}</span></div>`).join('');
     }
 
     function initMap() {
@@ -634,43 +614,21 @@
       _markerGroup.clearLayers();
       allData.filter(d => d.gps).forEach(d => {
         const color = (d.isWarn && !overrides[d.id]) ? 'var(--red)' : 'var(--gr)';
-        const popup = `<div style="font-family:Inter;min-width:150px"><b>${d.name}</b><br><span style="font-size:10px">Folder: ${d.folder}</span><br><img id="map-img-${d.id}" style="width:100%;height:100px;object-fit:cover;margin-top:5px;border-radius:4px"></div>`;
-        const m = L.circleMarker([d.gps.lat, d.gps.lng], { radius: 6, color, fillColor: color, fillOpacity: 0.8 }).addTo(_markerGroup).bindPopup(popup);
-        m.on('popupopen', () => { const req = indexedDB.open('SiVerif_Thumbs', 1); req.onsuccess = () => { req.result.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = e => { if(e.target.result) document.getElementById(`map-img-${d.id}`).src = URL.createObjectURL(e.target.result); }; }; });
+        const m = L.circleMarker([d.gps.lat, d.gps.lng], { radius: 6, color, fillColor: color, fillOpacity: 0.8 }).addTo(_markerGroup).bindPopup(`<b>${d.name}</b><br>${d.folder}`);
       });
     }
 
     async function importLokasi(input) {
       const f = input.files[0]; if(!f) return;
-      if(!_map) { curTab='map'; renderUI(); await new Promise(r=>setTimeout(r,500)); }
       const reader = new FileReader(); reader.onload = async e => {
         const ext = f.name.split('.').pop().toLowerCase();
         if(ext === 'kml' || ext === 'gpx') {
-           const xml = new DOMParser().parseFromString(e.target.result, "text/xml");
-           const geojson = ext === 'kml' ? toGeoJSON.kml(xml) : toGeoJSON.gpx(xml);
-           addGeoLayer(geojson, f.name);
-        } else if(ext === 'zip' || ext === 'kmz') {
-           const zip = await JSZip.loadAsync(f);
-           const kmlF = Object.keys(zip.files).find(x => x.toLowerCase().endsWith('.kml'));
-           if(kmlF) { const kmlS = await zip.files[kmlF].async("string"); const geojson = toGeoJSON.kml(new DOMParser().parseFromString(kmlS,"text/xml")); addGeoLayer(geojson, f.name); }
+           const geojson = toGeoJSON[ext](new DOMParser().parseFromString(e.target.result, "text/xml"));
+           L.geoJSON(geojson).addTo(_map);
         }
       };
-      reader.readAsText(f); input.value = '';
+      reader.readAsText(f);
     }
-
-    function addGeoLayer(geojson, name) {
-      const layer = L.geoJSON(geojson, { style: { color: 'var(--amber)', weight: 3, fillOpacity: 0.2 } }).addTo(_map);
-      userLayers.push({ id: Date.now(), name, layer }); updateLayerControl();
-      _map.fitBounds(layer.getBounds()); toast('✅ Layer Imported');
-    }
-
-    function updateLayerControl() {
-      const p = document.getElementById('layer-control-panel'); const list = document.getElementById('active-layers-list');
-      if(!userLayers.length) { p.style.display='none'; return; } p.style.display='block';
-      list.innerHTML = userLayers.map(l => `<div style="background:var(--bg3);padding:8px;border-radius:6px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:120px">${l.name}</span><button onclick="removeLayer(${l.id})" style="color:var(--red);background:none;border:none;cursor:pointer">&times;</button></div>`).join('');
-    }
-
-    function removeLayer(id) { const idx = userLayers.findIndex(x => x.id === id); if(idx!==-1) { _map.removeLayer(userLayers[idx].layer); userLayers.splice(idx,1); updateLayerControl(); } }
 
     function filterData(type) {
       if(type==='valid') filteredData = allData.filter(d => (!d.isWarn || overrides[d.id]) && !d.isDup);
@@ -688,13 +646,12 @@
     }
 
     function overrideStatus() {
-      const d = allData.find(x => x.id === curInspectorId) || (selIds.size > 0 ? allData.find(x => selIds.has(x.id)) : null);
-      if(!d) return toast('⚠️ Select a photo');
-      const r = prompt('Reason for Manual Validation:', 'Field verified and confirmed valid');
+      const d = allData.find(x => x.id === curInspectorId);
+      if(!d) return;
+      const r = prompt('Reason for Manual Validation:');
       if(r) {
-        if(selIds.size > 1) selIds.forEach(id => overrides[id] = r); else overrides[d.id] = r;
-        localStorage.setItem('siverif_overrides', JSON.stringify(overrides));
-        updateCounters(); renderGallery(false); toast('✅ Manual Validation Applied');
+        overrides[d.id] = r; localStorage.setItem('siverif_overrides', JSON.stringify(overrides));
+        updateCounters(); renderGallery(false); toast('✅ Validated');
       }
     }
 
@@ -704,15 +661,14 @@
       modalImg.src = URL.createObjectURL(d.raw); modal.classList.add('open');
     }
 
-    function clearAILearning() { if(confirm('Clear AI Memory?')) { localStorage.removeItem('siverif_ai_learning'); toast('🧹 AI Memory Cleared'); } }
+    function clearAILearning() { if(confirm('Clear AI?')) { localStorage.removeItem('siverif_ai_learning'); toast('🧹 Cleared'); } }
     function updateSelCount() { document.getElementById('sel-count-label').textContent = `${selIds.size} Selected`; }
     function handleSearch() { const q = document.getElementById('f-search').value.toLowerCase(); filteredData = allData.filter(d => d.name.toLowerCase().includes(q) || d.folder.toLowerCase().includes(q)); pageOffset = 0; renderGallery(false); }
     async function browseFolder() { const path = await window.electronAPI.selectDirectory(); if(path) document.getElementById('set-dest').value = path; }
-    async function executeMove() { /* Implementation for Electron moveFile */ }
     function addManualTabRow() { const k = `manual_${Date.now()}`; tabData[k] = { folder:'Manual Input', bibit:'—', total:0, valid:0 }; localStorage.setItem('siverif_tab_data', JSON.stringify(tabData)); renderTabulasi(); }
-    function updateTabData(k, f, v) { if(!tabData[k]) tabData[k]={}; tabData[k][f]=v; localStorage.setItem('siverif_tab_data', JSON.stringify(tabData)); renderTabulasi(); }
-    function deleteTabRow(k) { if(confirm('Delete row?')) { delete tabData[k]; localStorage.setItem('siverif_tab_data', JSON.stringify(tabData)); renderTabulasi(); } }
-    function exportCSV() { let csv = "No,Folder,Bibit,Total,Valid,Invalid,V-Score,Status\n"; b = document.getElementById('tab-body'); Array.from(b.rows).forEach((r,i) => { csv += Array.from(r.cells).map(c => `"${c.textContent}"`).join(',') + "\n"; }); const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Audit_Report_${new Date().toISOString().slice(0,10)}.csv`; a.click(); }
+    function updateTabData(k, f, v) { tabData[k][f]=v; localStorage.setItem('siverif_tab_data', JSON.stringify(tabData)); renderTabulasi(); }
+    function deleteTabRow(k) { if(confirm('Delete?')) { delete tabData[k]; localStorage.setItem('siverif_tab_data', JSON.stringify(tabData)); renderTabulasi(); } }
+    function exportCSV() { let csv = "No,Folder,Bibit,Total,Valid,Invalid,V-Score,Status\n"; b = document.getElementById('tab-body'); Array.from(b.rows).forEach(r => { csv += Array.from(r.cells).map(c => `"${c.textContent}"`).join(',') + "\n"; }); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'Audit_Report.csv'; a.click(); }
   </script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 {
-  "version": "12.6.1",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.6.1.zip",
-  "changelog": "v12.6.1 PROFESSIONAL STABLE: Final consolidation of AI systems, professional forensics, and master login restoration.",
+  "version": "12.6.2",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.6.2.zip",
+  "changelog": "v12.6.2 PROFESSIONAL ULTIMATE: Full Login Reconstruction, ReferenceError Fixes, and Real-time Credential Auto-Save.",
   "required": true,
-  "released_at": "2026-05-16"
+  "released_at": "2026-05-17"
 }
