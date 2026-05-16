@@ -1706,7 +1706,12 @@ async function loadPending() {
           <button class="btn btn-sm" style="background:#25d366;color:#fff;border:none;margin-bottom:3px;width:100%" onclick="waSendConfirmPendaftaran('${esc(p.user_name)}','${esc(p.instansi)}','${p.whatsapp||''}')">💬 WA Konfirmasi</button>
           <button class="btn btn-primary btn-sm" style="margin-bottom:3px" onclick="openApprove(${p.id},'${esc(p.user_name)}','${esc(p.instansi)}','${p.whatsapp||''}','${p.email||''}')">✅ Setujui</button>
           <button class="btn btn-danger btn-sm" onclick="rejectWithWA(${p.id},'${esc(p.user_name)}','${p.whatsapp||''}')">✕ Tolak</button>
-        ` : '<span style="color:var(--ink4);font-size:11px">Sudah diproses</span>'}
+        ` : `
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:5px">
+            <span style="color:var(--ink4);font-size:11px">Sudah diproses</span>
+            <button class="btn btn-danger btn-xs" onclick="deletePendingData(${p.id},'${esc(p.user_name)}')">🗑️</button>
+          </div>
+        `}
       </td>
     </tr>`).join('');
   } catch {}
@@ -1793,6 +1798,15 @@ async function waSendLicenseKey(key, name, phone, inst='') {
 
 async function waSendReject(name, phone) {
   await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\nKami mohon maaf, permohonan pendaftaran Anda *belum dapat kami proses* saat ini.\n\n📋 *Alasan:*\n• Data pendaftaran tidak lengkap / tidak memenuhi syarat\n\nJika ingin mendaftar ulang atau ada pertanyaan, silakan hubungi kami kembali.\n\nKami mohon maaf atas ketidaknyamanan ini.\n\nSalam Hormat,\n*Admin SiVerif RHL*\nKementerian LHK 🌿`);
+}
+
+async function deletePendingData(id, name) {
+  if (!confirm(`Hapus data pendaftaran "${name}" dari list?\n\nCatatan: Ini hanya menghapus log pendaftaran, lisensi yang sudah dibuat tetap aktif.`)) return;
+  try {
+    const r = await apiFetch(`/api/admin/pending/${id}`, 'DELETE');
+    if (r.ok) { showToast('Data pendaftaran dihapus ✓'); loadPending(); }
+    else showToast('Gagal menghapus', 'err');
+  } catch { showToast('Error koneksi', 'err'); }
 }
 
 // ── LOGS ──────────────────────────────────────────────────────────
