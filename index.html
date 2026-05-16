@@ -426,7 +426,7 @@ tr.expire-soon:hover td{background:#fed7aa !important}
           <div style="max-width:600px">
             <div class="form-row">
               <label>Nama Instansi Pemilik Aplikasi (Footer/Laporan)</label>
-              <input type="text" id="cfg-agency-name" placeholder="cth: Kementerian Lingkungan Hidup dan Kehutanan">
+              <input type="text" id="cfg-agency-name" placeholder="cth: SiVerif RHL Ultimate Edition">
               <p class="form-help">Nama ini akan muncul sebagai footer di aplikasi audit dan laporan.</p>
             </div>
             <div class="form-row">
@@ -468,7 +468,7 @@ tr.expire-soon:hover td{background:#fed7aa !important}
           </div>
           <div class="form-row">
             <label>Instansi</label>
-            <input id="adm-agency" type="text" placeholder="cth: BPDAS Agam Kuantan">
+            <input id="adm-agency" type="text" placeholder="cth: SiVerif Agam Kuantan">
           </div>
           <div class="form-row">
             <label>Username</label>
@@ -1785,19 +1785,19 @@ async function sendWAFonnte(phone, message) {
 }
 
 async function waSendConfirmPendaftaran(name, inst, phone) {
-  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\nKami dari Tim *SiVerif RHL* telah menerima permohonan pendaftaran Anda.\n\n📋 *DATA PENDAFTARAN*\n┌─────────────────────────\n│ 👤 Nama     : ${name}\n│ 🏢 Instansi : ${inst}\n└─────────────────────────\n\nPermohonan Anda sedang dalam proses *verifikasi dan review* oleh tim kami.\n\n⏳ *Estimasi proses:* 1x24 jam kerja\n\nKami akan menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih atas kepercayaan Anda menggunakan *SiVerif RHL*.\n\nSalam Hormat,\n*Admin SiVerif RHL*\nKementerian LHK 🌿`);
+  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\nKami dari Tim *SiVerif RHL* telah menerima permohonan pendaftaran Anda.\n\n📋 *DATA PENDAFTARAN*\n┌─────────────────────────\n│ 👤 Nama     : ${name}\n│ 🏢 Instansi : ${inst}\n└─────────────────────────\n\nPermohonan Anda sedang dalam proses *verifikasi dan review* oleh tim kami.\n\n⏳ *Estimasi proses:* 1x24 jam kerja\n\nKami akan menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih atas kepercayaan Anda menggunakan *SiVerif RHL*.\n\nSalam Hormat,\n*Admin SiVerif RHL*\nSiVerif RHL Ultimate 🌿`);
 }
 
 async function waSendPaymentInfo(name, phone) {
-  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\nAlhamdulillah, permohonan pendaftaran Anda telah *diverifikasi dan disetujui* ✅\n\nUntuk aktivasi lisensi *SiVerif RHL*, berikut informasi pembayaran:\n\n💳 *INFORMASI PEMBAYARAN*\n┌─────────────────────────────\n│ 📦 Paket    : SiVerif RHL Full Version\n│ 💰 Nominal  : Rp ___________,-\n│ 🏦 Bank     : ___________\n│ 📂 No. Rek  : ___________\n│ 👤 A/N      : ___________\n└─────────────────────────────\n\n📌 *Catatan:*\n• Pembayaran harap dilakukan dalam *3x24 jam*\n• Sertakan *nama lengkap* sebagai keterangan transfer\n• Setelah transfer, kirimkan *bukti pembayaran* ke nomor ini\n\nSalam Hormat,\n*Admin SiVerif RHL*\nKementerian LHK 🌿`);
+  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\nAlhamdulillah, permohonan pendaftaran Anda telah *diverifikasi dan disetujui* ✅\n\nUntuk aktivasi lisensi *SiVerif RHL*, berikut informasi pembayaran:\n\n💳 *INFORMASI PEMBAYARAN*\n┌─────────────────────────────\n│ 📦 Paket    : SiVerif RHL Full Version\n│ 💰 Nominal  : Rp ___________,-\n│ 🏦 Bank     : ___________\n│ 📂 No. Rek  : ___________\n│ 👤 A/N      : ___________\n└─────────────────────────────\n\n📌 *Catatan:*\n• Pembayaran harap dilakukan dalam *3x24 jam*\n• Sertakan *nama lengkap* sebagai keterangan transfer\n• Setelah transfer, kirimkan *bukti pembayaran* ke nomor ini\n\nSalam Hormat,\n*Admin SiVerif RHL*\nSiVerif RHL Ultimate 🌿`);
 }
 
 async function waSendLicenseKey(key, name, phone, inst='') {
-  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\n🎉 *Selamat!* Lisensi *SiVerif RHL* Anda telah *AKTIF*.\n\n🔑 *INFORMASI LISENSI*\n┌──────────────────────────────────\n│ 👤 Nama      : ${name}\n│ 🏢 Instansi  : ${inst||'—'}\n│ 📦 Paket     : Full Version\n│ 🔐 License Key:\n│\n│   *${key}*\n│\n└──────────────────────────────────\n\n📲 *CARA AKTIVASI:*\n1️⃣ Buka aplikasi *SiVerif RHL Launcher*\n2️⃣ Klik tombol *"AKTIVASI"*\n3️⃣ Masukkan License Key di atas\n4️⃣ Klik *"Verifikasi"*\n5️⃣ Aplikasi siap digunakan ✅\n\n⚠️ *Penting:*\n• License Key bersifat *RAHASIA* — jangan dibagikan\n• Lisensi terikat pada *1 perangkat*\n• Simpan pesan ini sebagai arsip\n\nTerima kasih telah menggunakan *SiVerif RHL* 🌿\n\nSalam Hormat,\n*Admin SiVerif RHL*\nKementerian LHK 🌿`);
+  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\n🎉 *Selamat!* Lisensi *SiVerif RHL* Anda telah *AKTIF*.\n\n🔑 *INFORMASI LISENSI*\n┌──────────────────────────────────\n│ 👤 Nama      : ${name}\n│ 🏢 Instansi  : ${inst||'—'}\n│ 📦 Paket     : Full Version\n│ 🔐 License Key:\n│\n│   *${key}*\n│\n└──────────────────────────────────\n\n📲 *CARA AKTIVASI:*\n1️⃣ Buka aplikasi *SiVerif RHL Launcher*\n2️⃣ Klik tombol *"AKTIVASI"*\n3️⃣ Masukkan License Key di atas\n4️⃣ Klik *"Verifikasi"*\n5️⃣ Aplikasi siap digunakan ✅\n\n⚠️ *Penting:*\n• License Key bersifat *RAHASIA* — jangan dibagikan\n• Lisensi terikat pada *1 perangkat*\n• Simpan pesan ini sebagai arsip\n\nTerima kasih telah menggunakan *SiVerif RHL* 🌿\n\nSalam Hormat,\n*Admin SiVerif RHL*\nSiVerif RHL Ultimate 🌿`);
 }
 
 async function waSendReject(name, phone) {
-  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\nKami mohon maaf, permohonan pendaftaran Anda *belum dapat kami proses* saat ini.\n\n📋 *Alasan:*\n• Data pendaftaran tidak lengkap / tidak memenuhi syarat\n\nJika ingin mendaftar ulang atau ada pertanyaan, silakan hubungi kami kembali.\n\nKami mohon maaf atas ketidaknyamanan ini.\n\nSalam Hormat,\n*Admin SiVerif RHL*\nKementerian LHK 🌿`);
+  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\nKami mohon maaf, permohonan pendaftaran Anda *belum dapat kami proses* saat ini.\n\n📋 *Alasan:*\n• Data pendaftaran tidak lengkap / tidak memenuhi syarat\n\nJika ingin mendaftar ulang atau ada pertanyaan, silakan hubungi kami kembali.\n\nKami mohon maaf atas ketidaknyamanan ini.\n\nSalam Hormat,\n*Admin SiVerif RHL*\nSiVerif RHL Ultimate 🌿`);
 }
 
 async function deletePendingData(id, name) {

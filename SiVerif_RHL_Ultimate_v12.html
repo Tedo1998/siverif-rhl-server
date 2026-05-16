@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SiVerif RHL v12.4.1 Ultimate — Masterpiece Edition</title>
+  <title>SiVerif RHL v12.5.0 Ultimate — Masterpiece Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
@@ -89,7 +89,7 @@
 
   <div id="login-wrap">
     <div style="width:400px;background:var(--bg2);border:1px solid var(--border);padding:3.5rem;border-radius:20px;box-shadow: 0 30px 100px rgba(0,0,0,0.6);position:relative;z-index:1000000">
-      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.4.0</span></div>
+      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.5.0</span></div>
       <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Masterpiece Auditing Suite</div>
       <input type="text" id="l-user" value="admin" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;font-size:14px">
       <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:1rem;font-size:14px">
@@ -106,7 +106,7 @@
     <div class="topbar">
       <div style="font-weight:900;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="location.reload()">
         <div style="width:32px;height:32px;background:var(--gr);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;font-weight:950">Si</div>
-        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.4.1</span></span>
+        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.5.0</span></span>
       </div>
       <div style="margin-left:auto;display:flex;gap:20px;align-items:center">
         <div id="instansi-tag" style="font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">READY</div>
@@ -338,7 +338,7 @@
   </div>
 
   <div id="toast" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gr);color:#000;padding:12px 30px;border-radius:50px;font-weight:950;transition:0.5s;z-index:10000"></div>
-  <div id="footer-ver" style="position:fixed;bottom:15px;right:15px;font-size:10px;font-weight:900;color:var(--tx3);background:rgba(13,17,23,0.8);padding:5px 12px;border-radius:20px;border:1px solid var(--border);z-index:9000">v12.4.1</div>
+  <div id="footer-ver" style="position:fixed;bottom:15px;right:15px;font-size:10px;font-weight:900;color:var(--tx3);background:rgba(13,17,23,0.8);padding:5px 12px;border-radius:20px;border:1px solid var(--border);z-index:9000">v12.5.0</div>
 
   <input type="file" id="fi-folder" webkitdirectory multiple style="display:none">
   <input type="file" id="fi-files" multiple style="display:none">
@@ -347,7 +347,7 @@
   <div id="photo-modal" class="modal-photo" onclick="this.classList.remove('open')"><img id="modal-photo-img" src=""></div>
 
   <script>
-    const APP_VERSION = '12.4.1';
+    const APP_VERSION = '12.5.0';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let _map = null, _markerGroup = null;
@@ -397,11 +397,11 @@
           toast('✅ Selamat Datang di SiVerif v' + APP_VERSION);
           return;
         } else {
-          alert(d.message || 'Login Gagal: Username atau Password salah');
+          toast('❌ ' + (d.message || 'Login Gagal: Username atau Password salah'));
         }
       } catch (e) {
         console.error('Login Error:', e);
-        alert('Gagal menghubungi server. Periksa koneksi internet Anda atau hubungi admin.');
+        toast('❌ Gagal menghubungi server. Periksa koneksi internet Anda.');
       } finally {
         btn.disabled = false;
         btn.textContent = 'SIGN IN \u2192';
@@ -591,7 +591,7 @@
       for(let i=0; i<allFiles.length; i++) {
         const f = allFiles[i];
         const exif = await new Promise(r => {
-          const timeout = setTimeout(() => r({}), 200);
+          const timeout = setTimeout(() => r({}), 1000);
           try { EXIF.getData(f, function() { clearTimeout(timeout); r(EXIF.getAllTags(this) || {}); }); } catch(e) { r({}); }
         });
         const gps = (e => {
@@ -735,7 +735,7 @@
         const f = files[i]; if(!f.type.startsWith('image/')) continue;
         
         const exif = await new Promise(r => {
-          const timeout = setTimeout(() => r({}), 200);
+          const timeout = setTimeout(() => r({}), 1000);
           try { EXIF.getData(f, function() { clearTimeout(timeout); r(EXIF.getAllTags(this) || {}); }); } catch(e) { r({}); }
         });
         const gps = (e => {
@@ -800,8 +800,9 @@
             }
           };
           card.onclick = () => {
+            showInspector(d);
             if (selIds.has(d.id)) { selIds.delete(d.id); card.classList.remove('sel'); } 
-            else { selIds.add(d.id); card.classList.add('sel'); showInspector(d); }
+            else { selIds.add(d.id); card.classList.add('sel'); }
             updateSelCount();
           };
           grid.appendChild(card);

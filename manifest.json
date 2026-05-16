@@ -1,7 +1,7 @@
 {
-  "version": "12.4.1",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.4.1.zip",
-  "changelog": "v12.4.1 Production Patch: Security Fixes, Inspector Stability & Credential Auto-Save.",
+  "version": "12.5.0",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.5.0.zip",
+  "changelog": "v12.5.0 Master Stabilization Release: Complete Branding Purge, Forensic Accuracy Audit & UI Interaction Mastery.",
   "required": true,
   "released_at": "2026-05-16"
 }
