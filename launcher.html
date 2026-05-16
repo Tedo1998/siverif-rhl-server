@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiVerif RHL Launcher</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
+            --blue: #58a6ff; --gr: #238636; --red: #f85149;
+            --tx: #c9d1d9; --tx2: #8b949e; --border: #30363d;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--tx); height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+        
+        .hdr { background: var(--bg2); padding: 30px 60px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 30px; position: relative; }
+        .logo { width: 80px; height: 80px; background: linear-gradient(135deg, var(--gr), #2ea043); border-radius: 22px; display: flex; align-items: center; justify-content: center; font-weight: 900; color: #fff; font-size: 14px; box-shadow: 0 0 30px rgba(46,160,67,0.3); }
+        .hdr h1 { font-size: 28px; font-weight: 900; color: #f0f6fc; }
+        .hdr p { font-size: 14px; color: var(--tx2); margin-top: 5px; }
+        .ver { margin-left: auto; background: var(--gr); color: #fff; padding: 10px 20px; border-radius: 30px; font-size: 12px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
+        .body { flex: 1; padding: 50px 60px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; align-content: start; }
+        .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 24px; padding: 40px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; }
+        .card:hover { border-color: var(--blue); transform: translateY(-10px); background: #1c2128; }
+        .card .icon { font-size: 40px; margin-bottom: 25px; color: var(--gr); transition: 0.3s; }
+        .card:hover .icon { color: var(--blue); transform: scale(1.1); }
+        .card h3 { font-size: 20px; font-weight: 850; margin-bottom: 15px; color: #f0f6fc; }
+        .card p { font-size: 13px; color: var(--tx2); line-height: 1.8; flex: 1; }
+        
+        .btn { margin-top: 30px; padding: 15px; background: var(--gr); color: #fff; text-align: center; border-radius: 12px; font-size: 14px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.3s; border: none; cursor: pointer; }
+        .btn:hover { filter: brightness(1.1); box-shadow: 0 5px 15px rgba(0,0,0,0.4); }
+        .btn.disabled { background: var(--bg3); color: #484f58; cursor: not-allowed; opacity: 0.5; }
+
+        /* MODAL REGISTRATION */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-box { background: var(--bg2); width: 450px; border-radius: 24px; border: 1px solid var(--border); overflow: hidden; animation: slideUp 0.4s ease; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .m-hdr { padding: 30px; border-bottom: 1px solid var(--border); background: var(--bg3); display: flex; justify-content: space-between; align-items: center; }
+        .m-hdr h2 { font-size: 18px; font-weight: 900; color: #fff; }
+        .m-close { cursor: pointer; color: var(--tx2); font-size: 20px; transition: 0.2s; }
+        .m-close:hover { color: var(--red); }
+        
+        .m-body { padding: 30px; }
+        .form-g { margin-bottom: 15px; }
+        .form-g label { display: block; font-size: 11px; font-weight: 900; color: var(--tx2); margin-bottom: 8px; text-transform: uppercase; }
+        .form-g input { width: 100%; background: var(--bg); border: 1px solid var(--border); color: #fff; padding: 12px 15px; border-radius: 10px; font-size: 14px; outline: none; transition: 0.2s; }
+        .form-g input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(88,166,255,0.1); }
+        .form-g input[readonly] { background: var(--bg3); opacity: 0.7; cursor: not-allowed; font-family: monospace; }
+        
+        .m-footer { padding: 0 30px 30px 30px; }
+        .btn-p { width: 100%; padding: 14px; background: var(--blue); color: #fff; border: none; border-radius: 10px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-p:hover { filter: brightness(1.1); transform: scale(1.02); }
+
+        .status-badge { background: rgba(57, 211, 83, 0.1); border: 1px solid var(--gr); color: var(--gr); padding: 15px 25px; border-radius: 15px; font-weight: 800; font-size: 13px; text-align: center; display: none; margin: 30px 60px 0 60px; }
+        .ftr { padding: 25px 60px; border-top: 1px solid var(--border); font-size: 11px; color: var(--tx2); display: flex; justify-content: space-between; }
+        
+        /* LOADER */
+        .loader { width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.2); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="update-banner" style="display:none;background:var(--blue);color:#fff;padding:12px;text-align:center;font-size:13px;font-weight:900;cursor:pointer;z-index:10001;animation: fadeIn 0.5s ease"></div>
+    <style>@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }</style>
+    
+    <div class="hdr">
+        <div class="logo">SiVerif</div>
+        <div>
+            <h1>SiVerif RHL Suite Ultimate</h1>
+            <p>Professional Forestry Photo Forensic & Auditing System</p>
+        </div>
+        <div class="ver" id="launcher-ver">v12.1.6 ✅ Stable</div>
+    </div>
+
+    <div id="lic-status" class="status-badge"></div>
+
+    <div class="body">
+        <div class="card" onclick="nav('audit')">
+            <div class="icon"><i class="fas fa-microscope"></i></div>
+            <h3>Audit RHL v12.1</h3>
+            <p>Analisis foto massal, deteksi manipulasi digital, dan tabulasi otomatis 10% Tanaman (Baseline v12.1.5).</p>
+            <div id="btn-audit" class="btn disabled">Buka Modul Audit</div>
+        </div>
+        <div class="card" onclick="openModal('reg')">
+            <div class="icon" style="color: #d29922"><i class="fas fa-id-card"></i></div>
+            <h3>User Portal</h3>
+            <p>Pendaftaran akun, sinkronisasi data instansi, dan aktivasi lisensi perangkat verifikasi lapangan.</p>
+            <div class="btn" style="background:#d29922">Masuk Portal</div>
+        </div>
+        <div class="card" onclick="nav('admin')">
+            <div class="icon" style="color: var(--blue)"><i class="fas fa-user-shield"></i></div>
+            <h3>Admin Control</h3>
+            <p>Manajemen lisensi pusat, kontrol sistem, dan log forensik audit terintegrasi Railway Server.</p>
+            <div class="btn" style="background:var(--blue)">Admin Panel</div>
+        </div>
+    </div>
+
+    <div class="ftr">
+        <span>© 2026 Kementerian Kehutanan RI — SiVerif RHL Ultimate Edition</span>
+        <span style="display:flex;gap:15px;align-items:center">
+            <label style="cursor:pointer;background:var(--blue);color:#fff;padding:5px 12px;border-radius:8px;border:1px solid var(--border);font-weight:800;font-size:10px;transition:0.2s">
+                📦 INSTALL PATCH
+                <input type="file" id="patch-input" accept=".zip" style="display:none" onchange="installPatch(this)">
+            </label>
+            <span onclick="manualUpdate()" style="cursor:pointer;background:var(--bg3);padding:5px 12px;border-radius:8px;border:1px solid var(--border);font-weight:800;font-size:10px;transition:0.2s" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--border)'">🌐 CEK UPDATE</span>
+            <span><i class="fas fa-shield-halved"></i> Sistem Forensik Digital Terintegrasi</span>
+        </span>
+    </div>
+
+    <!-- REGISTRATION MODAL -->
+    <div class="modal" id="modal-reg">
+        <div class="modal-box">
+            <div class="m-hdr">
+                <h2><i class="fas fa-user-plus" style="margin-right:10px"></i>Pendaftaran User</h2>
+                <div class="m-close" onclick="closeModal('reg')">&times;</div>
+            </div>
+            <div class="m-body">
+                <div class="form-g">
+                    <label>ID Perangkat (Device ID)</label>
+                    <input type="text" id="reg-mid" readonly>
+                </div>
+                <div class="form-g">
+                    <label>Nama Lengkap</label>
+                    <input type="text" id="reg-nama" placeholder="Contoh: Ahmad Subagja">
+                </div>
+                <div class="form-g">
+                    <label>Instansi / Dinas</label>
+                    <input type="text" id="reg-instansi" placeholder="Contoh: BPDAS Agam Kuantan">
+                </div>
+                <div class="form-g">
+                    <label>Alamat Email</label>
+                    <input type="email" id="reg-email" placeholder="contoh@gmail.com">
+                </div>
+                <div class="form-g">
+                    <label>No. HP / WhatsApp</label>
+                    <input type="tel" id="reg-wa" placeholder="Contoh: 08123456789">
+                </div>
+                <div style="display:flex;gap:10px;margin-top:20px">
+                    <button id="btn-submit" onclick="submitReg()" class="btn-p" style="flex:1.5">
+                        <div class="loader" id="reg-load"></div>
+                        <span id="reg-btn-txt">DAFTARKAN</span>
+                    </button>
+                    <button onclick="toggleActivationForm()" class="btn-p" style="background:var(--bg3);flex:1">
+                        🔑 AKTIVASI
+                    </button>
+                    <button onclick="checkStatus()" class="btn-p" style="background:var(--bg3);padding:14px 20px" title="Cek Status Pendaftaran">
+                        <i class="fas fa-magnifying-glass"></i>
+                    </button>
+                </div>
+
+                <div id="activation-form" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+                    <div class="form-g">
+                        <label>Masukkan License Key</label>
+                        <input type="text" id="lic-key-input" placeholder="XXXXX-XXXXX-XXXXX">
+                    </div>
+                    <button onclick="validateLicenseManual()" class="btn-p" style="background:var(--gr);width:100%">
+                        <div class="loader" id="val-load"></div>
+                        <span>VALIDASI & AKTIVASI SEKARANG</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SERVER_URL = 'https://siverif-rhl-server.vercel.app';
+        const MANIFEST_URL = 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/manifest.json';
+        let machineId = '';
+        window._lastUpdateUrl = null;
+
+        async function init() {
+            try {
+                console.log('Initializing Launcher Suite...');
+                checkLauncherUpdate();
+                
+                let status = { active: false, mid: 'UNKNOWN' };
+                if (typeof window.electronAPI !== 'undefined' && window.electronAPI.getLicenseStatus) {
+                    status = await window.electronAPI.getLicenseStatus();
+                } else {
+                    status.mid = localStorage.getItem('siverif_machine_id') || generateMachineId();
+                    localStorage.setItem('siverif_machine_id', status.mid);
+                }
+
+                machineId = status.mid;
+                if(document.getElementById('reg-mid')) {
+                    document.getElementById('reg-mid').value = machineId;
+                }
+                
+                const badge = document.getElementById('lic-status');
+                const auditBtn = document.getElementById('btn-audit');
+                
+                if(status.active) {
+                    badge.style.display = 'block';
+                    badge.innerHTML = `<i class="fas fa-check-circle"></i> SISTEM AKTIF: ${status.key}`;
+                    if(auditBtn) auditBtn.classList.remove('disabled');
+                } else {
+                    badge.style.display = 'block';
+                    badge.style.background = 'rgba(248,81,73,0.1)';
+                    badge.style.borderColor = 'var(--red)';
+                    badge.style.color = 'var(--red)';
+                    badge.innerHTML = `<i class="fas fa-exclamation-triangle"></i> LISENSI BELUM AKTIF — SILAKAN DAFTARKAN PERANGKAT`;
+                }
+            } catch (err) {
+                console.error('Initialization Failed:', err);
+            }
+        }
+        
+        function generateMachineId() {
+            // Generate ID unik per perangkat berdasarkan browser fingerprint
+            const nav = navigator.userAgent + navigator.language + screen.width + screen.height;
+            let hash = 0;
+            for(let i = 0; i < nav.length; i++) {
+                hash = ((hash << 5) - hash) + nav.charCodeAt(i);
+                hash |= 0;
+            }
+            return Math.abs(hash).toString(16).toUpperCase().padStart(16, '0');
+        }
+
+        function openModal(id) { document.getElementById('modal-' + id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById('modal-' + id).style.display = 'none'; }
+        function toggleActivationForm() { 
+            const f = document.getElementById('activation-form');
+            f.style.display = f.style.display === 'none' ? 'block' : 'none';
+        }
+
+        async function submitReg() {
+            const nama = document.getElementById('reg-nama').value.trim();
+            const instansi = document.getElementById('reg-instansi').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const wa = document.getElementById('reg-wa').value.trim();
+
+            if(!nama || !instansi || !email || !wa) return alert('Semua field wajib diisi!');
+            if(!email.includes('@')) return alert('Format email tidak valid!');
+            if(isNaN(wa)) return alert('Nomor HP harus berupa angka!');
+
+            const btn = document.getElementById('btn-submit');
+            const load = document.getElementById('reg-load');
+            const txt = document.getElementById('reg-btn-txt');
+
+            btn.disabled = true;
+            load.style.display = 'block';
+            txt.textContent = '...';
+
+            try {
+                const r = await fetch(`${SERVER_URL}/api/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        device_id: machineId, 
+                        user_name: nama, 
+                        instansi: instansi, 
+                        email: email, 
+                        whatsapp: wa 
+                    })
+                });
+                const d = await r.json();
+                
+                if(d.success) {
+                    alert(`✅ Pendaftaran berhasil!\n\nTim kami akan menghubungi Anda melalui WhatsApp dalam 1x24 jam untuk aktivasi.`);
+                    closeModal('reg');
+                }
+                if (!d.success) {
+                    alert('Gagal: ' + (d.error || d.message || 'Terjadi kesalahan'));
+                    return;
+                }
+            } catch(e) {
+                alert('Gagal menghubungi server. Pastikan Anda terhubung ke internet.');
+            } finally {
+                btn.disabled = false;
+                load.style.display = 'none';
+                txt.textContent = 'DAFTARKAN';
+            }
+        }
+
+        async function validateLicenseManual() {
+            const key = document.getElementById('lic-key-input').value; // Kirim persis seperti yang diketik
+            if(!key.trim()) return alert('Masukkan License Key!');
+            
+            const load = document.getElementById('val-load');
+            load.style.display = 'block';
+
+            try {
+                // Device ID boleh kosong jika device lock = false di server
+                const payload = { 
+                    license_key: key, 
+                    device_id: machineId || "" 
+                };
+                
+                console.log('🚀 Validating Payload:', payload);
+
+                const r = await fetch(`${SERVER_URL}/api/validate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const d = await r.json();
+                console.log('📥 Server Response:', d);
+                
+                // Jika server return valid: true atau success: true, maka aktifkan
+                if(d.valid || d.success) {
+                    // Simpan ke electronAPI (file permanen di komputer)
+                    if(window.electronAPI && window.electronAPI.activateLicense) {
+                        const res = await window.electronAPI.activateLicense(key, d);
+                        if(!res.success) {
+                            alert('❌ Gagal menyimpan lisensi: ' + res.error);
+                            return;
+                        }
+                    }
+                    // Backup ke localStorage
+                    localStorage.setItem('siverif_license_key', key);
+                    localStorage.setItem('siverif_license_valid', 'true');
+                    localStorage.setItem('siverif_user_name', d.user_name || '');
+                    localStorage.setItem('siverif_instansi', d.instansi || '');
+                    alert(`✅ Aktivasi Berhasil!\n\nSelamat datang, ${d.user_name || ''}!\nAplikasi siap digunakan.`);
+                    location.reload();
+                } else {
+                    alert('❌ ' + (d.error || d.message || 'License Key tidak valid.'));
+                }
+            } catch(e) {
+                console.error('❌ Validation Error:', e);
+                alert('Gagal memvalidasi. Periksa koneksi internet Anda.');
+            } finally {
+                load.style.display = 'none';
+            }
+        }
+
+        async function checkStatus() {
+            const wa = document.getElementById('reg-wa').value.trim();
+            if(!wa) return alert('Masukkan Nomor HP Anda pada form di atas!');
+            alert('⏳ Status Pendaftaran: DALAM ANTREAN\n\nSilakan hubungi admin pusat melalui WhatsApp untuk mempercepat konfirmasi dan aktivasi lisensi perangkat Anda.');
+        }
+
+        async function checkLauncherUpdate() {
+            try {
+                // Fetch from the new GitHub Manifest system for more reliability
+                const r = await fetch(MANIFEST_URL + '?t=' + Date.now()); // Prevent caching
+                const data = await r.json();
+                const serverVer = data.version;
+                window._lastUpdateUrl = data.patch_url;
+
+                const compare = (v1, v2) => {
+                    const a = (v1||'0.0.0').replace('v','').split('.').map(Number);
+                    const b = (v2||'0.0.0').replace('v','').split('.').map(Number);
+                    for(let i=0; i<3; i++) { if(a[i]>b[i]) return 1; if(a[i]<b[i]) return -1; }
+                    return 0;
+                };
+
+                // Get current app version dynamically
+                let currentVer = '12.1.6';
+                if (window.electronAPI && window.electronAPI.getDiagnostics) {
+                   const diag = await window.electronAPI.getDiagnostics();
+                   currentVer = diag.version;
+                }
+                
+                // Update UI visually
+                document.getElementById('launcher-ver').innerHTML = `v${currentVer} ✅ Stable`;
+                
+                const isNew = compare(serverVer, currentVer) > 0;
+                if(isNew) {
+                    const banner = document.getElementById('update-banner');
+                    banner.style.display = 'block';
+                    banner.style.background = 'rgba(0,255,150,0.1)';
+                    banner.style.color = 'var(--gr)';
+                    
+                    if (window._lastUpdateUrl && window._lastUpdateUrl.endsWith('.zip') && window.electronAPI && window.electronAPI.downloadAndPatch) {
+                       banner.innerHTML = `🔄 Auto-Patch <b>v${serverVer}</b> tersedia! Klik di sini untuk menginstal otomatis.`;
+                       banner.onclick = () => doAutoUpdate(window._lastUpdateUrl, serverVer);
+                    } else {
+                       banner.innerHTML = `🔄 Update <b>v${serverVer}</b> tersedia! Klik di sini untuk download manual`;
+                       banner.onclick = () => window.open(window._lastUpdateUrl, '_blank');
+                    }
+                }
+            } catch(e) { console.warn('Update check failed', e); }
+        }
+
+        async function doAutoUpdate(url, ver) {
+            if(!confirm(`Pembaruan v${ver} siap diunduh dan dipasang.\n\n⚠️ PENTING: Setelah patch selesai dipasang, Anda perlu menutup dan membuka ulang aplikasi secara manual untuk mengaktifkan pembaruan.\n\nData sesi yang sedang aktif (foto yang sedang dianalisis) tidak akan hilang selama Anda TIDAK menutup jendela Audit yang sedang terbuka.\n\nLanjutkan?`)) return;
+            
+            const banner = document.getElementById('update-banner');
+            banner.innerHTML = `⚙️ Mengunduh & Memasang Patch... Mohon tunggu dan JANGAN tutup aplikasi!`;
+            banner.onclick = null;
+            
+            try {
+                const res = await window.electronAPI.downloadAndPatch(url);
+                if(res.success) {
+                    banner.style.background = 'var(--gr)';
+                    banner.style.color = '#000';
+                    banner.style.cursor = 'pointer';
+                    banner.innerHTML = `✅ Patch v${ver} berhasil dipasang! <b>Klik di sini untuk RESTART otomatis dan mengaktifkan pembaruan.</b>`;
+                    banner.onclick = () => { location.reload(); };
+                } else {
+                    banner.style.background = 'var(--red-bg)';
+                    banner.style.color = 'var(--red)';
+                    banner.innerHTML = `❌ Gagal update: ${res.error} — Coba download manual dari GitHub.`;
+                    banner.onclick = () => window.open(window._lastUpdateUrl, '_blank');
+                }
+            } catch (err) {
+                banner.style.background = 'var(--red-bg)';
+                banner.style.color = 'var(--red)';
+                banner.innerHTML = `❌ Kesalahan sistem: ${err.message}`;
+            }
+        }
+
+        function manualUpdate() {
+            if(window._lastUpdateUrl) {
+                if (window._lastUpdateUrl.endsWith('.zip') && window.electronAPI && window.electronAPI.downloadAndPatch) {
+                   doAutoUpdate(window._lastUpdateUrl, 'Terbaru');
+                } else {
+                   if(confirm('📦 Pembaruan manual tersedia. Buka halaman download sekarang?')) {
+                       window.open(window._lastUpdateUrl, '_blank');
+                   }
+                }
+            } else {
+                alert('Tidak ada update/patch tersedia saat ini. Aplikasi Anda sudah versi terbaru (v12.1.0).');
+            }
+        }
+
+        function nav(path) {
+            if(path === 'audit') {
+                const auditBtn = document.getElementById('btn-audit');
+                if(auditBtn && auditBtn.classList.contains('disabled')) {
+                    alert('Aplikasi belum diaktivasi. Silakan mendaftar di User Portal.');
+                    return;
+                }
+            }
+            window.location.href = 'siverif://' + path;
+        }
+
+        async function installPatch(input) {
+            if(!input.files || input.files.length === 0) return;
+            const file = input.files[0];
+            
+            if(!window.electronAPI || !window.electronAPI.applyPatch) {
+                alert('Sistem patch tidak didukung pada versi ini. Silakan download ulang EXE utama.');
+                return;
+            }
+
+            const confirmMsg = `Anda akan menginstal patch: ${file.name}\n\n⚠️ PENTING: Setelah patch selesai dipasang, Anda perlu menutup dan membuka ulang aplikasi secara manual.\n\nData sesi aktif (foto yang sedang dianalisis di jendela Audit) TIDAK akan hilang selama Anda tidak menutup jendela tersebut.\n\nLanjutkan?`;
+            if(!confirm(confirmMsg)) {
+                input.value = '';
+                return;
+            }
+
+            const banner = document.getElementById('update-banner');
+            banner.style.display = 'block';
+            banner.innerHTML = `⚙️ Mengekstrak Patch <b>${file.name}</b>... Jangan tutup aplikasi!`;
+
+            try {
+                const res = await window.electronAPI.applyPatch(file.path);
+                if(res.success) {
+                    banner.style.background = 'var(--gr)';
+                    banner.style.color = '#000';
+                    banner.style.cursor = 'default';
+                    banner.innerHTML = `✅ Patch berhasil dipasang! Selesaikan pekerjaan Anda, lalu tutup &amp; buka ulang aplikasi untuk mengaktifkan pembaruan. (Klik untuk tutup notifikasi ini)`;
+                    banner.onclick = () => { banner.style.display = 'none'; };
+                } else {
+                    alert('❌ Gagal menginstal patch: ' + res.error);
+                    banner.style.display = 'none';
+                }
+            } catch(e) {
+                alert('❌ Terjadi kesalahan saat patch: ' + e.message);
+                banner.style.display = 'none';
+            }
+            
+            input.value = '';
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
