@@ -43,7 +43,7 @@ app.get('/', (req, res) => {
   const uptime = Math.floor((Date.now() - START_TIME) / 1000);
   res.json({
     status: 'ok',
-    version: '12.1.6',
+    version: '12.2.0',
     uptime_seconds: uptime,
     uptime_human: `${Math.floor(uptime/3600)}j ${Math.floor((uptime%3600)/60)}m`,
     connected: !!supabase
@@ -52,9 +52,9 @@ app.get('/', (req, res) => {
 
 app.get('/api/system', (req, res) => {
   res.json({
-    current_version: '12.1.6',
-    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.6.zip',
-    changelog: 'v12.1.6 Masterpiece: VisiPics Similar Detection, Advanced Blur Analysis, Delete Manual Row, and full CSV Persistence.'
+    current_version: '12.2.0',
+    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.0.zip',
+    changelog: 'v12.2.0 Masterpiece: Major Engine Upgrade, Similarity Detection, and UI Optimization.'
   });
 });
 
@@ -316,6 +316,27 @@ app.post('/api/validate', async (req, res) => {
     }
     res.json({ valid: false, error: 'Lisensi Tidak Valid' });
   } catch (e) { res.json({ valid: false, error: 'Koneksi database terputus' }); }
+});
+
+app.post('/api/notify/wa', verifyAdmin, async (req, res) => {
+  const { phone, message } = req.body;
+  if (!phone || !message) return res.status(400).json({ success: false, error: 'phone dan message wajib diisi' });
+  try {
+    const clean = phone.replace(/\D/g, '');
+    const target = clean.startsWith('0') ? '62' + clean.slice(1) : clean;
+    const form = new URLSearchParams();
+    form.append('target', target);
+    form.append('message', message);
+    form.append('countryCode', '62');
+    const r = await fetch('https://api.fonnte.com/send', {
+      method: 'POST',
+      headers: { 'Authorization': 'X1YTrbJtGZjGBwjs9pTZ' },
+      body: form
+    });
+    const d = await r.json();
+    if (d.status) return res.json({ success: true, detail: d });
+    return res.status(500).json({ success: false, error: d.reason || 'Gagal kirim WA' });
+  } catch (e) { res.status(500).json({ success: false, error: e.message }); }
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

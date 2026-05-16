@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SiVerif RHL — Super Admin Panel v3</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g900:#0d2208;--g800:#1a3d0f;--g700:#265c17;--g600:#317a1e;--g500:#3d9926;
+  --g200:#b7e4a8;--g100:#e8f7e4;--g50:#f4fbf2;
+  --red:#dc2626;--red-bg:#fee2e2;
+  --orange:#ea580c;--orange-bg:#fff7ed;
+  --blue:#2563eb;--blue-bg:#eff6ff;
+  --purple:#7c3aed;--purple-bg:#ede9fe;
+  --ink:#111827;--ink2:#374151;--ink3:#6b7280;--ink4:#9ca3af;
+  --card:#fff;--bg:#f0f4f0;--border:#e5e7eb;--border2:#d1d5db;
+  --r:8px;--r-lg:12px;--r-xl:16px;
+  --shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --shadow-lg:0 10px 25px rgba(0,0,0,.15);
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5}
+
+/* ── LOGIN ─────────────────────────────────────────────────────── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;
+  background:linear-gradient(135deg,var(--g900) 0%,var(--g800) 50%,#0a2906 100%)}
+.login-card{background:#fff;border-radius:20px;padding:2.5rem;width:100%;max-width:400px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.login-logo{text-align:center;margin-bottom:1.75rem}
+.login-logo .icon{font-size:48px;display:block;margin-bottom:.5rem}
+.login-logo h1{font-size:20px;font-weight:800;color:var(--g800)}
+.login-logo p{font-size:11.5px;color:var(--ink3);margin-top:4px}
+.server-row{display:flex;align-items:center;gap:8px;background:var(--g50);border:1.5px solid var(--g100);
+  border-radius:var(--r);padding:8px 12px;margin-bottom:1.25rem}
+.server-row .sl{font-size:10.5px;font-weight:700;color:var(--g700);white-space:nowrap}
+.server-row .sv{font-size:11px;color:var(--ink3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.server-row button{font-size:10px;padding:3px 10px;border-radius:4px;border:1px solid var(--border2);
+  background:#fff;cursor:pointer;color:var(--g700);font-weight:600}
+.lf{margin-bottom:1rem}
+.lf label{display:block;font-size:11.5px;font-weight:700;color:var(--ink3);margin-bottom:5px}
+.lf input{width:100%;padding:11px 13px;border:1.5px solid var(--border2);border-radius:var(--r);
+  font-size:13.5px;font-family:inherit;transition:border .15s}
+.lf input:focus{outline:none;border-color:var(--g500);box-shadow:0 0 0 3px rgba(61,153,38,.12)}
+.btn-login{width:100%;padding:13px;background:linear-gradient(135deg,var(--g700),var(--g500));
+  color:#fff;border:none;border-radius:var(--r-lg);font-size:14px;font-weight:800;cursor:pointer;
+  font-family:inherit;margin-top:.5rem;transition:all .15s;letter-spacing:.02em}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(38,92,23,.4)}
+.btn-login:active{transform:translateY(0)}
+.login-err{background:var(--red-bg);color:var(--red);border-radius:var(--r);padding:9px 13px;
+  font-size:12px;font-weight:600;margin-top:.75rem;display:none}
+.login-err.show{display:block}
+.login-ver{text-align:center;margin-top:1.5rem;font-size:10px;color:var(--ink4)}
+
+/* ── MAIN LAYOUT ────────────────────────────────────────────────── */
+#main-screen{display:none;min-height:100vh;flex-direction:column}
+.topbar{background:linear-gradient(135deg,var(--g900),var(--g800));padding:0 1.5rem;height:60px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.tb-brand{display:flex;align-items:center;gap:10px;color:#fff}
+.tb-brand .icon{font-size:24px}
+.tb-brand h1{font-size:16px;font-weight:800}
+.tb-badge{font-size:10px;color:rgba(255,255,255,.6);background:rgba(255,255,255,.1);
+  padding:2px 8px;border-radius:20px;margin-left:4px}
+.tb-right{display:flex;align-items:center;gap:10px}
+.tb-time{font-size:11px;color:rgba(255,255,255,.5)}
+.tb-server{font-size:10px;color:rgba(255,255,255,.4);max-width:200px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-topbar{padding:6px 14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:#fff;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-topbar:hover{background:rgba(255,255,255,.2)}
+
+/* ── TABS ───────────────────────────────────────────────────────── */
+.nav-tabs{display:flex;gap:0;border-bottom:2px solid var(--border);background:#fff;
+  padding:0 1.5rem;position:sticky;top:60px;z-index:99;overflow-x:auto;
+  box-shadow:var(--shadow)}
+.nav-tab{padding:14px 18px;border:none;background:transparent;font-size:12.5px;font-weight:600;
+  color:var(--ink3);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-2px;
+  font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.nav-tab:hover{color:var(--g700);background:var(--g50)}
+.nav-tab.active{color:var(--g700);border-bottom-color:var(--g500);background:var(--g50)}
+.nav-badge{background:var(--red);color:#fff;font-size:9px;font-weight:800;
+  padding:1px 5px;border-radius:10px;min-width:16px;text-align:center}
+
+/* ── CONTENT ────────────────────────────────────────────────────── */
+.content{padding:1.5rem;max-width:1500px;margin:0 auto;width:100%}
+.page{display:none}
+.page.active{display:block}
+
+/* ── STAT CARDS ─────────────────────────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px;margin-bottom:1.5rem}
+.stat-card{background:var(--card);border-radius:var(--r-lg);padding:16px 18px;border:1px solid var(--border);
+  box-shadow:var(--shadow);cursor:default;transition:transform .1s}
+.stat-card:hover{transform:translateY(-2px)}
+.stat-card .sc-icon{font-size:22px;margin-bottom:6px}
+.stat-card .sc-val{font-size:28px;font-weight:900;color:var(--ink);line-height:1}
+.stat-card .sc-lbl{font-size:11px;font-weight:600;color:var(--ink3);margin-top:4px}
+.stat-card.ok .sc-val{color:var(--g700)}
+.stat-card.warn .sc-val{color:var(--orange)}
+.stat-card.err .sc-val{color:var(--red)}
+.stat-card.info .sc-val{color:var(--blue)}
+.stat-card.purple .sc-val{color:var(--purple)}
+
+/* ── CARDS ──────────────────────────────────────────────────────── */
+.card{background:var(--card);border-radius:var(--r-xl);border:1px solid var(--border);
+  overflow:hidden;margin-bottom:1.25rem;box-shadow:var(--shadow)}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.card-title{font-size:13.5px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:6px}
+.card-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* ── SEARCH BAR ─────────────────────────────────────────────────── */
+.search-bar{display:flex;gap:8px;padding:12px 18px;border-bottom:1px solid var(--border);
+  background:var(--bg);flex-wrap:wrap}
+.search-bar input,.search-bar select{padding:7px 10px;border:1.5px solid var(--border2);
+  border-radius:var(--r);font-size:12px;font-family:inherit;background:#fff;transition:border .15s}
+.search-bar input:focus,.search-bar select:focus{outline:none;border-color:var(--g500)}
+.search-bar input{flex:1;min-width:160px}
+
+/* ── TABLE ──────────────────────────────────────────────────────── */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:650px}
+th{background:var(--g800);color:#fff;padding:10px 12px;text-align:left;font-size:11px;
+  font-weight:700;letter-spacing:.03em;white-space:nowrap;user-select:none}
+th.sortable{cursor:pointer}
+th.sortable:hover{background:var(--g700)}
+td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--ink2)}
+tr:hover td{background:var(--g50)}
+tr:last-child td{border-bottom:none}
+.td-mono{font-family:'Consolas',monospace;font-size:11px;background:var(--bg);
+  padding:2px 7px;border-radius:4px;letter-spacing:.04em;display:inline-block;color:var(--g800);
+  border:1px solid var(--g100)}
+
+/* ── BADGES ─────────────────────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 10px;
+  border-radius:20px;font-size:10.5px;font-weight:700}
+.badge.active{background:#dcfce7;color:#166534}
+.badge.inactive{background:#f3f4f6;color:#374151}
+.badge.suspended{background:var(--orange-bg);color:var(--orange)}
+.badge.expired{background:var(--red-bg);color:var(--red)}
+.badge.pending{background:#fef9c3;color:#854d0e}
+.badge.approved{background:#dcfce7;color:#166534}
+.badge.rejected{background:var(--red-bg);color:var(--red)}
+.badge.full{background:#dcfce7;color:#166534}
+.badge.demo{background:var(--purple-bg);color:var(--purple)}
+.badge.trial{background:#fef9c3;color:#854d0e}
+
+/* ── BUTTONS ────────────────────────────────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--r);
+  font-size:12px;font-weight:700;cursor:pointer;border:none;font-family:inherit;
+  transition:all .15s;white-space:nowrap;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--g700),var(--g500));color:#fff}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn-outline{background:#fff;color:var(--g700);border:1.5px solid var(--g200)}
+.btn-outline:hover{background:var(--g50)}
+.btn-danger{background:var(--red-bg);color:var(--red);border:1px solid #fca5a5}
+.btn-danger:hover{background:var(--red);color:#fff}
+.btn-warn{background:var(--orange-bg);color:var(--orange);border:1px solid #fdba74}
+.btn-warn:hover{background:var(--orange);color:#fff}
+.btn-blue{background:var(--blue-bg);color:var(--blue);border:1px solid #93c5fd}
+.btn-blue:hover{background:var(--blue);color:#fff}
+.btn-sm{padding:4px 10px;font-size:11px}
+.btn-xs{padding:2px 7px;font-size:10.5px}
+
+/* ── PAGINATION ─────────────────────────────────────────────────── */
+.pagination{display:flex;align-items:center;gap:6px;padding:12px 18px;
+  border-top:1px solid var(--border);background:var(--bg);flex-wrap:wrap}
+.pagination .pg-info{font-size:11.5px;color:var(--ink3);flex:1}
+.page-btn{padding:5px 10px;border:1.5px solid var(--border2);border-radius:6px;background:#fff;
+  font-size:12px;cursor:pointer;font-family:inherit;transition:all .15s}
+.page-btn:hover{border-color:var(--g500);color:var(--g700)}
+.page-btn.active{background:var(--g700);color:#fff;border-color:var(--g700)}
+.page-btn:disabled{opacity:.4;cursor:default}
+
+/* ── MODALS ─────────────────────────────────────────────────────── */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;
+  align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(3px)}
+.modal-backdrop.open{display:flex}
+.modal{background:#fff;border-radius:var(--r-xl);width:100%;max-width:520px;max-height:90vh;
+  overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg)}
+.modal-hdr{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;
+  align-items:center;justify-content:space-between;background:var(--g50)}
+.modal-hdr h3{font-size:15px;font-weight:800;color:var(--g800);display:flex;align-items:center;gap:7px}
+.modal-close{background:none;border:none;font-size:22px;cursor:pointer;
+  color:var(--ink3);padding:0;line-height:1;border-radius:4px;width:28px;height:28px;
+  display:flex;align-items:center;justify-content:center;transition:background .15s}
+.modal-close:hover{background:var(--border);color:var(--ink)}
+.modal-body{padding:20px;overflow-y:auto;flex:1}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;
+  gap:8px;justify-content:flex-end;background:var(--bg)}
+.form-row{margin-bottom:14px}
+.form-row label{display:block;font-size:11.5px;font-weight:700;color:var(--ink3);margin-bottom:5px}
+.form-row input,.form-row select,.form-row textarea{width:100%;padding:9px 11px;
+  border:1.5px solid var(--border2);border-radius:var(--r);font-size:13px;font-family:inherit;transition:border .15s}
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{outline:none;
+  border-color:var(--g500);box-shadow:0 0 0 3px rgba(61,153,38,.1)}
+.form-row textarea{resize:vertical;min-height:70px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-help{font-size:10.5px;color:var(--ink4);margin-top:3px}
+
+/* ── KEY SUCCESS ────────────────────────────────────────────────── */
+.key-success{background:linear-gradient(135deg,var(--g50),#e0f2da);border:2px solid var(--g200);
+  border-radius:var(--r-lg);padding:18px;text-align:center;margin-bottom:14px}
+.ks-label{font-size:14px;font-weight:800;color:var(--g800);margin-bottom:8px}
+.ks-key{font-family:'Consolas',monospace;font-size:20px;font-weight:900;color:var(--g700);
+  background:#fff;padding:10px 16px;border-radius:var(--r);border:2px solid var(--g200);
+  letter-spacing:.1em;word-break:break-all;margin-bottom:6px}
+.ks-sub{font-size:11.5px;color:var(--ink3)}
+
+/* ── LOG ACTIONS ────────────────────────────────────────────────── */
+.log-action{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;font-family:monospace}
+.log-action.ok{background:#dcfce7;color:#166534}
+.log-action.fail{background:var(--red-bg);color:var(--red)}
+.log-action.admin{background:var(--blue-bg);color:var(--blue)}
+.log-action.warn{background:var(--orange-bg);color:var(--orange)}
+
+/* ── EMPTY STATE ────────────────────────────────────────────────── */
+.empty-state{padding:3rem;text-align:center;color:var(--ink3)}
+.empty-state .es-icon{font-size:40px;margin-bottom:.75rem}
+.empty-state .es-title{font-size:14px;font-weight:700;color:var(--ink2);margin-bottom:.25rem}
+.empty-state .es-sub{font-size:12px}
+
+/* ── TOAST ──────────────────────────────────────────────────────── */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#1a3d0f;color:#fff;padding:12px 22px;border-radius:30px;font-size:13px;
+  font-weight:700;z-index:9999;transition:transform .3s ease;pointer-events:none;
+  box-shadow:0 6px 24px rgba(0,0,0,.3);max-width:90vw;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── DETAIL INFO ────────────────────────────────────────────────── */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.info-item{background:var(--bg);border-radius:var(--r);padding:10px 12px;border:1px solid var(--border)}
+.info-item .ii-label{font-size:10.5px;font-weight:700;color:var(--ink3);margin-bottom:3px}
+.info-item .ii-val{font-size:12.5px;color:var(--ink);font-weight:600}
+
+/* ── EXTEND BUTTONS ─────────────────────────────────────────────── */
+.extend-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.extend-btns .btn{flex:1;justify-content:center}
+
+/* ── BULK TEXTAREA ──────────────────────────────────────────────── */
+.bulk-help{background:var(--blue-bg);border:1px solid #93c5fd;border-radius:var(--r);
+  padding:10px 12px;font-size:11.5px;color:var(--blue);margin-bottom:12px;line-height:1.6}
+
+/* ── SERVER MODAL ───────────────────────────────────────────────── */
+.server-status{display:flex;align-items:center;gap:6px;font-size:11.5px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ink4)}
+.dot.ok{background:var(--g500);animation:pulse 2s infinite}
+.dot.err{background:var(--red)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── EXPIRE SOON ROW ────────────────────────────────────────────── */
+tr.expire-soon td{background:#fff7ed !important}
+tr.expire-soon:hover td{background:#fed7aa !important}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────── */
+@media(max-width:640px){
+  .content{padding:1rem}
+  .topbar{padding:0 1rem}
+  .form-grid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .info-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ LOGIN ══════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <span class="icon">🔐</span>
+      <h1>SiVerif RHL Admin</h1>
+      <p>Super Admin Panel v3.0</p>
+    </div>
+    <div class="server-row" style="flex-wrap:wrap;gap:6px;background:#f0f7f0;border-color:#238636">
+      <span class="sl">🖥️ Server</span>
+      <input type="text" id="srv-input" placeholder="https://your-app.vercel.app"
+        style="flex:1;min-width:200px;padding:5px 10px;border:1px solid #238636;border-radius:5px;background:#fff;color:#0d2208;font-size:12px;font-family:inherit"
+        onkeydown="if(event.key==='Enter')saveServer()">
+      <button onclick="saveServer()" style="padding:5px 14px;background:#238636;border:none;border-radius:5px;color:#fff;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit">Simpan</button>
+    </div>
+    <div style="font-size:10.5px;color:rgba(0,0,0,.4);margin-top:2px;padding-left:2px">
+      URL aktif: <span id="srv-disp" style="color:#238636;font-weight:600">Belum dikonfigurasi</span>
+    </div>
+    <div class="lf">
+      <label>Password Admin</label>
+      <input type="password" id="inp-pass" placeholder="Masukkan password" autofocus>
+    </div>
+    <button class="btn-login" onclick="doLogin()">🔓 Masuk</button>
+    <div class="login-err" id="login-err"></div>
+    <p class="login-ver">SiVerif RHL v12.1.5 &bull; Built for Standalone Suite &bull; © 2026</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════ MAIN ═══════════════════════════════ -->
+<div id="main-screen">
+  <div class="topbar">
+    <div class="tb-brand">
+      <span class="icon">🛡️</span>
+      <h1>SiVerif RHL</h1>
+      <span class="tb-badge">Admin v3.0</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-server" id="tb-srv"></span>
+      <span class="tb-time" id="tb-clock"></span>
+      <button class="btn-topbar" onclick="loadAll()">🔄</button>
+      <button class="btn-topbar" onclick="doLogout()">Keluar</button>
+    </div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('dashboard')">📊 Dashboard</button>
+    <button class="nav-tab" onclick="switchTab('licenses')">🔑 Lisensi</button>
+    <button class="nav-tab" onclick="switchTab('agency')">🏢 Instansi</button>
+    <button class="nav-tab" onclick="switchTab('pending')">⏳ Pendaftaran <span class="nav-badge" id="badge-pending">0</span></button>
+    <button class="nav-tab" onclick="switchTab('logs')">📋 Log Aktivitas</button>
+    <button class="nav-tab" onclick="switchTab('tools')">⚙️ Tools</button>
+    <button class="nav-tab" onclick="switchTab('system')">🛠 Update & Maintenance</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ═══ DASHBOARD ═══ -->
+    <div id="tab-dashboard" class="page active">
+      <div class="stats-row" id="stats-row">
+        <div class="stat-card"><div class="sc-icon">📦</div><div class="sc-val" id="s-total">—</div><div class="sc-lbl">Total Lisensi</div></div>
+        <div class="stat-card ok"><div class="sc-icon">✅</div><div class="sc-val" id="s-active">—</div><div class="sc-lbl">Aktif</div></div>
+        <div class="stat-card err"><div class="sc-icon">❌</div><div class="sc-val" id="s-expired">—</div><div class="sc-lbl">Kadaluarsa</div></div>
+        <div class="stat-card"><div class="sc-icon">🚫</div><div class="sc-val" id="s-inactive">—</div><div class="sc-lbl">Nonaktif</div></div>
+        <div class="stat-card warn"><div class="sc-icon">⏸️</div><div class="sc-val" id="s-suspended">—</div><div class="sc-lbl">Ditangguhkan</div></div>
+        <div class="stat-card warn"><div class="sc-icon">⚠️</div><div class="sc-val" id="s-expiresoon">—</div><div class="sc-lbl">Segera Exp.</div></div>
+        <div class="stat-card purple"><div class="sc-icon">⏳</div><div class="sc-val" id="s-pending">—</div><div class="sc-lbl">Menunggu</div></div>
+        <div class="stat-card info"><div class="sc-icon">📡</div><div class="sc-val" id="s-today">—</div><div class="sc-lbl">Validasi Hari Ini</div></div>
+        <div class="stat-card info"><div class="sc-icon">📈</div><div class="sc-val" id="s-week">—</div><div class="sc-lbl">Validasi 7 Hari</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🕐 Terakhir Aktif</span>
+          </div>
+          <table>
+            <thead><tr><th>User</th><th>Instansi</th><th>Terakhir Check</th><th>Total</th></tr></thead>
+            <tbody id="tbody-recent"></tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📋 Log Terbaru</span>
+          </div>
+          <table>
+            <thead><tr><th>Waktu</th><th>Aksi</th><th>Key</th></tr></thead>
+            <tbody id="tbody-recent-logs"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:.25rem">
+        <div class="card-header">
+          <span class="card-title">🖥️ Informasi Server</span>
+          <div class="card-actions">
+            <div class="server-status"><div class="dot" id="srv-dot"></div><span id="srv-status-txt">Memeriksa...</span></div>
+          </div>
+        </div>
+        <div style="padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px" id="srv-info-grid">
+          <div class="info-item"><div class="ii-label">Versi</div><div class="ii-val" id="si-ver">—</div></div>
+          <div class="info-item"><div class="ii-label">Uptime</div><div class="ii-val" id="si-uptime">—</div></div>
+          <div class="info-item"><div class="ii-label">Ukuran DB</div><div class="ii-val" id="si-db">—</div></div>
+          <div class="info-item"><div class="ii-label">URL Server</div><div class="ii-val" id="si-url" style="font-size:10px;word-break:break-all"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ LISENSI ═══ -->
+    <div id="tab-licenses" class="page">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🔑 Manajemen Lisensi</span>
+          <div class="card-actions">
+            <button class="btn btn-outline btn-sm" onclick="exportCSV()">📥 Export CSV</button>
+            <button class="btn btn-outline btn-sm" onclick="openBulk()">📦 Bulk Buat</button>
+            <button class="btn btn-primary btn-sm" onclick="openNewLic()">+ Buat Lisensi</button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input id="lic-search" type="text" placeholder="🔍 Cari nama, instansi, email, key..." oninput="debouncedSearch()">
+          <select id="lic-status-filter" onchange="searchLicenses()">
+            <option value="">Semua Status</option>
+            <option value="active">Aktif</option>
+            <option value="inactive">Nonaktif</option>
+            <option value="suspended">Ditangguhkan</option>
+            <option value="expired">Kadaluarsa</option>
+          </select>
+          <select id="lic-limit" onchange="searchLicenses()">
+            <option value="25">25 / hal</option>
+            <option value="50" selected>50 / hal</option>
+            <option value="100">100 / hal</option>
+          </select>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>License Key</th>
+                <th>Nama / Instansi</th>
+                <th>Tier</th>
+                <th>Status</th>
+                <th>Berlaku s/d</th>
+                <th>Cek Terakhir</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbody-lic"></tbody>
+          </table>
+        </div>
+        <div class="pagination" id="lic-pagination"></div>
+      </div>
+    </div>
+
+    <!-- ═══ AGENCY ═══ -->
+    <div id="tab-agency" class="page">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🏢 Manajemen Instansi & Akun Admin</span>
+        </div>
+        <div style="padding:1.5rem">
+          <div style="max-width:600px">
+            <div class="form-row">
+              <label>Nama Instansi Pemilik Aplikasi (Footer/Laporan)</label>
+              <input type="text" id="cfg-agency-name" placeholder="cth: Kementerian Lingkungan Hidup dan Kehutanan">
+              <p class="form-help">Nama ini akan muncul sebagai footer di aplikasi audit dan laporan.</p>
+            </div>
+            <div class="form-row">
+              <label>Admin Password Baru (Biarkan kosong jika tidak ingin ganti)</label>
+              <input type="password" id="cfg-admin-pass" placeholder="Password rahasia baru">
+            </div>
+            <button class="btn btn-primary" onclick="saveAgencySettings()">💾 Simpan Pengaturan Instansi</button>
+          </div>
+          
+          <div style="margin-top:2rem;border-top:1px solid var(--border);padding-top:2rem">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem">
+              <h4 style="margin:0">Daftar Akun Admin Akses Audit</h4>
+              <button class="btn btn-primary btn-sm" onclick="openAddAdminModal()">➕ Tambah Akun Admin</button>
+            </div>
+            <div class="tbl-wrap">
+              <table>
+                <thead><tr><th>Nama Lengkap</th><th>Instansi</th><th>Username</th><th>Role</th><th>Aksi</th></tr></thead>
+                <tbody id="tbody-admin-users">
+                  <tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--ink4)">Memuat data...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MODAL: ADD ADMIN ═══ -->
+    <div id="modal-admin" class="modal-backdrop">
+      <div class="modal" style="max-width:400px">
+        <div class="modal-hdr">
+          <h3>👤 Tambah Admin Audit</h3>
+          <button class="modal-close" onclick="closeModal('modal-admin')">×</button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <label>Nama Lengkap</label>
+            <input id="adm-name" type="text" placeholder="cth: Ahmad Fauzi">
+          </div>
+          <div class="form-row">
+            <label>Instansi</label>
+            <input id="adm-agency" type="text" placeholder="cth: BPDAS Agam Kuantan">
+          </div>
+          <div class="form-row">
+            <label>Username</label>
+            <input id="adm-user" type="text" placeholder="username_audit">
+          </div>
+          <div class="form-row">
+            <label>Password</label>
+            <input id="adm-pass" type="password" placeholder="••••••••">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal('modal-admin')">Batal</button>
+          <button class="btn btn-primary" onclick="submitNewAdmin()">💾 Simpan Akun</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PENDING ═══ -->
+    <div id="tab-pending" class="page">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">⏳ Pendaftaran Menunggu Persetujuan</span>
+          <div class="card-actions">
+            <select id="pending-filter" onchange="loadPending()">
+              <option value="pending">Menunggu</option>
+              <option value="approved">Disetujui</option>
+              <option value="rejected">Ditolak</option>
+              <option value="all">Semua</option>
+            </select>
+            <button class="btn btn-outline btn-sm" onclick="loadPending()">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Nama</th><th>Instansi</th><th>Kontak</th><th>Waktu Daftar</th><th>Status</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="tbody-pending"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ LOGS ═══ -->
+    <div id="tab-logs" class="page">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📋 Log Aktivitas</span>
+          <div class="card-actions">
+            <button class="btn btn-outline btn-sm" onclick="loadLogs()">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input id="log-search" type="text" placeholder="🔍 Filter log..." oninput="filterLogs()">
+          <select id="log-action-filter" onchange="loadLogs()">
+            <option value="">Semua Aksi</option>
+            <option value="VALIDATE_OK">Validasi Berhasil</option>
+            <option value="VALIDATE_FAIL">Validasi Gagal</option>
+            <option value="ADMIN_LOGIN">Login Admin</option>
+            <option value="LICENSE_CREATED">Buat Lisensi</option>
+            <option value="STATUS_">Ubah Status</option>
+          </select>
+          <select id="log-limit" onchange="loadLogs()">
+            <option value="100">100 Log</option>
+            <option value="200" selected>200 Log</option>
+            <option value="500">500 Log</option>
+          </select>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr><th>Waktu</th><th>License Key</th><th>Aksi</th><th>Device</th><th>IP</th><th>Info</th></tr>
+            </thead>
+            <tbody id="tbody-logs"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TOOLS ═══ -->
+    <div id="tab-tools" class="page">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <div class="card">
+          <div class="card-header"><span class="card-title">⚡ Quick Actions</span></div>
+          <div style="padding:18px;display:flex;flex-direction:column;gap:10px">
+            <button class="btn btn-primary" onclick="exportCSV()">📥 Export Semua Lisensi ke CSV</button>
+            <button class="btn btn-outline" onclick="loadAll()">🔄 Refresh Semua Data</button>
+            <button class="btn btn-outline" onclick="promptServer()">🖥️ Ganti URL Server</button>
+            <button class="btn btn-warn" onclick="openBulk()">📦 Buat Lisensi Massal (Bulk)</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><span class="card-title">📊 Statistik Validasi</span></div>
+          <div style="padding:18px">
+            <div class="info-grid">
+              <div class="info-item"><div class="ii-label">Hari Ini</div><div class="ii-val" id="tool-today">—</div></div>
+              <div class="info-item"><div class="ii-label">7 Hari</div><div class="ii-val" id="tool-week">—</div></div>
+              <div class="info-item"><div class="ii-label">30 Hari</div><div class="ii-val" id="tool-month">—</div></div>
+              <div class="info-item"><div class="ii-label">Lisensi Aktif</div><div class="ii-val" id="tool-active">—</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">🔍 Cek Satu Lisensi</span></div>
+        <div style="padding:18px">
+          <div style="display:flex;gap:8px;margin-bottom:12px">
+            <input id="check-key-inp" type="text" placeholder="Masukkan License Key..." 
+              style="flex:1;padding:9px 11px;border:1.5px solid var(--border2);border-radius:var(--r);font-size:13px;font-family:inherit"
+              onkeydown="if(event.key==='Enter')checkOneLic()">
+            <button class="btn btn-primary" onclick="checkOneLic()">🔍 Cek</button>
+          </div>
+          <div id="check-result"></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main-screen -->
+
+<!-- ═══ TOAST ═══ -->
+<div id="toast"></div>
+
+<!-- ═══ MODAL: NEW/EDIT LISENSI ═══ -->
+<div id="modal-lic" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-hdr">
+      <h3 id="modal-lic-title">➕ Buat Lisensi Baru</h3>
+      <button class="modal-close" onclick="closeModal('modal-lic')">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="lic-form">
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Nama Lengkap *</label>
+            <input id="f-name" type="text" placeholder="Nama pengguna">
+          </div>
+          <div class="form-row">
+            <label>Instansi / Organisasi *</label>
+            <input id="f-inst" type="text" placeholder="Nama instansi">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Email</label>
+            <input id="f-email" type="email" placeholder="email@domain.com">
+          </div>
+          <div class="form-row">
+            <label>WhatsApp</label>
+            <input id="f-wa" type="text" placeholder="08xxxxxxxxxx">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Tier Lisensi</label>
+            <select id="f-tier">
+              <option value="full">Full</option>
+              <option value="demo">Demo</option>
+              <option value="trial">Trial</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Maks Foto (0 = unlimited)</label>
+            <input id="f-maxphoto" type="number" min="0" value="0">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Berlaku Sampai (kosong = selamanya)</label>
+            <input id="f-valid" type="date">
+          </div>
+          <div class="form-row">
+            <label>Lock Perangkat</label>
+            <select id="f-devlock">
+              <option value="0">Tidak (multi-device)</option>
+              <option value="1">Ya (lock ke 1 device)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Catatan</label>
+          <textarea id="f-notes" placeholder="Catatan opsional..."></textarea>
+        </div>
+      </div>
+      <div id="lic-success" style="display:none"></div>
+    </div>
+    <div class="modal-footer" id="lic-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-lic')">Batal</button>
+      <button class="btn btn-primary" id="btn-submit-lic" onclick="submitNewLic()">💾 Buat Lisensi</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: DETAIL LISENSI ═══ -->
+<div id="modal-detail" class="modal-backdrop">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-hdr">
+      <h3>🔍 Detail Lisensi</h3>
+      <button class="modal-close" onclick="closeModal('modal-detail')">×</button>
+    </div>
+    <div class="modal-body" id="modal-detail-body">
+      <p>Memuat...</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-detail')">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: PERPANJANG ═══ -->
+<div id="modal-extend" class="modal-backdrop">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-hdr">
+      <h3>⏰ Perpanjang Lisensi</h3>
+      <button class="modal-close" onclick="closeModal('modal-extend')">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="extend-info" style="font-size:12px;color:var(--ink3);margin-bottom:14px"></p>
+      <p style="font-size:12px;font-weight:700;margin-bottom:8px">Perpanjang otomatis:</p>
+      <div class="extend-btns">
+        <button class="btn btn-outline" onclick="extendLic(30)">+30 hari</button>
+        <button class="btn btn-outline" onclick="extendLic(90)">+90 hari</button>
+        <button class="btn btn-outline" onclick="extendLic(180)">+6 bulan</button>
+        <button class="btn btn-primary" onclick="extendLic(365)">+1 tahun</button>
+      </div>
+      <div style="border-top:1px solid var(--border);margin:14px 0;padding-top:14px">
+        <p style="font-size:12px;font-weight:700;margin-bottom:8px">Atau pilih tanggal:</p>
+        <div style="display:flex;gap:8px">
+          <input id="extend-date" type="date" style="flex:1;padding:8px;border:1.5px solid var(--border2);border-radius:var(--r);font-family:inherit">
+          <button class="btn btn-primary" onclick="extendLicDate()">Set Tanggal</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-extend')">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: APPROVE PENDING ═══ -->
+<div id="modal-approve" class="modal-backdrop">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-hdr">
+      <h3>✅ Setujui Pendaftaran</h3>
+      <button class="modal-close" onclick="closeModal('modal-approve')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="bulk-help" id="approve-info"></div>
+      <div id="approve-form">
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Tier</label>
+            <select id="ap-tier">
+              <option value="full">Full</option>
+              <option value="demo">Demo</option>
+              <option value="trial">Trial</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Maks Foto</label>
+            <input id="ap-maxphoto" type="number" min="0" value="0">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Berlaku Sampai</label>
+            <input id="ap-valid" type="date">
+          </div>
+          <div class="form-row">
+            <label>Lock Device</label>
+            <select id="ap-devlock">
+              <option value="0">Tidak</option>
+              <option value="1">Ya</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div id="approve-success" style="display:none"></div>
+    </div>
+    <div class="modal-footer" id="approve-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-approve')">Batal</button>
+      <button class="btn btn-primary" onclick="submitApprove()">✅ Setujui & Buat Lisensi</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: BULK ═══ -->
+<div id="modal-bulk" class="modal-backdrop">
+  <div class="modal" style="max-width:580px">
+    <div class="modal-hdr">
+      <h3>📦 Buat Lisensi Massal</h3>
+      <button class="modal-close" onclick="closeModal('modal-bulk')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="bulk-help">
+        Format setiap baris: <strong>NamaUser | NamaInstansi | WhatsApp | Tier | TanggalBerlaku</strong><br>
+        Contoh:<br>
+        Ahmad Yani | BPBD Padang | 08123456789 | full | 2026-12-31<br>
+        Siti Rahma | Dinkes Sumbar | 08987654321 | demo |<br>
+        <small>WhatsApp, Tier, dan Tanggal boleh dikosongkan (pisahkan dengan |)</small>
+      </div>
+      <div class="form-row">
+        <label>Data Lisensi (max 100 baris)</label>
+        <textarea id="bulk-data" style="min-height:200px;font-family:monospace;font-size:12px"
+          placeholder="Ahmad Yani | BPBD Padang | 08123456789 | full | 2026-12-31&#10;Siti Rahma | Dinkes Sumbar | | demo |"></textarea>
+      </div>
+      <div id="bulk-result" style="display:none"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-bulk')">Batal</button>
+      <button class="btn btn-primary" onclick="submitBulk()">📦 Buat Semua</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TAB: UPDATE & MAINTENANCE SYSTEM ══ -->
+<div id="tab-system" class="page" style="display:none">
+  <div style="max-width:780px;margin:0 auto">
+
+    <!-- Status bar -->
+    <div id="sys-statusbar" style="display:none;margin-bottom:1.25rem;padding:12px 16px;border-radius:8px;font-size:12.5px;font-weight:600;border:1px solid"></div>
+
+    <!-- Maintenance Mode Card -->
+    <div class="card" style="margin-bottom:1.25rem">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.25rem">
+        <div style="font-size:1.5rem">🚧</div>
+        <div>
+          <div style="font-size:14px;font-weight:700">Mode Maintenance</div>
+          <div style="font-size:11.5px;color:var(--text-muted)">Saat aktif, pengguna tidak bisa login — muncul layar maintenance</div>
+        </div>
+        <!-- Toggle switch -->
+        <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+          <span style="font-size:12px;font-weight:600" id="maint-toggle-label">Nonaktif</span>
+          <label style="position:relative;display:inline-block;width:48px;height:26px;cursor:pointer">
+            <input type="checkbox" id="maint-toggle" style="opacity:0;width:0;height:0" onchange="toggleMaintenance(this.checked)">
+            <span id="maint-slider" style="position:absolute;inset:0;background:#ccc;border-radius:13px;transition:.3s"></span>
+            <span id="maint-knob" style="position:absolute;left:3px;top:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.3s;box-shadow:0 1px 3px rgba(0,0,0,.3)"></span>
+          </label>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="display:block;font-size:10.5px;font-weight:700;color:var(--text-muted);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em">Pesan Maintenance</label>
+          <textarea id="maint-msg" rows="3" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;background:var(--card-bg);color:var(--text)">Sistem sedang dalam pemeliharaan. Silakan coba beberapa saat lagi.</textarea>
+        </div>
+        <div>
+          <label style="display:block;font-size:10.5px;font-weight:700;color:var(--text-muted);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em">Estimasi Selesai (opsional)</label>
+          <input type="datetime-local" id="maint-eta" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:inherit;background:var(--card-bg);color:var(--text)">
+          <div style="margin-top:.5rem;font-size:11px;color:var(--text-muted)">Kosongkan jika tidak ada estimasi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Version Management Card -->
+    <div class="card" style="margin-bottom:1.25rem">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.25rem">
+        <div style="font-size:1.5rem">📦</div>
+        <div>
+          <div style="font-size:14px;font-weight:700">Manajemen Versi</div>
+          <div style="font-size:11.5px;color:var(--text-muted)">Atur versi terkini dan versi minimum yang diizinkan</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem">
+        <div>
+          <label style="display:block;font-size:10.5px;font-weight:700;color:var(--text-muted);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em">Versi Terkini</label>
+          <input type="text" id="ver-current" placeholder="cth: 5.1.0" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:monospace;background:var(--card-bg);color:var(--text)">
+          <div style="margin-top:.35rem;font-size:11px;color:var(--text-muted)">Versi EXE terbaru yang tersedia</div>
+        </div>
+        <div>
+          <label style="display:block;font-size:10.5px;font-weight:700;color:var(--text-muted);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em">Versi Minimum</label>
+          <input type="text" id="ver-min" placeholder="cth: 5.0.0" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:monospace;background:var(--card-bg);color:var(--text)">
+          <div style="margin-top:.35rem;font-size:11px;color:var(--text-muted)">Di bawah ini, login diblokir</div>
+        </div>
+        <div>
+          <label style="display:block;font-size:10.5px;font-weight:700;color:var(--text-muted);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em">URL Download EXE Baru</label>
+          <input type="url" id="ver-url" placeholder="https://drive.google.com/..." style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:inherit;background:var(--card-bg);color:var(--text)">
+        </div>
+        <div>
+          <label style="display:block;font-size:10.5px;font-weight:700;color:var(--text-muted);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em">Pesan Update</label>
+          <input type="text" id="ver-msg" placeholder="cth: Perbaikan bug thumbnail foto" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:inherit;background:var(--card-bg);color:var(--text)">
+        </div>
+      </div>
+      <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer">
+        <input type="checkbox" id="ver-mandatory">
+        <span>Update <strong>wajib</strong> — pengguna tidak bisa login sebelum update</span>
+      </label>
+    </div>
+
+    <!-- Pengumuman Card -->
+    <div class="card" style="margin-bottom:1.25rem">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.25rem">
+        <div style="font-size:1.5rem">📢</div>
+        <div>
+          <div style="font-size:14px;font-weight:700">Pengumuman / Banner</div>
+          <div style="font-size:11.5px;color:var(--text-muted)">Tampil sebagai banner info di login screen pengguna (kosongkan untuk menyembunyikan)</div>
+        </div>
+      </div>
+      <textarea id="announcement" rows="3" placeholder="cth: Pembaruan jadwal verifikasi tahun 2026 telah tersedia. Hubungi admin untuk info lebih lanjut." style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:12.5px;font-family:inherit;resize:vertical;background:var(--card-bg);color:var(--text)"></textarea>
+    </div>
+
+    <!-- Action buttons -->
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="btn btn-primary" onclick="saveSystemConfig()">💾 Simpan Semua Perubahan</button>
+      <button class="btn btn-outline" onclick="loadSystemConfig()">↺ Muat Ulang dari Server</button>
+      <div id="sys-save-status" style="font-size:12px;color:var(--text-muted)"></div>
+    </div>
+
+    <!-- Current status preview -->
+    <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:var(--bg);border:1px solid var(--border);border-radius:8px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem">Status Saat Ini (dari Server)</div>
+      <pre id="sys-raw" style="font-size:11px;font-family:monospace;color:var(--text-muted);white-space:pre-wrap;line-height:1.6">Memuat...</pre>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────
+let SERVER_URL = localStorage.getItem('siverif_server') || 'https://siverif-rhl-server.vercel.app';
+let TOKEN      = sessionStorage.getItem('siverif_token') || '';
+let _editKey   = null;
+let _pendingId = null;
+let _waName='', _waPhone='', _waInst='';
+let _extendKey = null;
+let _allLogs   = [];
+let _licPage   = 1;
+let _searchTimer = null;
+
+// ── INIT ───────────────────────────────────────────────────────────
+window.onload = () => {
+  updateServerDisplay();
+  if (TOKEN && SERVER_URL) { showMain(); loadAll(); }
+  else { document.getElementById('login-screen').style.display = 'flex'; }
+  setInterval(updateClock, 1000);
+  updateClock();
+};
+
+function updateClock() {
+  const now = new Date();
+  document.getElementById('tb-clock').textContent =
+    now.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+function updateServerDisplay() {
+  const short = SERVER_URL ? SERVER_URL.replace('https://','').replace('http://','').replace(/\/$/,'') : 'Belum dikonfigurasi';
+  document.getElementById('srv-disp').textContent = short;
+  const tb = document.getElementById('tb-srv');
+  if (tb) tb.textContent = short;
+  const si = document.getElementById('si-url');
+  if (si) si.textContent = SERVER_URL || '—';
+  const inp=document.getElementById('srv-input');if(inp&&SERVER_URL)inp.value=SERVER_URL;
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────
+function promptServer() {
+  // Arahkan fokus ke input URL server agar user tahu harus mengisi dulu
+  const inp = document.getElementById('srv-input');
+  if (inp) { inp.focus(); inp.style.borderColor='#f85149'; }
+  showLoginErr('Masukkan URL server terlebih dahulu, lalu klik Simpan.');
+}
+function saveServer() {
+  const inp = document.getElementById('srv-input');
+  if (!inp) return;
+  const url = inp.value.trim().replace(/\/$/, '');
+  if (!url) { inp.style.borderColor='#f85149'; showLoginErr('URL server tidak boleh kosong.'); return; }
+  inp.style.borderColor='rgba(255,255,255,.2)';
+  SERVER_URL = url;
+  localStorage.setItem('siverif_server', SERVER_URL);
+  updateServerDisplay();
+  showToast('URL server disimpan', 'ok');
+  // Hapus pesan error jika ada
+  const errEl = document.getElementById('login-err');
+  if (errEl) errEl.classList.remove('show');
+}
+
+async function doLogin() {
+  // Jika SERVER_URL kosong, coba ambil dari input terlebih dahulu
+  if (!SERVER_URL) {
+    const inp = document.getElementById('srv-input');
+    const urlFromInput = inp ? inp.value.trim().replace(/\/$/, '') : '';
+    if (urlFromInput) {
+      SERVER_URL = urlFromInput;
+      localStorage.setItem('siverif_server', SERVER_URL);
+      updateServerDisplay();
+    } else {
+      promptServer();
+      return;
+    }
+  }
+  const pass = document.getElementById('inp-pass').value;
+  if (!pass) { showLoginErr('Password wajib diisi'); return; }
+  try {
+    const r = await fetch(`${SERVER_URL}/api/admin/login`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ password: pass })
+    });
+    const d = await safeJson(r);
+    if (!r.ok) { showLoginErr(d.error || 'Login gagal'); return; }
+    TOKEN = d.token;
+    sessionStorage.setItem('siverif_token', TOKEN);
+    showMain();
+    loadAll();
+  } catch(e) {
+    showLoginErr('Tidak dapat terhubung ke server. Periksa URL server dan koneksi internet.');
+  }
+}
+
+function showLoginErr(msg) {
+  const el = document.getElementById('login-err');
+  el.textContent = '⚠️ ' + msg;
+  el.classList.add('show');
+}
+
+function showMain() {
+  document.getElementById('login-screen').style.display = 'none';
+  const m = document.getElementById('main-screen');
+  m.style.display = 'flex';
+}
+
+function doLogout() {
+  TOKEN = '';
+  sessionStorage.removeItem('siverif_token');
+  document.getElementById('main-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('inp-pass').value = '';
+  document.getElementById('login-err').classList.remove('show');
+}
+
+// ── API ───────────────────────────────────────────────────────────
+async function apiFetch(path, method='GET', body=null) {
+  const fullUrl = SERVER_URL + path;
+  console.log('[apiFetch]', method, fullUrl);
+  const opts = {
+    method,
+    headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+TOKEN }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(fullUrl, opts);
+  if (r.status === 401) { doLogout(); throw new Error('Session expired'); }
+  return r;
+}
+
+// ── SAFE JSON PARSE ───────────────────────────────────────────────
+// Cek Content-Type sebelum .json(), mencegah error 'Unexpected token <'
+async function safeJson(r) {
+  const ct = r.headers.get('Content-Type') || '';
+  if (!ct.includes('application/json')) {
+    const text = await r.text();
+    console.error('[safeJson] Server tidak mengembalikan JSON.', '\nStatus:', r.status, '\nContent-Type:', ct, '\nBody (200 char):', text.slice(0, 200));
+    throw new Error(`Server error (HTTP ${r.status}): Response bukan JSON. Pastikan URL server benar dan endpoint tersedia.`);
+  }
+  return r.json();
+}
+
+// ── TABS ──────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.page').forEach(p => { p.style.display='none'; p.classList.remove('active'); });
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  const tabEl = document.getElementById('tab-'+name);
+  if (tabEl) { tabEl.style.display='block'; tabEl.classList.add('active'); }
+  const tabs = document.querySelectorAll('.nav-tab');
+  const idx = ['dashboard','licenses','pending','logs','tools','system'].indexOf(name);
+  if (idx >= 0 && tabs[idx]) tabs[idx].classList.add('active');
+
+  if (name === 'licenses') { _licPage = 1; loadLicenses(); }
+  if (name === 'agency')   loadAgencySettings();
+  if (name === 'pending')  loadPending();
+  if (name === 'logs')     loadLogs();
+  if (name === 'tools')    loadDashboard();
+  if (name === 'system')   loadSystemConfig();
+}
+
+async function loadAgencySettings() {
+  try {
+    const r = await apiFetch('/api/admin/agency/settings');
+    if (!r.ok) throw new Error('Server error: ' + r.status);
+    const d = await safeJson(r);
+    const admins = d.admins || d.admin_users || d.data?.admins || [];
+    if (document.getElementById('cfg-agency-name'))
+      document.getElementById('cfg-agency-name').value = d.agency_name || '';
+    renderAdminUsers(admins);
+  } catch(e) { 
+    console.error('Agency fetch error:', e); 
+    const tbody = document.getElementById('tbody-admin-users');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--red)">Gagal memuat data dari server. Pastikan URL server benar.</td></tr>';
+  }
+}
+
+function renderAdminUsers(users) {
+  const tbody = document.getElementById('tbody-admin-users');
+  if(!users.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:2rem;color:var(--ink4)">Belum ada akun admin audit. Klik tombol di atas untuk menambah.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = users.map(u => `
+    <tr>
+      <td style="font-weight:600">${u.name}</td>
+      <td style="font-size:11px;color:var(--ink3)">${u.agency || '—'}</td>
+      <td class="td-mono">${u.username}</td>
+      <td><span class="badge full">Field Admin</span></td>
+      <td>
+        <button class="btn btn-danger btn-xs" onclick="deleteAdmin('${u.username}')">🗑️ Hapus</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openAddAdminModal() {
+  document.getElementById('adm-name').value = '';
+  document.getElementById('adm-agency').value = '';
+  document.getElementById('adm-user').value = '';
+  document.getElementById('adm-pass').value = '';
+  document.getElementById('modal-admin').classList.add('open');
+}
+
+async function submitNewAdmin() {
+  const name = document.getElementById('adm-name').value.trim();
+  const agency = document.getElementById('adm-agency').value.trim();
+  const user = document.getElementById('adm-user').value.trim();
+  const pass = document.getElementById('adm-pass').value.trim();
+  if(!name || !user || !pass) { showToast('Semua field wajib diisi', 'err'); return; }
+  
+  const btn = document.querySelector('#modal-admin .btn-primary');
+  const oldText = btn.textContent;
+  btn.textContent = 'Menyimpan...';
+  btn.disabled = true;
+
+  const endpoint = '/api/admin/agency/admins';
+  console.log('[submitNewAdmin] Memanggil endpoint:', SERVER_URL + endpoint);
+
+  try {
+    const r = await apiFetch(endpoint, 'POST', { name, agency, username: user, password: pass });
+    if (!r.ok) {
+      const d = await safeJson(r);
+      throw new Error(d.error || 'Gagal menambah akun');
+    }
+    
+    // Berhasil
+    showToast('Akun Admin Berhasil Ditambahkan ✓');
+    console.log('[submitNewAdmin] Berhasil menambah akun:', user);
+    
+    // Kosongkan form
+    document.getElementById('adm-name').value = '';
+    document.getElementById('adm-agency').value = '';
+    document.getElementById('adm-user').value = '';
+    document.getElementById('adm-pass').value = '';
+    
+    closeModal('modal-admin');
+    
+    // Refresh otomatis tabel
+    await loadAgencySettings();
+  } catch(e) { 
+    console.error('[submitNewAdmin] Error:', e.message);
+    showToast(e.message || 'Gagal menambah akun', 'err'); 
+  } finally {
+    btn.textContent = oldText;
+    btn.disabled = false;
+  }
+}
+
+async function deleteAdmin(username) {
+  if(!confirm(`Hapus akun admin ${username}?`)) return;
+  try {
+    await apiFetch(`/api/admin/agency/admins/${username}`, 'DELETE');
+    showToast('Akun Berhasil Dihapus ✓');
+    loadAgencySettings();
+  } catch(e) { showToast('Gagal menghapus', 'err'); }
+}
+
+async function saveAgencySettings() {
+  const name = document.getElementById('cfg-agency-name').value.trim();
+  const pass = document.getElementById('cfg-admin-pass').value.trim();
+  try {
+    await apiFetch('/api/admin/agency', 'POST', { agency_name: name, admin_password: pass });
+    showToast('Pengaturan Instansi Disimpan ✓');
+    if(pass) showToast('Password admin diperbarui, silakan login ulang nanti.');
+  } catch(e) { showToast('Gagal menyimpan', 'err'); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// SYSTEM UPDATE & MAINTENANCE FUNCTIONS
+// ══════════════════════════════════════════════════════════════
+async function loadSystemConfig() {
+  const pre = document.getElementById('sys-raw');
+  const bar = document.getElementById('sys-statusbar');
+  try {
+    const r = await apiFetch('/api/admin/system');
+    const data = await safeJson(r);
+    const s = data.state || data;
+    // Populate form
+    document.getElementById('maint-toggle').checked = s.maintenance_mode;
+    document.getElementById('maint-msg').value = s.maintenance_message || '';
+    document.getElementById('maint-eta').value = s.maintenance_eta
+      ? new Date(s.maintenance_eta).toISOString().slice(0,16) : '';
+    document.getElementById('ver-current').value = s.current_version || '5.0.0';
+    document.getElementById('ver-min').value = s.min_version || '5.0.0';
+    document.getElementById('ver-url').value = s.update_url || '';
+    document.getElementById('ver-msg').value = s.update_message || '';
+    document.getElementById('ver-mandatory').checked = s.update_mandatory || false;
+    document.getElementById('announcement').value = s.announcement || '';
+    // Update toggle visual
+    updateToggleVisual(s.maintenance_mode);
+    // Show raw status
+    if (pre) pre.textContent = JSON.stringify(s, null, 2);
+    // Status bar
+    if (bar) {
+      if (s.maintenance_mode) {
+        bar.style.display = 'block';
+        bar.style.background = '#fee2e2'; bar.style.borderColor = '#fca5a5'; bar.style.color = '#991b1b';
+        bar.textContent = '🚧 MODE MAINTENANCE AKTIF — Pengguna tidak dapat login saat ini';
+      } else {
+        bar.style.display = 'none';
+      }
+    }
+  } catch(e) {
+    if (pre) pre.textContent = 'Gagal memuat: ' + e.message;
+  }
+}
+
+async function saveSystemConfig() {
+  const statusEl = document.getElementById('sys-save-status');
+  statusEl.textContent = 'Menyimpan...';
+  const eta = document.getElementById('maint-eta').value;
+  const payload = {
+    maintenance_mode: document.getElementById('maint-toggle').checked,
+    maintenance_message: document.getElementById('maint-msg').value,
+    maintenance_eta: eta ? new Date(eta).toISOString() : '',
+    current_version: document.getElementById('ver-current').value.trim() || '5.0.0',
+    min_version: document.getElementById('ver-min').value.trim() || '5.0.0',
+    update_url: document.getElementById('ver-url').value.trim(),
+    update_message: document.getElementById('ver-msg').value.trim(),
+    update_mandatory: document.getElementById('ver-mandatory').checked,
+    announcement: document.getElementById('announcement').value.trim()
+  };
+  try {
+    const r = await apiFetch('/api/admin/system', 'POST', payload);
+    const data = await safeJson(r);
+    statusEl.textContent = '✅ Tersimpan — ' + new Date().toLocaleTimeString('id-ID');
+    setTimeout(() => statusEl.textContent = '', 4000);
+    document.getElementById('sys-raw').textContent = JSON.stringify(data.state || data, null, 2);
+    // Update status bar
+    loadSystemConfig();
+  } catch(e) {
+    statusEl.textContent = '❌ Gagal: ' + e.message;
+  }
+}
+
+function toggleMaintenance(on) {
+  updateToggleVisual(on);
+  // Auto-save saat toggle
+  saveSystemConfig();
+}
+
+function updateToggleVisual(on) {
+  const slider = document.getElementById('maint-slider');
+  const knob = document.getElementById('maint-knob');
+  const label = document.getElementById('maint-toggle-label');
+  if (!slider) return;
+  slider.style.background = on ? '#dc2626' : '#ccc';
+  knob.style.transform = on ? 'translateX(22px)' : 'translateX(0)';
+  label.textContent = on ? '🔴 AKTIF' : 'Nonaktif';
+  label.style.color = on ? '#dc2626' : 'var(--text-muted)';
+}
+
+// ── LOAD ALL ──────────────────────────────────────────────────────
+async function loadAll() {
+  loadDashboard();
+  loadPendingBadge();
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    // Server info
+    const rs = await fetch(SERVER_URL + '/');
+    if (rs.ok) {
+      const d = await rs.json();
+      document.getElementById('srv-dot').className = 'dot ok';
+      document.getElementById('srv-status-txt').textContent = 'Online';
+      document.getElementById('si-ver').textContent = d.version || '—';
+      document.getElementById('si-uptime').textContent = d.uptime_human || d.uptime_seconds + 's';
+      document.getElementById('si-db').textContent = formatBytes(d.db_size_bytes || 0);
+    }
+
+    const r = await apiFetch('/api/admin/dashboard');
+    if (!r.ok) return;
+    const d = await safeJson(r);
+
+    // Stats
+    const L = d.licenses;
+    document.getElementById('s-total').textContent = L.total;
+    document.getElementById('s-active').textContent = L.active;
+    document.getElementById('s-expired').textContent = L.expired;
+    document.getElementById('s-inactive').textContent = L.inactive;
+    document.getElementById('s-suspended').textContent = L.suspended;
+    document.getElementById('s-expiresoon').textContent = L.expire_soon;
+    document.getElementById('s-pending').textContent = d.pending;
+    document.getElementById('s-today').textContent = d.activity.validate_today;
+    document.getElementById('s-week').textContent = d.activity.validate_week;
+
+    // Tool stats
+    document.getElementById('tool-today').textContent = d.activity.validate_today;
+    document.getElementById('tool-week').textContent = d.activity.validate_week;
+    document.getElementById('tool-month').textContent = d.activity.validate_month;
+    document.getElementById('tool-active').textContent = L.active;
+
+    // Badge pending
+    const pb = document.getElementById('badge-pending');
+    pb.textContent = d.pending;
+    pb.style.display = d.pending > 0 ? 'inline' : 'none';
+
+    // Recent active
+    document.getElementById('tbody-recent').innerHTML = (d.recent_active||[]).map(r => `
+      <tr>
+        <td style="font-weight:600">${esc(r.user_name)}</td>
+        <td style="font-size:11px">${esc(r.instansi)}</td>
+        <td style="font-size:11px">${r.last_check?.slice(0,16)||'—'}</td>
+        <td>${r.check_count||0}</td>
+      </tr>`).join('') || '<tr><td colspan="4"><div class="empty-state"><div class="es-icon">📭</div>Belum ada aktivitas</div></td></tr>';
+
+    // Recent logs
+    document.getElementById('tbody-recent-logs').innerHTML = (d.recent_logs||[]).map(l => {
+      const cls = l.action.includes('OK')||l.action.includes('APPROV') ? 'ok'
+                : l.action.includes('FAIL')||l.action.includes('DELETE') ? 'fail'
+                : l.action.includes('ADMIN') ? 'admin' : 'warn';
+      return `<tr>
+        <td style="font-size:10.5px;white-space:nowrap">${l.created_at?.slice(11,16)||''}</td>
+        <td><span class="log-action ${cls}">${l.action.replace('LICENSE_','').replace('VALIDATE_','VAL_')}</span></td>
+        <td style="font-size:10.5px">${(l.license_key||'').slice(0,12)}</td>
+      </tr>`;
+    }).join('') || '<tr><td colspan="3">—</td></tr>';
+
+  } catch(e) {
+    document.getElementById('srv-dot').className = 'dot err';
+    document.getElementById('srv-status-txt').textContent = 'Offline / Error';
+  }
+}
+
+// ── LICENSES ─────────────────────────────────────────────────────
+let _licTotal = 0, _licPages = 1;
+
+function debouncedSearch() {
+  clearTimeout(_searchTimer);
+  _searchTimer = setTimeout(() => { _licPage = 1; loadLicenses(); }, 400);
+}
+
+function searchLicenses() { _licPage = 1; loadLicenses(); }
+
+async function loadLicenses() {
+  const q      = document.getElementById('lic-search').value;
+  const status = document.getElementById('lic-status-filter').value;
+  const limit  = document.getElementById('lic-limit').value;
+  try {
+    let url = `/api/admin/licenses?page=${_licPage}&limit=${limit}`;
+    if (q)      url += `&q=${encodeURIComponent(q)}`;
+    if (status) url += `&status=${status}`;
+    const r = await apiFetch(url);
+    if (!r.ok) return;
+    const res = await safeJson(r);
+    const list = res.data || [];
+    _licTotal = res.total; _licPages = res.pages || 1;
+
+    const now = new Date();
+    const tbody = document.getElementById('tbody-lic');
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><div class="es-icon">🔑</div><div class="es-title">Tidak ada lisensi</div><div class="es-sub">Buat lisensi baru dengan tombol di atas</div></div></td></tr>';
+      document.getElementById('lic-pagination').innerHTML = '';
+      return;
+    }
+
+    const offset = (_licPage - 1) * parseInt(limit);
+    tbody.innerHTML = list.map((l, i) => {
+      const expireSoon = l.status === 'active' && l.valid_until &&
+        new Date(l.valid_until) <= new Date(now.getTime() + 7*86400000);
+      return `<tr class="${expireSoon ? 'expire-soon' : ''}">
+        <td style="color:var(--ink4);font-size:11px">${offset+i+1}</td>
+        <td>
+          <span class="td-mono" style="cursor:pointer" onclick="copyKey('${l.license_key}')" title="Klik untuk salin">
+            ${l.license_key}
+          </span>
+        </td>
+        <td>
+          <div style="font-weight:700;font-size:12.5px">${esc(l.user_name)}</div>
+          <div style="font-size:11px;color:var(--ink3)">${esc(l.instansi)}</div>
+        </td>
+        <td><span class="badge ${l.tier||'full'}">${l.tier||'full'}</span></td>
+        <td><span class="badge ${l.status}">${statusLabel(l.status)}</span></td>
+        <td style="font-size:11.5px">${l.valid_until ? l.valid_until.slice(0,10) + (expireSoon ? ' ⚠️' : '') : '♾️ Selamanya'}</td>
+        <td style="font-size:11px;color:var(--ink3)">${l.last_check ? l.last_check.slice(0,16) : '—'}</td>
+        <td>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <button class="btn btn-outline btn-xs" onclick="openDetail('${l.license_key}')">👁️</button>
+            <button class="btn btn-outline btn-xs" onclick="openEditLic('${l.license_key}')">✏️</button>
+            <button class="btn btn-blue btn-xs" onclick="openExtend('${l.license_key}','${esc(l.user_name)}','${l.valid_until||''}')">⏰</button>
+            ${l.status==='active'
+              ? `<button class="btn btn-warn btn-xs" onclick="setStatus('${l.license_key}','inactive')">⏸️</button>`
+              : `<button class="btn btn-outline btn-xs" onclick="setStatus('${l.license_key}','active')">▶️</button>`}
+            <button class="btn btn-danger btn-xs" onclick="delLic('${l.license_key}','${esc(l.user_name)}')">🗑️</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    renderPagination();
+  } catch(e) { showToast('Gagal memuat lisensi', 'err'); }
+}
+
+function renderPagination() {
+  const pg = document.getElementById('lic-pagination');
+  if (_licPages <= 1) { pg.innerHTML = `<span class="pg-info">Total: ${_licTotal} lisensi</span>`; return; }
+  let html = `<span class="pg-info">Total: ${_licTotal} lisensi &bull; Hal ${_licPage}/${_licPages}</span>`;
+  html += `<button class="page-btn" onclick="goPage(1)" ${_licPage===1?'disabled':''}>«</button>`;
+  html += `<button class="page-btn" onclick="goPage(${_licPage-1})" ${_licPage===1?'disabled':''}>‹</button>`;
+  const start = Math.max(1, _licPage - 2);
+  const end   = Math.min(_licPages, start + 4);
+  for (let p = start; p <= end; p++) {
+    html += `<button class="page-btn ${p===_licPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+  }
+  html += `<button class="page-btn" onclick="goPage(${_licPage+1})" ${_licPage===_licPages?'disabled':''}>›</button>`;
+  html += `<button class="page-btn" onclick="goPage(${_licPages})" ${_licPage===_licPages?'disabled':''}>»</button>`;
+  pg.innerHTML = html;
+}
+
+function goPage(p) { _licPage = p; loadLicenses(); }
+
+// ── NEW/EDIT LIC ──────────────────────────────────────────────────
+function openNewLic() {
+  _editKey = null;
+  resetLicForm();
+  document.getElementById('modal-lic-title').textContent = '➕ Buat Lisensi Baru';
+  document.getElementById('btn-submit-lic').textContent  = '💾 Buat Lisensi';
+  document.getElementById('btn-submit-lic').onclick      = submitNewLic;
+  document.getElementById('modal-lic').classList.add('open');
+}
+
+async function openEditLic(key) {
+  try {
+    const r = await apiFetch(`/api/admin/licenses/${key}`);
+    const l = await safeJson(r);
+    _editKey = key;
+    resetLicForm();
+    document.getElementById('f-name').value     = l.user_name || '';
+    document.getElementById('f-inst').value     = l.instansi  || '';
+    document.getElementById('f-email').value    = l.email     || '';
+    document.getElementById('f-wa').value       = l.whatsapp  || '';
+    document.getElementById('f-tier').value     = l.tier      || 'full';
+    document.getElementById('f-maxphoto').value = l.max_photos || 0;
+    document.getElementById('f-valid').value    = l.valid_until ? l.valid_until.slice(0,10) : '';
+    document.getElementById('f-devlock').value  = l.device_locked ? '1' : '0';
+    document.getElementById('f-notes').value    = l.notes || '';
+    document.getElementById('modal-lic-title').textContent = '✏️ Edit Lisensi';
+    document.getElementById('btn-submit-lic').textContent  = '💾 Simpan Perubahan';
+    document.getElementById('btn-submit-lic').onclick      = submitEditLic;
+    document.getElementById('modal-lic').classList.add('open');
+  } catch { showToast('Gagal memuat data', 'err'); }
+}
+
+function resetLicForm() {
+  document.getElementById('lic-form').style.display   = 'block';
+  document.getElementById('lic-success').style.display = 'none';
+  document.getElementById('lic-footer').style.display  = 'flex';
+  ['f-name','f-inst','f-email','f-wa','f-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-tier').value    = 'full';
+  document.getElementById('f-maxphoto').value = '0';
+  document.getElementById('f-valid').value    = '';
+  document.getElementById('f-devlock').value  = '0';
+}
+
+async function submitNewLic() {
+  const name = document.getElementById('f-name').value.trim();
+  const inst = document.getElementById('f-inst').value.trim();
+  if (!name || !inst) { showToast('Nama dan instansi wajib diisi', 'err'); return; }
+  const body = {
+    user_name: name, instansi: inst,
+    email:     document.getElementById('f-email').value,
+    whatsapp:  document.getElementById('f-wa').value,
+    tier:      document.getElementById('f-tier').value,
+    max_photos: parseInt(document.getElementById('f-maxphoto').value) || 0,
+    valid_until: document.getElementById('f-valid').value || null,
+    device_locked: parseInt(document.getElementById('f-devlock').value),
+    notes: document.getElementById('f-notes').value
+  };
+  try {
+    const r = await apiFetch('/api/admin/licenses', 'POST', body);
+    const d = await safeJson(r);
+    if (!r.ok) { showToast(d.error || 'Gagal membuat lisensi', 'err'); return; }
+    document.getElementById('lic-form').style.display    = 'none';
+    document.getElementById('lic-footer').style.display  = 'none';
+    document.getElementById('lic-success').style.display = 'block';
+    document.getElementById('lic-success').innerHTML = `
+      <div class="key-success">
+        <div class="ks-label">✅ Lisensi berhasil dibuat!</div>
+        <div class="ks-key">${d.license_key}</div>
+        <div class="ks-sub">Salin dan kirimkan ke pengguna</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="btn btn-primary" onclick="copyKey('${d.license_key}')">📋 Salin License Key</button>
+        <button class="btn btn-outline" onclick="waKey('${d.license_key}','${esc(name)}','${document.getElementById('f-wa').value}')">💬 Kirim via WhatsApp</button>
+        <button class="btn btn-outline" onclick="closeModal('modal-lic');loadLicenses();loadAll()">✓ Selesai</button>
+      </div>`;
+  } catch { showToast('Error koneksi', 'err'); }
+}
+
+async function submitEditLic() {
+  if (!_editKey) return;
+  const name = document.getElementById('f-name').value.trim();
+  const inst = document.getElementById('f-inst').value.trim();
+  if (!name || !inst) { showToast('Nama dan instansi wajib diisi', 'err'); return; }
+  try {
+    const r = await apiFetch(`/api/admin/licenses/${_editKey}`, 'PUT', {
+      user_name: name, instansi: inst,
+      email:    document.getElementById('f-email').value,
+      whatsapp: document.getElementById('f-wa').value,
+      tier:     document.getElementById('f-tier').value,
+      max_photos: parseInt(document.getElementById('f-maxphoto').value) || 0,
+      valid_until: document.getElementById('f-valid').value || null,
+      device_locked: parseInt(document.getElementById('f-devlock').value),
+      notes: document.getElementById('f-notes').value
+    });
+    if (r.ok) { showToast('Lisensi berhasil diperbarui ✓'); closeModal('modal-lic'); loadLicenses(); }
+    else { const d = await safeJson(r); showToast(d.error || 'Gagal menyimpan', 'err'); }
+  } catch { showToast('Error koneksi', 'err'); }
+}
+
+// ── DETAIL ────────────────────────────────────────────────────────
+async function openDetail(key) {
+  document.getElementById('modal-detail').classList.add('open');
+  const body = document.getElementById('modal-detail-body');
+  body.innerHTML = '<p style="padding:2rem;text-align:center">⏳ Memuat...</p>';
+  try {
+    const r = await apiFetch(`/api/admin/licenses/${key}`);
+    if (!r.ok) {
+      const text = await r.text();
+      throw new Error(`HTTP ${r.status} — ${text.slice(0,150)}`);
+    }
+    const l = await safeJson(r);
+    body.innerHTML = `
+      <div class="info-grid">
+        <div class="info-item"><div class="ii-label">License Key</div><div class="ii-val td-mono" style="font-size:12px">${l.license_key}</div></div>
+        <div class="info-item"><div class="ii-label">Status</div><div class="ii-val"><span class="badge ${l.status}">${statusLabel(l.status)}</span></div></div>
+        <div class="info-item"><div class="ii-label">Nama</div><div class="ii-val">${esc(l.user_name)}</div></div>
+        <div class="info-item"><div class="ii-label">Instansi</div><div class="ii-val">${esc(l.instansi)}</div></div>
+        <div class="info-item"><div class="ii-label">Email</div><div class="ii-val">${l.email||'—'}</div></div>
+        <div class="info-item"><div class="ii-label">WhatsApp</div><div class="ii-val">${l.whatsapp||'—'}</div></div>
+        <div class="info-item"><div class="ii-label">Tier</div><div class="ii-val"><span class="badge ${l.tier||'full'}">${l.tier||'full'}</span></div></div>
+        <div class="info-item"><div class="ii-label">Maks Foto</div><div class="ii-val">${l.max_photos ? l.max_photos : '♾️ Unlimited'}</div></div>
+        <div class="info-item"><div class="ii-label">Berlaku s/d</div><div class="ii-val">${l.valid_until ? l.valid_until.slice(0,10) : '♾️ Selamanya'}</div></div>
+        <div class="info-item"><div class="ii-label">Lock Device</div><div class="ii-val">${l.device_locked ? '🔒 Ya' : '🔓 Tidak'}</div></div>
+        <div class="info-item"><div class="ii-label">Device ID</div><div class="ii-val" style="font-size:11px;word-break:break-all">${l.device_id||'Belum terdaftar'}</div></div>
+        <div class="info-item"><div class="ii-label">Total Validasi</div><div class="ii-val">${l.check_count||0}×</div></div>
+        <div class="info-item"><div class="ii-label">Cek Terakhir</div><div class="ii-val">${l.last_check?.slice(0,16)||'—'}</div></div>
+        <div class="info-item"><div class="ii-label">Dibuat</div><div class="ii-val">${l.created_at?.slice(0,16)||'—'}</div></div>
+        <div class="info-item"><div class="ii-label">Diaktifkan</div><div class="ii-val">${l.activated_at?.slice(0,16)||'Belum'}</div></div>
+      </div>
+      ${l.notes ? `<div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 12px;margin-bottom:14px"><strong>Catatan:</strong> ${esc(l.notes)}</div>` : ''}
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <button class="btn btn-outline btn-sm" onclick="copyKey('${l.license_key}')">📋 Salin Key</button>
+        ${l.device_id ? `<button class="btn btn-warn btn-sm" onclick="resetDevice('${l.license_key}')">🔄 Reset Device</button>` : ''}
+        <button class="btn btn-blue btn-sm" onclick="closeModal('modal-detail');openExtend('${l.license_key}','${esc(l.user_name)}','${l.valid_until||''}')">⏰ Perpanjang</button>
+      </div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:8px">📋 Log Terakhir</div>
+      <div class="tbl-wrap">
+        <table style="min-width:400px">
+          <thead><tr><th>Waktu</th><th>Aksi</th><th>IP</th></tr></thead>
+          <tbody>${(l.recent_logs||[]).map(log => {
+            const cls = log.action.includes('OK') ? 'ok' : log.action.includes('FAIL') ? 'fail' : 'admin';
+            return `<tr><td style="font-size:11px">${log.created_at?.slice(0,16)}</td><td><span class="log-action ${cls}">${log.action}</span></td><td style="font-size:11px">${log.ip||'—'}</td></tr>`;
+          }).join('')||'<tr><td colspan="3" style="text-align:center;color:var(--ink4)">Belum ada log</td></tr>'}</tbody>
+        </table>
+      </div>`;
+  } catch(err) {
+    console.error('openDetail error:', err);
+    body.innerHTML = `<div style="color:var(--red);padding:1rem">
+      <b>&#10060; Gagal memuat detail lisensi</b><br>
+      <span style="font-size:11px;color:#888">${err.message || 'Koneksi ke server gagal. Cek koneksi internet atau status server.'}</span><br><br>
+      <button class="btn btn-outline btn-sm" onclick="openDetail('${key}')">&#128260; Coba Lagi</button>
+    </div>`;
+  }
+}
+
+// ── STATUS & ACTIONS ──────────────────────────────────────────────
+async function setStatus(key, status) {
+  const labels = {active:'Aktifkan',inactive:'Nonaktifkan',suspended:'Tangguhkan',expired:'Expired'};
+  if (!confirm(`${labels[status]||'Ubah status'} lisensi ini?`)) return;
+  try {
+    const r = await apiFetch(`/api/admin/licenses/${key}/status`, 'PATCH', { status });
+    if (r.ok) { showToast(`Status diubah ke ${status} ✓`); loadLicenses(); loadAll(); }
+    else { const d = await safeJson(r); showToast(d.error || 'Gagal', 'err'); }
+  } catch { showToast('Error', 'err'); }
+}
+
+async function delLic(key, name) {
+  if (!confirm(`Hapus lisensi milik "${name}"?\n\nTindakan ini tidak dapat dibatalkan.`)) return;
+  try {
+    const r = await apiFetch(`/api/admin/licenses/${key}`, 'DELETE');
+    if (r.ok) { showToast('Lisensi dihapus ✓'); loadLicenses(); loadAll(); }
+    else { const d = await safeJson(r); showToast(d.error || 'Gagal', 'err'); }
+  } catch { showToast('Error', 'err'); }
+}
+
+async function resetDevice(key) {
+  if (!confirm('Reset device ID untuk lisensi ini?')) return;
+  try {
+    const r = await apiFetch(`/api/admin/licenses/${key}/reset-device`, 'PATCH');
+    if (r.ok) { showToast('Device ID berhasil direset ✓'); openDetail(key); }
+    else showToast('Gagal reset device', 'err');
+  } catch { showToast('Error', 'err'); }
+}
+
+// ── EXTEND ────────────────────────────────────────────────────────
+function openExtend(key, name, validUntil) {
+  _extendKey = key;
+  const current = validUntil ? `Berlaku s/d: ${validUntil.slice(0,10)}` : 'Berlaku selamanya';
+  document.getElementById('extend-info').textContent = `🔑 ${name} — ${current}`;
+  // Set min date
+  const minDate = new Date(); minDate.setDate(minDate.getDate()+1);
+  document.getElementById('extend-date').min = minDate.toISOString().slice(0,10);
+  document.getElementById('modal-extend').classList.add('open');
+}
+
+async function extendLic(days) {
+  if (!_extendKey) return;
+  try {
+    const r = await apiFetch(`/api/admin/licenses/${_extendKey}/extend`, 'PATCH', { days });
+    const d = await safeJson(r);
+    if (r.ok) { showToast(`Diperpanjang s/d ${d.new_valid_until?.slice(0,10)} ✓`); closeModal('modal-extend'); loadLicenses(); loadAll(); }
+    else showToast(d.error || 'Gagal', 'err');
+  } catch { showToast('Error', 'err'); }
+}
+
+async function extendLicDate() {
+  const date = document.getElementById('extend-date').value;
+  if (!date) { showToast('Pilih tanggal terlebih dahulu', 'err'); return; }
+  try {
+    const r = await apiFetch(`/api/admin/licenses/${_extendKey}/extend`, 'PATCH', { new_date: date });
+    const d = await safeJson(r);
+    if (r.ok) { showToast(`Masa berlaku diset s/d ${date} ✓`); closeModal('modal-extend'); loadLicenses(); loadAll(); }
+    else showToast(d.error || 'Gagal', 'err');
+  } catch { showToast('Error', 'err'); }
+}
+
+// ── EXPORT ────────────────────────────────────────────────────────
+async function exportCSV() {
+  try {
+    const r = await apiFetch('/api/admin/export/csv');
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `siverif-licenses-${new Date().toISOString().slice(0,10)}.csv`;
+    a.click(); URL.revokeObjectURL(url);
+    showToast('CSV berhasil diunduh ✓');
+  } catch { showToast('Gagal export CSV', 'err'); }
+}
+
+// ── BULK ──────────────────────────────────────────────────────────
+function openBulk() {
+  document.getElementById('bulk-data').value = '';
+  document.getElementById('bulk-result').style.display = 'none';
+  document.getElementById('modal-bulk').classList.add('open');
+}
+
+async function submitBulk() {
+  const raw = document.getElementById('bulk-data').value.trim();
+  if (!raw) { showToast('Data kosong', 'err'); return; }
+  const lines = raw.split('\n').filter(l => l.trim());
+  const items = lines.map(line => {
+    const parts = line.split('|').map(p => p.trim());
+    return {
+      user_name:   parts[0] || '',
+      instansi:    parts[1] || '',
+      whatsapp:    parts[2] || '',
+      tier:        parts[3] || 'full',
+      valid_until: parts[4] || null
+    };
+  }).filter(i => i.user_name && i.instansi);
+
+  if (!items.length) { showToast('Tidak ada data valid. Pastikan format benar.', 'err'); return; }
+  try {
+    const r = await apiFetch('/api/admin/bulk', 'POST', { items });
+    const d = await safeJson(r);
+    if (!r.ok) { showToast(d.error || 'Gagal', 'err'); return; }
+    const res = document.getElementById('bulk-result');
+    res.style.display = 'block';
+    res.innerHTML = `
+      <div style="background:var(--g50);border:1px solid var(--g200);border-radius:var(--r);padding:12px;margin-bottom:10px">
+        <div style="font-weight:800;color:var(--g800);margin-bottom:8px">✅ ${d.count} lisensi berhasil dibuat</div>
+        <div style="font-family:monospace;font-size:11px;max-height:200px;overflow-y:auto">
+          ${d.results.map(r => r.license_key
+            ? `<div style="padding:3px 0;border-bottom:1px solid var(--border)">${r.license_key} — ${esc(r.user_name)}</div>`
+            : `<div style="color:var(--red)">❌ ${esc(r.item?.user_name||'?')}: ${r.error}</div>`
+          ).join('')}
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="closeModal('modal-bulk');loadLicenses();loadAll()">✓ Selesai</button>`;
+    showToast(`${d.count} lisensi dibuat ✓`);
+    loadLicenses(); loadAll();
+  } catch { showToast('Error koneksi', 'err'); }
+}
+
+// ── PENDING ───────────────────────────────────────────────────────
+async function loadPendingBadge() {
+  try {
+    const r = await apiFetch('/api/admin/pending?status=pending');
+    if (!r.ok) return;
+    const list = await safeJson(r);
+    const pb = document.getElementById('badge-pending');
+    pb.textContent = list.length;
+    pb.style.display = list.length > 0 ? 'inline' : 'none';
+  } catch {}
+}
+
+async function loadPending() {
+  const status = document.getElementById('pending-filter').value;
+  try {
+    const url = status === 'all' ? '/api/admin/pending?status=all' : `/api/admin/pending?status=${status}`;
+    const r = await apiFetch(url);
+    if (!r.ok) return;
+    const list = await safeJson(r);
+    const tbody = document.getElementById('tbody-pending');
+    if (!list.length) {
+      tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><div class="es-icon">📭</div><div class="es-title">Tidak ada data</div></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = list.map((p,i) => `<tr>
+      <td>${i+1}</td>
+      <td style="font-weight:600">${esc(p.user_name)}</td>
+      <td>${esc(p.instansi)}</td>
+      <td style="font-size:11px">${p.whatsapp||'—'}<br><span style="color:var(--ink4)">${p.email||''}</span></td>
+      <td style="font-size:11px">${p.created_at?.slice(0,16)||'—'}</td>
+      <td><span class="badge ${p.status}">${p.status}</span></td>
+      <td>
+        ${p.status==='pending' ? `
+          <button class="btn btn-sm" style="background:#25d366;color:#fff;border:none;margin-bottom:3px;width:100%" onclick="waSendConfirmPendaftaran('${esc(p.user_name)}','${esc(p.instansi)}','${p.whatsapp||''}')">💬 WA Konfirmasi</button>
+          <button class="btn btn-primary btn-sm" style="margin-bottom:3px" onclick="openApprove(${p.id},'${esc(p.user_name)}','${esc(p.instansi)}','${p.whatsapp||''}','${p.email||''}')">✅ Setujui</button>
+          <button class="btn btn-danger btn-sm" onclick="rejectWithWA(${p.id},'${esc(p.user_name)}','${p.whatsapp||''}')">✕ Tolak</button>
+        ` : '<span style="color:var(--ink4);font-size:11px">Sudah diproses</span>'}
+      </td>
+    </tr>`).join('');
+  } catch {}
+}
+
+function openApprove(id, name, inst, wa='', email='') {
+  _pendingId = id;
+  _waName = name; _waPhone = wa; _waInst = inst;
+  document.getElementById('approve-info').innerHTML =
+    `<strong>Nama:</strong> ${esc(name)}<br><strong>Instansi:</strong> ${esc(inst)}${wa ? `<br><strong>WA:</strong> ${wa}` : ''}${email ? `<br><strong>Email:</strong> ${email}` : ''}`;
+  document.getElementById('approve-success').style.display = 'none';
+  document.getElementById('approve-form').style.display    = 'block';
+  document.getElementById('approve-footer').style.display  = 'flex';
+  document.getElementById('modal-approve').classList.add('open');
+}
+
+async function submitApprove() {
+  try {
+    const r = await apiFetch(`/api/admin/pending/${_pendingId}/approve`, 'POST', {
+      tier:         document.getElementById('ap-tier').value,
+      max_photos:   parseInt(document.getElementById('ap-maxphoto').value) || 0,
+      valid_until:  document.getElementById('ap-valid').value || null,
+      device_locked: parseInt(document.getElementById('ap-devlock').value)
+    });
+    const d = await safeJson(r);
+    if (!r.ok) { showToast('Gagal menyetujui', 'err'); return; }
+    document.getElementById('approve-form').style.display   = 'none';
+    document.getElementById('approve-footer').style.display = 'none';
+    document.getElementById('approve-success').style.display = 'block';
+    document.getElementById('approve-success').innerHTML = `
+      <div class="key-success">
+        <div class="ks-label">✅ Pendaftaran disetujui!</div>
+        <div class="ks-key">${d.license_key}</div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-bottom:8px" onclick="copyKey('${d.license_key}')">📋 Salin License Key</button>
+      <div style="margin:10px 0 6px;font-size:12px;font-weight:600">📲 Kirim WhatsApp Otomatis:</div>
+      <button class="btn btn-outline" style="width:100%;margin-bottom:6px;background:#25d366;color:#fff;border-color:#25d366" onclick="waSendLicenseKey('${d.license_key}',_waName,_waPhone,_waInst)">💬 Kirim License Key via WA</button>
+      <button class="btn btn-outline" style="width:100%;margin-bottom:8px" onclick="waSendPaymentInfo(_waName,_waPhone)">💳 Kirim Info Pembayaran via WA</button>
+      <button class="btn btn-outline" style="width:100%" onclick="closeModal('modal-approve');loadPending();loadAll()">Selesai</button>`;
+  } catch { showToast('Error', 'err'); }
+}
+
+async function rejectPending(id) {
+  if (!confirm('Tolak pendaftaran ini?')) return;
+  const reason = 'Ditolak oleh admin';
+  try {
+    await apiFetch(`/api/admin/pending/${id}/reject`, 'POST', { reason });
+    showToast('Pendaftaran ditolak');
+    loadPending(); loadAll();
+  } catch { showToast('Error', 'err'); }
+}
+
+async function rejectWithWA(id, name, phone) {
+  if (!confirm(`Tolak pendaftaran ${name}?`)) return;
+  try {
+    await apiFetch(`/api/admin/pending/${id}/reject`, 'POST', { reason: 'Ditolak oleh admin' });
+    showToast('Pendaftaran ditolak');
+    loadPending(); loadAll();
+    if (phone) await waSendReject(name, phone);
+  } catch { showToast('Error', 'err'); }
+}
+
+async function sendWAFonnte(phone, message) {
+  if (!phone) return;
+  try {
+    const r = await apiFetch('/api/notify/wa', 'POST', { phone, message });
+    const d = await safeJson(r);
+    if (d.success) { showToast('WA terkirim ✓'); return d; }
+    showToast('Gagal kirim WA: ' + (d.error||''), 'err');
+  } catch { showToast('Error kirim WA', 'err'); }
+}
+
+async function waSendConfirmPendaftaran(name, inst, phone) {
+  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\nKami dari Tim *SiVerif RHL* telah menerima permohonan pendaftaran Anda.\n\n📋 *DATA PENDAFTARAN*\n┌─────────────────────────\n│ 👤 Nama     : ${name}\n│ 🏢 Instansi : ${inst}\n└─────────────────────────\n\nPermohonan Anda sedang dalam proses *verifikasi dan review* oleh tim kami.\n\n⏳ *Estimasi proses:* 1x24 jam kerja\n\nKami akan menghubungi Anda kembali setelah proses verifikasi selesai.\n\nTerima kasih atas kepercayaan Anda menggunakan *SiVerif RHL*.\n\nSalam Hormat,\n*Admin SiVerif RHL*\nKementerian LHK 🌿`);
+}
+
+async function waSendPaymentInfo(name, phone) {
+  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\nAlhamdulillah, permohonan pendaftaran Anda telah *diverifikasi dan disetujui* ✅\n\nUntuk aktivasi lisensi *SiVerif RHL*, berikut informasi pembayaran:\n\n💳 *INFORMASI PEMBAYARAN*\n┌─────────────────────────────\n│ 📦 Paket    : SiVerif RHL Full Version\n│ 💰 Nominal  : Rp ___________,-\n│ 🏦 Bank     : ___________\n│ 📂 No. Rek  : ___________\n│ 👤 A/N      : ___________\n└─────────────────────────────\n\n📌 *Catatan:*\n• Pembayaran harap dilakukan dalam *3x24 jam*\n• Sertakan *nama lengkap* sebagai keterangan transfer\n• Setelah transfer, kirimkan *bukti pembayaran* ke nomor ini\n\nSalam Hormat,\n*Admin SiVerif RHL*\nKementerian LHK 🌿`);
+}
+
+async function waSendLicenseKey(key, name, phone, inst='') {
+  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\n🎉 *Selamat!* Lisensi *SiVerif RHL* Anda telah *AKTIF*.\n\n🔑 *INFORMASI LISENSI*\n┌──────────────────────────────────\n│ 👤 Nama      : ${name}\n│ 🏢 Instansi  : ${inst||'—'}\n│ 📦 Paket     : Full Version\n│ 🔐 License Key:\n│\n│   *${key}*\n│\n└──────────────────────────────────\n\n📲 *CARA AKTIVASI:*\n1️⃣ Buka aplikasi *SiVerif RHL Launcher*\n2️⃣ Klik tombol *"AKTIVASI"*\n3️⃣ Masukkan License Key di atas\n4️⃣ Klik *"Verifikasi"*\n5️⃣ Aplikasi siap digunakan ✅\n\n⚠️ *Penting:*\n• License Key bersifat *RAHASIA* — jangan dibagikan\n• Lisensi terikat pada *1 perangkat*\n• Simpan pesan ini sebagai arsip\n\nTerima kasih telah menggunakan *SiVerif RHL* 🌿\n\nSalam Hormat,\n*Admin SiVerif RHL*\nKementerian LHK 🌿`);
+}
+
+async function waSendReject(name, phone) {
+  await sendWAFonnte(phone, `Assalamu'alaikum Warahmatullahi Wabarakatuh,\n\nYth. Bapak/Ibu *${name}*\n\nKami mohon maaf, permohonan pendaftaran Anda *belum dapat kami proses* saat ini.\n\n📋 *Alasan:*\n• Data pendaftaran tidak lengkap / tidak memenuhi syarat\n\nJika ingin mendaftar ulang atau ada pertanyaan, silakan hubungi kami kembali.\n\nKami mohon maaf atas ketidaknyamanan ini.\n\nSalam Hormat,\n*Admin SiVerif RHL*\nKementerian LHK 🌿`);
+}
+
+// ── LOGS ──────────────────────────────────────────────────────────
+async function loadLogs() {
+  const limit  = document.getElementById('log-limit').value;
+  const action = document.getElementById('log-action-filter').value;
+  try {
+    let url = `/api/admin/logs?limit=${limit}`;
+    if (action) url += `&action=${action}`;
+    const r = await apiFetch(url);
+    if (!r.ok) return;
+    _allLogs = await safeJson(r);
+    renderLogs(_allLogs);
+  } catch {}
+}
+
+function renderLogs(list) {
+  const tbody = document.getElementById('tbody-logs');
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state">Tidak ada log</div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = list.map(l => {
+    const cls = l.action.includes('OK')||l.action.includes('APPROVED') ? 'ok'
+              : l.action.includes('FAIL')||l.action.includes('DELETE') ? 'fail'
+              : l.action.includes('ADMIN')||l.action.includes('SUPER') ? 'admin' : 'warn';
+    return `<tr>
+      <td style="font-size:11px;white-space:nowrap">${l.created_at?.slice(0,16)||''}</td>
+      <td><span class="td-mono" style="font-size:10px">${(l.license_key||'—').slice(0,20)}</span></td>
+      <td><span class="log-action ${cls}">${l.action}</span></td>
+      <td style="font-size:10.5px;max-width:110px;overflow:hidden;text-overflow:ellipsis">${l.device_id?.slice(0,12)||'—'}</td>
+      <td style="font-size:11px">${l.ip?.slice(0,20)||'—'}</td>
+      <td style="font-size:11px;max-width:200px;overflow:hidden;text-overflow:ellipsis">${esc(l.info||'')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterLogs() {
+  const q = document.getElementById('log-search').value.toLowerCase();
+  renderLogs(q ? _allLogs.filter(l => (l.action+l.license_key+l.info+l.ip).toLowerCase().includes(q)) : _allLogs);
+}
+
+// ── CHECK ONE LIC ─────────────────────────────────────────────────
+async function checkOneLic() {
+  const key = document.getElementById('check-key-inp').value.trim();
+  if (!key) { showToast('Masukkan license key', 'err'); return; }
+  try {
+    const r = await apiFetch(`/api/admin/licenses/${key}`);
+    const res = document.getElementById('check-result');
+    if (r.status === 404) {
+      res.innerHTML = `<div style="background:var(--red-bg);border:1px solid #fca5a5;border-radius:var(--r);padding:12px;color:var(--red)">❌ Lisensi tidak ditemukan</div>`;
+      return;
+    }
+    const l = await safeJson(r);
+    res.innerHTML = `
+      <div style="background:var(--g50);border:1px solid var(--g200);border-radius:var(--r);padding:14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span class="badge ${l.status}">${statusLabel(l.status)}</span>
+          <strong>${esc(l.user_name)}</strong> &mdash; ${esc(l.instansi)}
+        </div>
+        <div class="info-grid">
+          <div class="info-item"><div class="ii-label">Key</div><div class="ii-val td-mono" style="font-size:11px">${l.license_key}</div></div>
+          <div class="info-item"><div class="ii-label">Tier</div><div class="ii-val">${l.tier||'full'}</div></div>
+          <div class="info-item"><div class="ii-label">Berlaku s/d</div><div class="ii-val">${l.valid_until?.slice(0,10)||'Selamanya'}</div></div>
+          <div class="info-item"><div class="ii-label">Validasi</div><div class="ii-val">${l.check_count||0}×</div></div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="btn btn-outline btn-sm" onclick="openEditLic('${l.license_key}')">✏️ Edit</button>
+          <button class="btn btn-blue btn-sm" onclick="openExtend('${l.license_key}','${esc(l.user_name)}','${l.valid_until||''}')">⏰ Perpanjang</button>
+          <button class="btn btn-outline btn-sm" onclick="openDetail('${l.license_key}')">👁️ Detail</button>
+        </div>
+      </div>`;
+  } catch { showToast('Gagal cek lisensi', 'err'); }
+}
+
+// ── UTILS ─────────────────────────────────────────────────────────
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function statusLabel(s) { return {active:'Aktif',inactive:'Nonaktif',suspended:'Ditangguhkan',expired:'Kadaluarsa'}[s]||s; }
+function formatBytes(b) { if (b < 1024) return b+'B'; if (b < 1048576) return (b/1024).toFixed(1)+'KB'; return (b/1048576).toFixed(2)+'MB'; }
+
+function copyKey(key) {
+  navigator.clipboard.writeText(key).then(() => showToast('License key disalin ✓'));
+}
+
+function waKey(key, name, phone='') {
+  const msg = encodeURIComponent(`Halo ${name},\n\nLisensi SiVerif RHL Anda telah aktif:\n\n🔑 License Key: ${key}\n\nSilakan masukkan kode ini saat membuka aplikasi SiVerif RHL.\n\nTerima kasih.`);
+  const url = phone ? `https://wa.me/${phone.replace(/\D/g,'')}?text=${msg}` : `https://wa.me/?text=${msg}`;
+  window.open(url, '_blank');
+}
+
+let _toastTimer;
+function showToast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.background = type==='err' ? '#dc2626' : type==='warn' ? '#ea580c' : '#1a3d0f';
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape')
+    document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open'));
+  if (e.key === 'Enter' && document.getElementById('login-screen').style.display !== 'none')
+    doLogin();
+});
+</script>
+</body>
+</html>
