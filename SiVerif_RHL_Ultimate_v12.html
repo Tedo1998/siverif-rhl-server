@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SiVerif RHL v12.3.2 Ultimate — Masterpiece Edition</title>
+  <title>SiVerif RHL v12.4.1 Ultimate — Masterpiece Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
@@ -106,10 +106,10 @@
     <div class="topbar">
       <div style="font-weight:900;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="location.reload()">
         <div style="width:32px;height:32px;background:var(--gr);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;font-weight:950">Si</div>
-        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.4.0</span></span>
+        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.4.1</span></span>
       </div>
       <div style="margin-left:auto;display:flex;gap:20px;align-items:center">
-        <div id="instansi-tag" style="font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">LOADING...</div>
+        <div id="instansi-tag" style="font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">READY</div>
         <div id="diag-status" style="font-size:9px;font-weight:900;color:var(--gr)">● ULTIMATE CORE READY</div>
         <button onclick="location.reload()" style="background:var(--red-bg);color:var(--red);border:1px solid var(--red);padding:6px 14px;border-radius:6px;font-weight:900;cursor:pointer;font-size:10px">KELUAR</button>
       </div>
@@ -117,7 +117,7 @@
 
     <div class="app-shell">
       <div class="sidebar">
-        <div class="sb-label">Audit Control</div>
+        <div class="ftr" style="font-size: 8px; color: var(--tx3); margin-bottom: 10px;">© 2026 SiVerif RHL Ultimate Edition</div>
         <div class="sb-item active" data-t="all">📷 Forensic Gallery <span id="c-all" style="margin-left:auto;opacity:0.4">0</span></div>
         <div class="sb-item" data-t="map">🗺️ Interactive Map</div>
         <div class="sb-item" data-t="tab">📊 Data Tabulation</div>
@@ -286,43 +286,40 @@
           <div id="ai-res" style="margin-top:10px;font-size:11px;font-weight:800;color:var(--gr);text-align:center"></div>
         </div>
         <div id="in-data" style="padding:1.5rem;display:none">
-          <!-- Status Forensic -->
-          <div id="in-status-ok" class="hide" style="background:rgba(57,211,83,0.1);border:1px solid var(--gr);color:var(--gr);padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:800;font-size:11px">✅ STATUS: FOTO NORMAL</div>
-          <div id="in-warn" class="hide" style="background:var(--red-bg);border:1px solid var(--red);color:var(--red);padding:10px 12px;border-radius:8px;margin-bottom:6px;font-weight:900">⚠️ MANIPULASI TERDETEKSI</div>
-          <div id="in-status-override" class="hide" style="background:rgba(56,139,253,0.1);border:1px solid var(--blue);color:var(--blue);padding:10px 12px;border-radius:8px;margin-bottom:6px;font-weight:800;font-size:11px">✅ DIVALIDASI MANUAL</div>
+          <div id="in-status-ok" class="hide" style="background:rgba(57,211,83,0.1);border:1px solid var(--gr);color:var(--gr);padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:800;font-size:11px">✅ NORMAL</div>
+          <div id="in-warn" class="hide" style="background:var(--red-bg);border:1px solid var(--red);color:var(--red);padding:10px 12px;border-radius:8px;margin-bottom:6px;font-weight:900">⚠️ MANIPULATED</div>
+          <div id="in-status-override" class="hide" style="background:rgba(56,139,253,0.1);border:1px solid var(--blue);color:var(--blue);padding:10px 12px;border-radius:8px;margin-bottom:6px;font-weight:800;font-size:11px">✅ OVERRIDE</div>
           <div id="in-override-reason" class="hide" style="background:rgba(56,139,253,0.05);border:1px solid rgba(56,139,253,0.3);color:var(--blue);padding:8px 12px;border-radius:6px;margin-bottom:12px;font-size:10px;line-height:1.6"></div>
           <div id="in-warn-reason" class="hide" style="background:rgba(248,81,73,0.05); border:1px solid rgba(248,81,73,0.3); color:#fca5a5; padding:8px 12px; border-radius:6px; margin-bottom:12px; font-size:10px; line-height:1.6"></div>
-          <div id="in-warn-reason" class="hide" style="background:rgba(248,81,73,0.05);border:1px solid rgba(248,81,73,0.3);color:#fca5a5;padding:8px 12px;border-radius:6px;margin-bottom:12px;font-size:10px;line-height:1.6"></div>
-          <!-- Detail Fields -->
           <div style="display:flex;flex-direction:column;gap:10px">
             <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">📄 Nama File</div>
+              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Filename</div>
               <div id="in-filename" style="font-size:11px;font-weight:700;word-break:break-all;color:var(--tx)"></div>
             </div>
             <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">🕒 Tanggal & Jam Asli (EXIF)</div>
+              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Date Time (EXIF)</div>
               <div id="in-time" style="font-size:11px;font-weight:700;color:var(--amber)"></div>
             </div>
             <div>
-              <div style="font-size:9px;color:var(--gr);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">🌱 Verifikasi Jenis Bibit</div>
+              <div style="font-size:9px;color:var(--gr);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Category</div>
               <select id="in-bibit-verify" onchange="verifyBibit(this.value)" style="width:100%; background:var(--bg2); border:1px solid var(--border); color:#fff; padding:6px; border-radius:6px; font-size:11px; font-weight:700; outline:none;">
-                <option value="">— Pilih Jenis —</option>
+                <option value="">— Select —</option>
               </select>
             </div>
             <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">📍 Koordinat GPS</div>
+              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">GPS</div>
               <div id="in-gps" style="font-size:11px;font-weight:700;color:var(--gr)"></div>
             </div>
             <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">📷 Software / Kamera</div>
+              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Device</div>
               <div id="in-soft" style="font-size:11px;font-weight:700"></div>
             </div>
             <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">📁 Folder</div>
+              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Folder</div>
               <div id="in-folder" style="font-size:11px;font-weight:700;color:var(--tx2)"></div>
             </div>
             <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">💾 Ukuran File</div>
+              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Size</div>
               <div id="in-size" style="font-size:11px;font-weight:700;color:var(--tx2)"></div>
             </div>
           </div>
@@ -333,7 +330,7 @@
 
   <div id="prog" style="position:fixed;inset:0;background:rgba(13,17,23,0.98);z-index:10000;display:none;align-items:center;justify-content:center;text-align:center">
     <div style="width:400px">
-      <div id="prog-text" style="font-weight:900;margin-bottom:20px;font-size:16px">HYPER-SCAN ENGINE v12.4.0...</div>
+      <div id="prog-text" style="font-weight:900;margin-bottom:20px;font-size:16px">ANALYSIS ENGINE...</div>
       <div style="height:8px;background:var(--bg4);border-radius:10px;overflow:hidden"><div id="prog-fill" style="height:100%;width:0;background:var(--gr);transition:0.1s"></div></div>
       <div id="prog-pct" style="margin-top:15px;font-weight:900;font-size:32px;color:var(--gr)">0%</div>
       <p id="prog-file" style="font-size:10px;color:var(--tx3);margin-top:10px"></p>
@@ -341,7 +338,7 @@
   </div>
 
   <div id="toast" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gr);color:#000;padding:12px 30px;border-radius:50px;font-weight:950;transition:0.5s;z-index:10000"></div>
-  <div id="footer-ver" style="position:fixed;bottom:15px;right:15px;font-size:10px;font-weight:900;color:var(--tx3);background:rgba(13,17,23,0.8);padding:5px 12px;border-radius:20px;border:1px solid var(--border);z-index:9000">v12.4.0 — Checking...</div>
+  <div id="footer-ver" style="position:fixed;bottom:15px;right:15px;font-size:10px;font-weight:900;color:var(--tx3);background:rgba(13,17,23,0.8);padding:5px 12px;border-radius:20px;border:1px solid var(--border);z-index:9000">v12.4.1</div>
 
   <input type="file" id="fi-folder" webkitdirectory multiple style="display:none">
   <input type="file" id="fi-files" multiple style="display:none">
@@ -350,7 +347,7 @@
   <div id="photo-modal" class="modal-photo" onclick="this.classList.remove('open')"><img id="modal-photo-img" src=""></div>
 
   <script>
-    const APP_VERSION = '12.4.0';
+    const APP_VERSION = '12.4.1';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let _map = null, _markerGroup = null;
@@ -370,27 +367,26 @@
       const u = document.getElementById('l-user').value;
       const p = document.getElementById('l-pass').value;
       const btn = document.getElementById('btn-login-main');
-      
       if (!u || !p) return alert('Username dan Password wajib diisi');
       
-      btn.disabled = true;
-      btn.textContent = 'AUTHENTICATING...';
+      btn.disabled = true; btn.textContent = 'AUTHENTICATING...';
+      localStorage.setItem('siverif_saved_user', u);
+      localStorage.setItem('siverif_saved_pass', p);
       
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        
         const r = await fetch('https://siverif-rhl-server.vercel.app/api/agency/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: u, password: p })
+          body: JSON.stringify({ username: u, password: p }),
+          signal: controller.signal
         });
-        
+        clearTimeout(timeoutId);
         const d = await r.json();
         
         if (d.success) {
-          if (document.getElementById('l-rem').checked) {
-            localStorage.setItem('siverif_saved_user', u);
-          } else {
-            localStorage.removeItem('siverif_saved_user');
-          }
           if (d.name) {
             document.getElementById('instansi-tag').textContent = d.name;
             localStorage.setItem('siverif_agency_cache', d.name);
@@ -398,19 +394,14 @@
           document.getElementById('login-wrap').style.display = 'none';
           document.getElementById('app').classList.add('active');
           initApp();
+          toast('✅ Selamat Datang di SiVerif v' + APP_VERSION);
+          return;
         } else {
           alert(d.message || 'Login Gagal: Username atau Password salah');
         }
       } catch (e) {
         console.error('Login Error:', e);
-        if (p === (localStorage.getItem('siverif_master_pass') || 'Admin123')) {
-          document.getElementById('login-wrap').style.display = 'none';
-          document.getElementById('app').classList.add('active');
-          initApp();
-          toast('⚠️ Mode Offline Aktif');
-        } else {
-          alert('Gagal menghubungi server. Periksa koneksi internet Anda.');
-        }
+        alert('Gagal menghubungi server. Periksa koneksi internet Anda atau hubungi admin.');
       } finally {
         btn.disabled = false;
         btn.textContent = 'SIGN IN \u2192';
@@ -486,11 +477,16 @@
     
     document.addEventListener('DOMContentLoaded', () => {
       const savedUser = localStorage.getItem('siverif_saved_user');
+      const savedPass = localStorage.getItem('siverif_saved_pass');
       if (savedUser) {
         const uInp = document.getElementById('l-user');
         const rChk = document.getElementById('l-rem');
         if(uInp) uInp.value = savedUser;
         if(rChk) rChk.checked = true;
+      }
+      if (savedPass) {
+        const pInp = document.getElementById('l-pass');
+        if(pInp) pInp.value = savedPass;
       }
       checkSystemStatus();
       setInterval(checkSystemStatus, 60000);
@@ -604,14 +600,18 @@
           return { lat: dms(e.GPSLatitude, e.GPSLatitudeRef), lng: dms(e.GPSLongitude, e.GPSLongitudeRef) };
         })(exif);
         const soft = (exif.Software || '').toLowerCase();
-        let isWarn = soft.includes('adobe') || soft.includes('photoshop') || soft.includes('picsart') || soft.includes('snapseed') || soft.includes('geosetter') || soft.includes('exiftool') || !gps;
+        let isWarn = false, warnReason = [];
+        if(soft.includes('adobe') || soft.includes('photoshop')) { isWarn = true; warnReason.push("Digital Editing Software (Adobe/Photoshop)"); }
+        if(soft.includes('picsart') || soft.includes('snapseed')) { isWarn = true; warnReason.push("Mobile Editing App Detected"); }
+        if(soft.includes('geosetter') || soft.includes('exiftool')) { isWarn = true; warnReason.push("Metadata Manipulation Tool Detected"); }
+        if(!gps) { isWarn = true; warnReason.push("No GPS Metadata Found"); }
         
         if (exif.DateTime) {
           const timeMatch = exif.DateTime.match(/\s(\d{1,2}):(\d{2}):(\d{2})/);
           if (timeMatch) {
             let hour = parseInt(timeMatch[1]);
             if (hour >= 24) hour = hour % 24;
-            if (hour < 6 || hour >= 20) isWarn = true;
+            if (hour < 6 || hour >= 20) { isWarn = true; warnReason.push("Suspicious Shooting Time (Night/Hidden)"); }
           }
         }
         const thumbBlob = await new Promise(r => {
@@ -685,7 +685,7 @@
            if (found) detectedBibit = found;
         }
         
-        allData.push({ id: i, name: f.name, path: f.path || null, gps, folder: fName, soft: exif.Software || '-', time: exif.DateTime || '-', isWarn, isBlur, blurScore: Math.round(bScore), pHash: thumbBlob.hash, size: f.size, raw: f, verifiedBibit: detectedBibit });
+        allData.push({ id: i, name: f.name, path: f.path || null, gps, folder: fName, soft: exif.Software || '-', time: exif.DateTime || '-', isWarn, warnReason: warnReason.join(", "), isBlur, blurScore: Math.round(bScore), pHash: thumbBlob.hash, size: f.size, raw: f, verifiedBibit: detectedBibit });
         
         if(i % 20 === 0 || i === allFiles.length-1) {
           const p = Math.round(((i+1)/allFiles.length)*100);
@@ -732,8 +732,7 @@
       let added = 0;
 
       for(let i=0; i<files.length; i++) {
-        const f = files[i];
-        if(!f.type.startsWith('image/')) continue;
+        const f = files[i]; if(!f.type.startsWith('image/')) continue;
         
         const exif = await new Promise(r => {
           const timeout = setTimeout(() => r({}), 200);
@@ -744,6 +743,14 @@
           const dms=(v,ref)=>(v[0]+v[1]/60+v[2]/3600)*(ref==='S'||ref==='W'?-1:1);
           return { lat: dms(e.GPSLatitude, e.GPSLatitudeRef), lng: dms(e.GPSLongitude, e.GPSLongitudeRef) };
         })(exif);
+
+        const soft = (exif.Software || '').toLowerCase();
+        let isWarn = false, warnReason = [];
+        if(soft.includes('adobe') || soft.includes('photoshop')) { isWarn = true; warnReason.push("Digital Editing Software (Adobe/Photoshop)"); }
+        if(soft.includes('picsart') || soft.includes('snapseed')) { isWarn = true; warnReason.push("Mobile Editing App Detected"); }
+        if(soft.includes('geosetter') || soft.includes('exiftool')) { isWarn = true; warnReason.push("Metadata Manipulation Tool Detected"); }
+        if(!gps) { isWarn = true; warnReason.push("No GPS Metadata Found"); }
+
         const id = startId + i;
         const thumbBlob = await new Promise(r => {
           const img = new Image();
@@ -753,12 +760,11 @@
             const ctx = c.getContext('2d'); ctx.drawImage(img,0,0,c.width,c.height);
             c.toBlob(b => r({ blob: b }), 'image/jpeg', 0.5); 
           };
-          const url = URL.createObjectURL(f);
-          img.src = url;
+          const url = URL.createObjectURL(f); img.src = url;
           setTimeout(() => URL.revokeObjectURL(url), 1000);
         });
         if(thumbBlob && thumbBlob.blob) db.transaction('thumbs','readwrite').objectStore('thumbs').put(thumbBlob.blob, id);
-        allData.push({ id, name: f.name, path: f.path || null, gps, folder: 'Import', soft: exif.Software || '-', time: exif.DateTime || '-', isWarn: !gps, isBlur: false, size: f.size, raw: f });
+        allData.push({ id, name: f.name, path: f.path || null, gps, folder: 'Import', soft: exif.Software || '-', time: exif.DateTime || '-', isWarn, warnReason: warnReason.join(", "), isBlur: false, size: f.size, raw: f, verifiedBibit: '' });
         added++;
       }
       document.getElementById('prog').style.display='none';
@@ -805,29 +811,58 @@
     }
 
     function showInspector(d) {
+      if(!d) return;
       curInspectorId = d.id;
-      document.getElementById('in-data').style.display = 'block';
-      document.getElementById('in-name').textContent = d.name;
-      document.getElementById('in-folder').textContent = d.folder;
-      document.getElementById('in-gps').textContent = d.gps ? `${d.gps.lat.toFixed(6)}, ${d.gps.lng.toFixed(6)}` : '❌';
-      document.getElementById('in-soft').textContent = d.soft;
-      document.getElementById('in-time').textContent = d.time;
+      const safeGet = (id) => document.getElementById(id) || { style: {}, textContent: '', innerHTML: '' };
       
-      const sel = document.getElementById('in-bibit-verify');
-      sel.innerHTML = '<option value="">— Pilih Jenis —</option>' + bibitConfig.map(b => `<option value="${b}">${b}</option>`).join('');
+      const inData = safeGet('in-data');
+      inData.style.display = 'block';
+      
+      // Populate Basic Info
+      safeGet('in-name').textContent = d.name || 'Unknown';
+      safeGet('in-filename').textContent = d.name || 'Unknown';
+      safeGet('in-folder').textContent = d.folder || 'Import';
+      safeGet('in-gps').textContent = d.gps ? `${d.gps.lat.toFixed(6)}, ${d.gps.lng.toFixed(6)}` : '❌';
+      safeGet('in-soft').textContent = d.soft || '-';
+      safeGet('in-time').textContent = d.time || '-';
+      safeGet('in-size').textContent = d.size ? (d.size / (1024*1024)).toFixed(2) + ' MB' : '-';
+      
+      const sel = safeGet('in-bibit-verify');
+      sel.innerHTML = '<option value="">— Select —</option>' + bibitConfig.map(b => `<option value="${b}">${b}</option>`).join('');
       sel.value = d.verifiedBibit || "";
 
+      // Load Thumbnail
       const req = indexedDB.open('SiVerifV12.4_Hyper', 1);
       req.onsuccess = () => {
         req.result.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = e => {
-          if(e.target.result) document.getElementById('in-img').src = URL.createObjectURL(e.target.result);
+          if(e.target.result) {
+            const img = safeGet('in-img');
+            img.src = URL.createObjectURL(e.target.result);
+            img.classList.remove('hide');
+          }
         };
       };
       
-      const warnDiv = document.getElementById('in-warn');
-      const okDiv = document.getElementById('in-status-ok');
-      if(d.isWarn && !overrides[d.id]) { warnDiv.classList.remove('hide'); okDiv.classList.add('hide'); }
-      else { warnDiv.classList.add('hide'); okDiv.classList.remove('hide'); }
+      // Forensic UI logic
+      const warnDiv = safeGet('in-warn');
+      const warnReasonDiv = safeGet('in-warn-reason');
+      const okDiv = safeGet('in-status-ok');
+      const overrideDiv = safeGet('in-status-override');
+      const overrideReasonDiv = safeGet('in-override-reason');
+
+      [warnDiv, warnReasonDiv, okDiv, overrideDiv, overrideReasonDiv].forEach(el => el.classList.add('hide'));
+
+      if(overrides[d.id]) {
+        overrideDiv.classList.remove('hide');
+        overrideReasonDiv.classList.remove('hide');
+        overrideReasonDiv.textContent = `ALASAN: ${overrides[d.id]}`;
+      } else if(d.isWarn) {
+        warnDiv.classList.remove('hide');
+        warnReasonDiv.classList.remove('hide');
+        warnReasonDiv.innerHTML = `ALASAN:<br>• ${(d.warnReason || 'Unknown error').split(', ').join('<br>• ')}`;
+      } else {
+        okDiv.classList.remove('hide');
+      }
     }
 
     function initMap() {
