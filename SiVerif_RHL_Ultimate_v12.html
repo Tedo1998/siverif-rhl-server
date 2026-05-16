@@ -348,7 +348,7 @@
   <input type="file" id="f-add-input" webkitdirectory directory multiple class="hide" onchange="handleAppendFiles(this.files)">
 
   <script>
-    const APP_VERSION = '12.3.6';
+    const APP_VERSION = '12.3.7';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let _map = null, _markerGroup = null;
@@ -1047,7 +1047,10 @@
 
     function showInspector(d) {
       curInspectorId = d.id;
-      document.getElementById('ai-res').innerHTML = ''; // Reset AI scan result
+      const inImg = document.getElementById('in-img');
+      inImg.classList.add('hide');
+      inImg.style.height = '180px'; 
+
       document.getElementById('in-data').style.display = 'block';
       document.getElementById('in-name').textContent     = d.name;
       document.getElementById('in-filename').textContent = d.name;
@@ -1079,26 +1082,19 @@
       const s = (d.soft || '').toLowerCase();
       const isSoftwareWarn = s.includes('adobe') || s.includes('photoshop') || s.includes('picsart') || s.includes('snapseed') || s.includes('geosetter') || s.includes('exiftool');
       
-      if (isSoftwareWarn) {
-          reasons.push(`Manipulasi Digital Terdeteksi (${d.soft})`);
-      }
+      if (isSoftwareWarn) reasons.push(`🚨 Manipulasi Digital Terdeteksi (${d.soft})`);
+      if (!d.gps) reasons.push("📍 Lokasi GPS Tidak Ditemukan");
       
       if (d.time && d.time !== '-') {
-        // Cari pola jam yang didahului oleh spasi (format EXIF standar: YYYY:MM:DD HH:MM:SS)
         const timeMatch = d.time.match(/\s(\d{1,2}):(\d{2}):(\d{2})/);
         if (timeMatch) {
           let hour = parseInt(timeMatch[1]);
           if (hour >= 24) hour = hour % 24;
-          if (hour < 6 || hour >= 20) {
-             const timeStr = timeMatch[0].trim();
-             reasons.push(`Waktu pengambilan foto tidak wajar: ${timeStr} (di luar jam 06.00–20.00)`);
-          }
+          if (hour < 6 || hour >= 20) reasons.push(`🕒 Jam Foto Tidak Wajar (${timeMatch[0].trim()})`);
         }
       }
       
-      if (d.isBlur) {
-          reasons.push(`⚠️ FOTO BLUR — Kualitas tidak memenuhi standar (Score: ${d.blurScore}). Saran: Ambil ulang foto dengan kamera stabil.`);
-      }
+      if (d.isBlur) reasons.push(`🌫️ Foto Terdeteksi Blur (Score: ${d.blurScore})`);
 
       // --- BUG 2: VERIFIKASI JENIS BIBIT ---
       const assignedBibit = d.verifiedBibit || "Belum Ditentukan";
@@ -1174,16 +1170,15 @@
       const ovrReason = document.getElementById('in-override-reason');
 
       // RESET Visibility
-      warnDiv.className = 'hide';
-      reasonDiv.className = 'hide';
-      statusOk.className = 'hide';
-      statusOvr.className = 'hide';
-      ovrReason.className = 'hide';
-      btnOvr.className = ''; // ALWAYS SHOW BUTTON
+      warnDiv.classList.add('hide');
+      reasonDiv.classList.add('hide');
+      statusOk.classList.add('hide');
+      statusOvr.classList.add('hide');
+      ovrReason.classList.add('hide');
 
       if (ovr) {
-        statusOvr.className = '';
-        ovrReason.className = '';
+        statusOvr.classList.remove('hide');
+        ovrReason.classList.remove('hide');
         ovrReason.innerHTML = `<b>Alasan Validasi:</b><br>${ovr}`;
         btnOvr.innerHTML = '❌ BATALKAN VALIDASI';
         btnOvr.style.background = 'rgba(248,81,73,0.1)';
@@ -1194,19 +1189,18 @@
         btnOvr.style.background = 'var(--blue)';
         btnOvr.style.color = '#fff';
         btnOvr.style.border = 'none';
-        btnOvr.className = ''; 
         
         if (reasons.length > 0) {
-          warnDiv.className = '';
-          reasonDiv.className = '';
-          reasonDiv.innerHTML = '🔍 Alasan:<br>• ' + reasons.join('<br>• ');
+          warnDiv.classList.remove('hide');
+          reasonDiv.classList.remove('hide');
+          reasonDiv.innerHTML = '🔍 Alasan Forensic:<br>• ' + reasons.join('<br>• ');
         } else {
-          statusOk.className = '';
+          statusOk.classList.remove('hide');
         }
       }
+      btnOvr.classList.remove('hide'); // Always show button
 
-      const img = document.getElementById('in-img'); img.classList.remove('hide');
-      img.style.cursor = 'zoom-in';
+      const img = document.getElementById('in-img'); 
       img.onclick = () => showPhotoPopup();
       const req = indexedDB.open('SiVerifV12_Hyper', 1);
       req.onsuccess = () => {
@@ -1214,7 +1208,7 @@
           if(e.target.result) {
             const blobUrl = URL.createObjectURL(e.target.result);
             img.src = blobUrl;
-            // store full src for popup
+            img.classList.remove('hide'); // SHOW after load
             img.dataset.fullsrc = blobUrl;
           }
         };
