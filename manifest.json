@@ -1,6 +1,6 @@
 {
-  "version": "12.2.9",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.9.zip",
+  "version": "12.3.2",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.3.2.zip",
   "changelog": "v12.2.6 Masterpiece: BULLETPROOF EDITION. Login redundant, Duplicate post-process, dan Stabilitas Total.",
   "required": true,
   "released_at": "2026-05-16"

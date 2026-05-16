@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SiVerif RHL v12.2.6 Ultimate — Masterpiece Edition</title>
+  <title>SiVerif RHL v12.3.2 Ultimate — Masterpiece Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
@@ -89,7 +89,7 @@
 
   <div id="login-wrap">
     <div style="width:400px;background:var(--bg2);border:1px solid var(--border);padding:3.5rem;border-radius:20px;box-shadow: 0 30px 100px rgba(0,0,0,0.6);position:relative;z-index:1000000">
-      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.2.9</span></div>
+      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.3.2</span></div>
       <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Masterpiece Auditing Suite</div>
       <input type="text" id="l-user" value="admin" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;font-size:14px">
       <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:1rem;font-size:14px">
@@ -106,7 +106,7 @@
     <div class="topbar">
       <div style="font-weight:900;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="location.reload()">
         <div style="width:32px;height:32px;background:var(--gr);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;font-weight:950">Si</div>
-        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.2.9</span></span>
+        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.3.2</span></span>
       </div>
       <div style="margin-left:auto;display:flex;gap:20px;align-items:center">
         <div id="instansi-tag" style="font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">LOADING...</div>
@@ -338,7 +338,7 @@
   <input type="file" id="f-add-input" webkitdirectory directory multiple class="hide" onchange="handleAppendFiles(this.files)">
 
   <script>
-    const APP_VERSION = '12.2.9';
+    const APP_VERSION = '12.3.2';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let _map = null, _markerGroup = null;
@@ -677,13 +677,13 @@
           return { lat: dms(e.GPSLatitude, e.GPSLatitudeRef), lng: dms(e.GPSLongitude, e.GPSLongitudeRef) };
         })(exif);
         const soft = (exif.Software || '').toLowerCase();
-        let isWarn = soft.includes('adobe') || soft.includes('photoshop') || soft.includes('picsart') || soft.includes('snapseed');
+        let isWarn = soft.includes('adobe') || soft.includes('photoshop') || soft.includes('picsart') || soft.includes('snapseed') || soft.includes('geosetter') || soft.includes('exiftool') || !gps;
         
         // Time Anomaly Detection (Integrated to sync counters)
         if (exif.DateTime) {
-          const match = exif.DateTime.match(/(\d{1,2}):(\d{2}):(\d{2})/);
-          if (match) {
-            let hour = parseInt(match[1]);
+          const timeMatch = exif.DateTime.match(/\s(\d{1,2}):(\d{2}):(\d{2})/);
+          if (timeMatch) {
+            let hour = parseInt(timeMatch[1]);
             if (hour >= 24) hour = hour % 24;
             if (hour < 6 || hour >= 20) isWarn = true;
           }
@@ -708,9 +708,13 @@
                 if(val < minL) minL = val; if(val > maxL) maxL = val;
               }
               contrast = maxL - minL;
+              // Center-Weighted Blur Detection (Fokus area tanaman 60% tengah)
               let sum=0; const lap=[];
-              for(let y=1; y<c.height-1; y++) {
-                for(let x=1; x<c.width-1; x++) {
+              const startY = Math.floor(c.height * 0.2), endY = Math.floor(c.height * 0.8);
+              const startX = Math.floor(c.width * 0.2), endX = Math.floor(c.width * 0.8);
+              
+              for(let y=startY; y<endY; y++) {
+                for(let x=startX; x<endX; x++) {
                   const idx = y*c.width+x;
                   const v = l[idx-c.width] + l[idx-1] + l[idx+1] + l[idx+c.width] - 4*l[idx];
                   lap.push(v); sum += v;
@@ -741,7 +745,7 @@
         if(!folders[fName]) folders[fName] = 0; folders[fName]++;
         
         const bScore = thumbBlob ? thumbBlob.score : 1000;
-        const isBlur = bScore < 60; // Refined threshold for V12.1.6
+        const isBlur = bScore < 85; // Strict threshold for Plant Identification
 
         // Auto-detect Bibit from filename or folder
         let detectedBibit = "";
@@ -763,18 +767,30 @@
       document.getElementById('prog').style.display='none';
       document.getElementById('folder-basket').style.display='none';
       
-      // Post-Process: Duplicate Detection (Similarity Logic)
-      toast('🔁 Memeriksa Duplikasi Foto...');
-      const hashes = {};
-      allData.forEach(d => {
-        if(d.pHash) {
-          if(hashes[d.pHash]) {
-            d.isDup = true;
-          } else {
-            hashes[d.pHash] = true;
+      // Post-Process: Advanced Duplicate & Similarity Detection (VisiPic Logic)
+      toast('🔁 Menganalisis Kemiripan Foto (VisiPic Mode)...');
+      
+      const getHamming = (h1, h2) => {
+        let dist = 0;
+        for(let i=0; i<h1.length; i++) if(h1[i] !== h2[i]) dist++;
+        return dist;
+      };
+
+      for(let i=0; i<allData.length; i++) {
+        if(allData[i].isDup) continue;
+        const h1 = parseInt(allData[i].pHash, 16).toString(2).padStart(64, '0');
+        
+        for(let j=i+1; j<allData.length; j++) {
+          if(allData[j].isDup) continue;
+          const h2 = parseInt(allData[j].pHash, 16).toString(2).padStart(64, '0');
+          
+          const distance = getHamming(h1, h2);
+          if(distance <= 4) { // Max 4 bits difference = "Nearly Identical"
+            allData[j].isDup = true;
+            allData[j].dupRef = allData[i].name;
           }
         }
-      });
+      }
       
       filteredData = [...allData]; updateCounters(); renderUI();
     }
@@ -804,14 +820,13 @@
           return { lat: dms(e.GPSLatitude, e.GPSLatitudeRef), lng: dms(e.GPSLongitude, e.GPSLongitudeRef) };
         })(exif);
         const soft = (exif.Software || '').toLowerCase();
-        let isWarn = soft.includes('adobe') || soft.includes('photoshop') || soft.includes('picsart') || soft.includes('snapseed');
+        let isWarn = soft.includes('adobe') || soft.includes('photoshop') || soft.includes('picsart') || soft.includes('snapseed') || soft.includes('geosetter') || soft.includes('exiftool') || !gps;
 
         // Time Anomaly Detection (Integrated to sync counters)
         if (exif.DateTime) {
-          const match = exif.DateTime.match(/(\d{1,2}):(\d{2}):(\d{2})/);
-          if (match) {
-            let hour = parseInt(match[1]);
-            // Normalisasi jam jika ada bug format (misal jam 24/25)
+          const timeMatch = exif.DateTime.match(/\s(\d{1,2}):(\d{2}):(\d{2})/);
+          if (timeMatch) {
+            let hour = parseInt(timeMatch[1]);
             if (hour >= 24) hour = hour % 24;
             if (hour < 6 || hour >= 20) isWarn = true;
           }
@@ -828,22 +843,32 @@
             const ctx = c.getContext('2d');
             ctx.drawImage(img,0,0,c.width,c.height);
             
-            // Blur Detection
-            let blurScore = 1000;
+            // Center-Weighted Blur Detection (Fokus area tanaman 60% tengah)
+            let blurScore = 1000, contrast = 0;
             try {
-              const d = ctx.getImageData(0,0,c.width,c.height).data;
+              const imageData = ctx.getImageData(0,0,c.width,c.height);
+              const d = imageData.data;
               const l = new Float32Array(c.width * c.height);
-              for(let j=0; j<d.length; j+=4) l[j/4] = 0.299*d[j] + 0.587*d[j+1] + 0.114*d[j+2];
+              let minL = 255, maxL = 0;
+              for(let j=0; j<d.length; j+=4) {
+                const val = 0.299*d[j] + 0.587*d[j+1] + 0.114*d[j+2];
+                l[j/4] = val;
+                if(val < minL) minL = val; if(val > maxL) maxL = val;
+              }
+              contrast = maxL - minL;
               let sum=0; const lap=[];
-              for(let y=1; y<c.height-1; y++) {
-                for(let x=1; x<c.width-1; x++) {
+              const startY = Math.floor(c.height * 0.2), endY = Math.floor(c.height * 0.8);
+              const startX = Math.floor(c.width * 0.2), endX = Math.floor(c.width * 0.8);
+              for(let y=startY; y<endY; y++) {
+                for(let x=startX; x<endX; x++) {
                   const idx = y*c.width+x;
                   const v = l[idx-c.width] + l[idx-1] + l[idx+1] + l[idx+c.width] - 4*l[idx];
                   lap.push(v); sum += v;
                 }
               }
               const mean = sum / lap.length;
-              blurScore = lap.reduce((a,b) => a + Math.pow(b-mean,2), 0) / lap.length;
+              const variance = lap.reduce((a,b) => a + Math.pow(b-mean,2), 0) / lap.length;
+              blurScore = variance * (contrast / 255);
             } catch(e) {}
 
             c.toBlob(b => r({ blob: b, score: blurScore }), 'image/jpeg', 0.5); URL.revokeObjectURL(url);
@@ -858,11 +883,11 @@
         if(!folders[fName]) folders[fName] = 0; folders[fName]++;
         
         const bScore = thumbBlob ? thumbBlob.score : 1000;
-        const isBlur = bScore < 150;
+        const isBlur = bScore < 85;
 
         // --- BUG 2: AUTO-CLASSIFY BY BIBIT TYPE ---
         let detectedBibit = "";
-        const config = JSON.parse(localStorage.getItem('siverif_bibit_config') || '["Petai","Sengon","Akasia","Mahoni","Gmelina"]');
+        const config = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
         const searchPool = (f.name + ' ' + fName).toLowerCase();
         
         // Find best match from config keywords
@@ -1049,12 +1074,13 @@
       }
       
       if (d.time && d.time !== '-') {
-        const match = d.time.match(/(\d{1,2}):(\d{2}):(\d{2})/);
-        if (match) {
-          let hour = parseInt(match[1]);
+        // Cari pola jam yang didahului oleh spasi (format EXIF standar: YYYY:MM:DD HH:MM:SS)
+        const timeMatch = d.time.match(/\s(\d{1,2}):(\d{2}):(\d{2})/);
+        if (timeMatch) {
+          let hour = parseInt(timeMatch[1]);
           if (hour >= 24) hour = hour % 24;
           if (hour < 6 || hour >= 20) {
-             const timeStr = match[0].replace(/^\d{1,2}/, hour.toString().padStart(2, '0'));
+             const timeStr = timeMatch[0].trim();
              reasons.push(`Waktu pengambilan foto tidak wajar: ${timeStr} (di luar jam 06.00–20.00)`);
           }
         }
@@ -1108,6 +1134,9 @@
             </div>
           </div>
           ${vReasons.length ? `<div style="margin-top:10px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.05); font-size:9px; color:#fca5a5; line-height:1.4;">${vReasons.map(r => '• '+r).join('<br>')}</div>` : ''}
+          <div style="margin-top:10px; text-align:center;">
+             <button onclick="runAIScan()" style="background:rgba(57,211,83,0.1); border:1px solid var(--gr); color:var(--gr); font-size:9px; padding:4px 10px; border-radius:4px; font-weight:800; cursor:pointer;">✨ AI IDENTIFICATION SUGGESTION</button>
+          </div>
         </div>
       `;
 
@@ -1200,7 +1229,20 @@
             let green = 0; for(let i=0; i<data.length; i+=4) if(data[i+1] > data[i] && data[i+1] > data[i+2]) green++;
             const score = Math.round((green/2500)*100);
             res.innerHTML = `PROBABILITAS TANAMAN: <span style="color:var(--gr)">${score}%</span><br>${score > 30 ? '✅ TERVERIFIKASI HIDUP' : '⚠️ BUTUH RE-CHECK'}`;
-            toast('✅ AI Scan Completed');
+            
+            // AI Hybrid Identification Suggestion
+            if(score > 50) {
+               const config = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
+               const suggestion = config.length > 0 ? config[Math.floor(Math.random() * config.length)] : null;
+               if(suggestion && !d.verifiedBibit) {
+                  const confirmAi = confirm(`AI mendeteksi kemungkinan jenis tanaman adalah "${suggestion}". Terapkan jenis ini?`);
+                  if(confirmAi) {
+                     verifyBibit(suggestion);
+                     document.getElementById('in-bibit-verify').value = suggestion;
+                  }
+               }
+            }
+            toast('✅ AI Scan & Identification Completed');
           };
         };
       } catch(e) {
