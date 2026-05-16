@@ -44,9 +44,9 @@ app.get('/', (req, res) => {
 
 app.get('/api/system', (req, res) => {
   res.json({
-    current_version: '12.1.1',
-    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.1.zip',
-    changelog: 'Fix: Pesan error pendaftaran tidak lagi menampilkan \'undefined\''
+    current_version: '12.1.4',
+    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.4.zip',
+    changelog: 'Update v12.1.4: Fix Layout, AI Scan, High-Res Zoom, and Admin Panel Control.'
   });
 });
 
@@ -131,30 +131,63 @@ app.get('/api/admin/licenses', verifyAdmin, async (req, res) => {
     .from('licenses')
     .select('*')
     .order('created_at', { ascending: false })
-    .limit(500);
+    .limit(1000);
   if (error) return res.status(500).json({ error: error.message });
-  res.json({ data }); // Admin Panel expects { data: [] }
+  res.json({ data });
+});
+
+// GET Detail
+app.get('/api/admin/licenses/:key', verifyAdmin, async (req, res) => {
+  const { key } = req.params;
+  try {
+    const { data: l, error } = await supabase
+      .from('licenses')
+      .select('*')
+      .eq('license_key', key)
+      .single();
+    if (error || !l) return res.status(404).json({ error: 'Lisensi tidak ditemukan' });
+    const { data: logs } = await supabase.from('activity_log').select('*').eq('license_key', key).order('created_at', { ascending: false }).limit(10);
+    res.json({ ...l, recent_logs: logs || [] });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.post('/api/admin/licenses', verifyAdmin, async (req, res) => {
-  const { user_name, instansi, tier, valid_until } = req.body;
+  const { user_name, instansi, tier, valid_until, email, whatsapp } = req.body;
   const key = `SVR-${crypto.randomBytes(3).toString('hex').toUpperCase()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
   const { error } = await supabase
     .from('licenses')
-    .insert([{ license_key: key, user_name, instansi, tier: tier || 'full', valid_until: valid_until || null }]);
+    .insert([{ license_key: key, user_name, instansi, tier: tier || 'full', valid_until: valid_until || null, email, whatsapp }]);
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true, license_key: key });
 });
 
-app.put('/api/admin/licenses/:id', verifyAdmin, async (req, res) => {
-  const { user_name, instansi, status, tier, valid_until, notes } = req.body;
-  const { error } = await supabase.from('licenses').update({ user_name, instansi, status, tier, valid_until, notes }).eq('id', req.params.id);
+app.patch('/api/admin/licenses/:key/status', verifyAdmin, async (req, res) => {
+  const { error } = await supabase.from('licenses').update({ status: req.body.status }).eq('license_key', req.params.key);
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
 
-app.delete('/api/admin/licenses/:id', verifyAdmin, async (req, res) => {
-  const { error } = await supabase.from('licenses').delete().eq('id', req.params.id);
+app.patch('/api/admin/licenses/:key/reset-device', verifyAdmin, async (req, res) => {
+  const { error } = await supabase.from('licenses').update({ device_id: null, device_locked: false }).eq('license_key', req.params.key);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json({ success: true });
+});
+
+app.patch('/api/admin/licenses/:key/extend', verifyAdmin, async (req, res) => {
+  try {
+    const { data: l } = await supabase.from('licenses').select('valid_until').eq('license_key', req.params.key).single();
+    if (!l) return res.status(404).json({ error: 'Lisensi tidak ditemukan' });
+    let newDate = l.valid_until ? new Date(l.valid_until) : new Date();
+    if (newDate < new Date()) newDate = new Date();
+    newDate.setDate(newDate.getDate() + parseInt(req.body.days));
+    const { error } = await supabase.from('licenses').update({ valid_until: newDate.toISOString() }).eq('license_key', req.params.key);
+    if (error) throw error;
+    res.json({ success: true, new_valid_until: newDate.toISOString() });
+  } catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+app.delete('/api/admin/licenses/:key', verifyAdmin, async (req, res) => {
+  const { error } = await supabase.from('licenses').delete().eq('license_key', req.params.key);
   if (error) return res.status(500).json({ error: error.message });
   res.json({ success: true });
 });
@@ -162,29 +195,21 @@ app.delete('/api/admin/licenses/:id', verifyAdmin, async (req, res) => {
 // ── ADMIN: PENDING REGISTRATIONS ──
 
 app.get('/api/admin/pending', verifyAdmin, async (req, res) => {
-  const { data, error } = await supabase
-    .from('pending_registrations')
-    .select('*')
-    .order('created_at', { ascending: false });
+  const { data, error } = await supabase.from('pending_registrations').select('*').order('created_at', { ascending: false });
   if (error) return res.status(500).json({ error: error.message });
-  res.json(data); // Admin Panel expects array directly
+  res.json(data);
 });
 
 app.post('/api/admin/pending/:id/approve', verifyAdmin, async (req, res) => {
   const { id } = req.params;
-  const { tier, valid_until, device_locked } = req.body;
+  const { tier, valid_until } = req.body;
   try {
     const { data: reg } = await supabase.from('pending_registrations').select('*').eq('id', id).single();
     if (!reg) return res.status(404).json({ error: 'Data tidak ditemukan' });
-    
     const key = `SVR-${crypto.randomBytes(3).toString('hex').toUpperCase()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
-    const { error: iErr } = await supabase.from('licenses').insert([{
-      license_key: key, user_name: reg.user_name, instansi: reg.instansi,
-      email: reg.email, whatsapp: reg.whatsapp, device_id: reg.device_id,
-      tier: tier || 'full', status: 'active', valid_until: valid_until || null
+    await supabase.from('licenses').insert([{
+      license_key: key, user_name: reg.user_name, instansi: reg.instansi, email: reg.email, whatsapp: reg.whatsapp, device_id: reg.device_id, tier: tier || 'full', status: 'active', valid_until: valid_until || null
     }]);
-    if (iErr) throw iErr;
-    
     await supabase.from('pending_registrations').update({ status: 'approved' }).eq('id', id);
     res.json({ success: true, license_key: key });
   } catch (e) { res.status(500).json({ error: e.message }); }
@@ -200,9 +225,9 @@ app.post('/api/admin/pending/:id/reject', verifyAdmin, async (req, res) => {
 
 app.get('/api/admin/logs', verifyAdmin, async (req, res) => {
   const { action, limit } = req.query;
-  let query = supabase.from('activity_log').select('*').order('created_at', { ascending: false }).limit(limit || 200);
-  if (action) query = query.eq('action', action);
-  const { data, error } = await query;
+  let q = supabase.from('activity_log').select('*').order('created_at', { ascending: false }).limit(limit || 200);
+  if (action) q = q.eq('action', action);
+  const { data, error } = await q;
   if (error) return res.status(500).json({ error: error.message });
   res.json(data);
 });
@@ -211,35 +236,24 @@ app.get('/api/admin/logs', verifyAdmin, async (req, res) => {
 
 app.post('/api/register', async (req, res) => {
   const { user_name, instansi, email, whatsapp, device_id } = req.body;
-  if (!user_name || !email) return res.status(400).json({ success: false, error: 'Nama dan email wajib diisi' });
-  const { error } = await supabase
-    .from('pending_registrations')
-    .insert([{ user_name, instansi: instansi || 'Umum', email, whatsapp: whatsapp || '', device_id: device_id || '', status: 'pending' }]);
+  const { error } = await supabase.from('pending_registrations').insert([{ user_name, instansi, email, whatsapp, device_id, status: 'pending' }]);
   if (error) return res.status(500).json({ success: false, error: error.message });
   res.json({ success: true });
 });
 
 app.post('/api/validate', async (req, res) => {
-  const { license_key } = req.body;
+  const { license_key, device_id } = req.body;
   try {
-    const { data, error } = await supabase
-      .from('licenses')
-      .select('*')
-      .eq('license_key', license_key?.toUpperCase())
-      .eq('status', 'active')
-      .single();
-
+    const { data, error } = await supabase.from('licenses').select('*').eq('license_key', license_key?.toUpperCase()).eq('status', 'active').single();
     if (data && !error) {
-      // Log validation (optional)
+      if (data.device_locked && data.device_id && data.device_id !== device_id) return res.json({ valid: false, error: 'Lisensi terkunci di perangkat lain' });
       await supabase.from('activity_log').insert([{ action: 'VALIDATE_OK', license_key, info: 'Validasi Berhasil' }]);
-      // Update check count
       await supabase.from('licenses').update({ check_count: (data.check_count || 0) + 1, last_check: new Date() }).eq('id', data.id);
       return res.json({ valid: true, user_name: data.user_name, instansi: data.instansi });
     }
-    res.json({ valid: false, error: 'Lisensi Tidak Valid atau Nonaktif' });
+    res.json({ valid: false, error: 'Lisensi Tidak Valid' });
   } catch (e) { res.json({ valid: false, error: 'Koneksi database terputus' }); }
 });
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
 module.exports = app;
