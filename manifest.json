@@ -1,7 +1,7 @@
 {
   "version": "12.1.4",
   "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.4.zip",
-  "changelog": "Update v12.1.4: Fix Layout Inspector (Kanan), Fix AI Scan reactivity, Fix High-Res Photo Zoom, Fix Sidebar Stats, Fix Tabulasi Manual & Export CSV.",
+  "changelog": "FINAL v12.1.4 (Update 11:10 AM): Perbaikan Layout Sidebar, AI Scan Hyper-Engine, dan High-Resolution Zoom Photo.",
   "required": true,
   "released_at": "2026-05-16"
 }
