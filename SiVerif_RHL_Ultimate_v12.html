@@ -89,7 +89,7 @@
 
   <div id="login-wrap">
     <div style="width:400px;background:var(--bg2);border:1px solid var(--border);padding:3.5rem;border-radius:20px;box-shadow: 0 30px 100px rgba(0,0,0,0.6);position:relative;z-index:1000000">
-      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.2.6</span></div>
+      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.2.8</span></div>
       <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Masterpiece Auditing Suite</div>
       <input type="text" id="l-user" value="admin" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;font-size:14px">
       <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:1rem;font-size:14px">
@@ -106,7 +106,7 @@
     <div class="topbar">
       <div style="font-weight:900;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="location.reload()">
         <div style="width:32px;height:32px;background:var(--gr);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;font-weight:950">Si</div>
-        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.2.6</span></span>
+        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.2.8</span></span>
       </div>
       <div style="margin-left:auto;display:flex;gap:20px;align-items:center">
         <div id="instansi-tag" style="font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">LOADING...</div>
@@ -181,7 +181,8 @@
                <option value="">🌱 Set Bibit Terpilih...</option>
             </select>
             <select id="sort-by" onchange="handleSort()" style="padding:10px;background:var(--bg3);color:#fff;border:1px solid var(--border2);border-radius:8px;outline:none;font-weight:800;cursor:pointer">
-              <option value="name">Sort by: Nama</option>
+              <option value="group">Kategori Forensic</option>
+              <option value="bibit">Jenis Bibit (Auto)</option>
               <option value="time">Sort by: Waktu</option>
               <option value="warn">Sort by: Forensic Status</option>
               <option value="group">Sort by: Kriteria Grup</option>
@@ -198,9 +199,13 @@
               📂 INPUT LOKASI (SHP/KML/GPX)
               <input type="file" id="kml-input" accept=".kml,.kmz,.gpx,.zip" style="display:none" onchange="importLokasi(this)">
             </label>
-            <div id="layer-control-panel" style="background:var(--bg2); border:1px solid var(--border); border-radius:6px; padding:10px; font-size:10px; display:none;">
-               <div style="font-weight:800; margin-bottom:5px; color:var(--gr);">Layer Aktif</div>
-               <div id="active-layers-list" style="display:flex; flex-direction:column; gap:5px;"></div>
+            <div id="layer-control-panel" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; width:220px; box-shadow:0 10px 30px rgba(0,0,0,0.5); overflow:hidden; display:none;">
+               <div style="background:var(--bg3); padding:8px 12px; font-weight:900; font-size:11px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border);">
+                 <span style="color:var(--gr)">🗺️ LAYER MANAGER</span>
+                 <span onclick="this.parentElement.parentElement.classList.toggle('collapsed')" style="cursor:pointer; opacity:0.5;">▼</span>
+               </div>
+               <div id="active-layers-list" style="padding:10px; display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto;"></div>
+               <style>#layer-control-panel.collapsed #active-layers-list { display:none; }</style>
             </div>
             <button class="map-btn" onclick="exportPDF()">🖨️ EXPORT PDF</button>
             <button class="map-btn" onclick="exportJPG()">🖼️ EXPORT JPG</button>
@@ -221,7 +226,7 @@
             </div>
           </div>
           <table class="tab-table">
-            <thead><tr><th>No</th><th>Nama Kelompok</th><th>Jenis Bibit</th><th>Total Foto</th><th>Foto Valid</th><th>Foto Manipulasi</th><th>Foto Blur</th><th>Foto Duplikat</th><th>Target 10%</th><th>Target 20%</th><th>Keterangan</th><th>Aksi</th></tr></thead>
+            <thead><tr><th>No</th><th>Nama Folder</th><th>Jenis Bibit</th><th>Jml Foto</th><th>Valid</th><th>Invalid</th><th>V-Score</th><th>Status</th></tr></thead>
             <tbody id="tab-body"></tbody>
           </table>
         </div>
@@ -855,14 +860,41 @@
         const bScore = thumbBlob ? thumbBlob.score : 1000;
         const isBlur = bScore < 150;
 
-        // Auto-detect Bibit from filename or folder
+        // --- BUG 2: AUTO-CLASSIFY BY BIBIT TYPE ---
         let detectedBibit = "";
-        const config = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
+        const config = JSON.parse(localStorage.getItem('siverif_bibit_config') || '["Petai","Sengon","Akasia","Mahoni","Gmelina"]');
         const searchPool = (f.name + ' ' + fName).toLowerCase();
-        const found = config.find(b => searchPool.includes(b.toLowerCase()));
-        if (found) detectedBibit = found;
+        
+        // Find best match from config keywords
+        for (const b of config) {
+          if (searchPool.includes(b.toLowerCase())) {
+            detectedBibit = b;
+            break;
+          }
+        }
 
-        allData.push({ id, name: f.name, path: f.path || null, gps, folder: fName, soft: exif.Software || '-', time: exif.DateTime || '-', isWarn, isBlur, blurScore: Math.round(bScore), size: f.size, raw: f, verifiedBibit: detectedBibit });
+        allData.push({ 
+          id, 
+          name: f.name, 
+          path: f.path || null, 
+          gps, 
+          folder: fName, 
+          soft: exif.Software || '-', 
+          time: exif.DateTime || '-', 
+          isWarn, 
+          isBlur, 
+          blurScore: Math.round(bScore), 
+          size: f.size, 
+          raw: f, 
+          verifiedBibit: detectedBibit // AUTO-ASSIGNED
+        });
+        
+        // Sync to tabulation data automatically
+        if (detectedBibit) {
+           const key = `row_${fName}`;
+           if (!tabData[key]) tabData[key] = { bibit: detectedBibit };
+           else if (!tabData[key].bibit) tabData[key].bibit = detectedBibit;
+        }
         added++;
 
         if(i % 5 === 0 || i === files.length-1) {
@@ -908,6 +940,9 @@
     }
 
     function getGroup(d) {
+        const sortType = document.getElementById('sort-by').value;
+        if (sortType === 'bibit') return d.verifiedBibit || "📂 Belum Teridentifikasi";
+        
         if (d.isWarn && !overrides[d.id]) return "⚠️ Manipulasi Digital";
         if (d.isBlur) return "🌫️ Blur";
         if (d.isDup) return "🔁 Duplikat";
@@ -950,7 +985,7 @@
             <div class="c-img"></div><div class="c-info"><div class="c-name">${d.name}</div></div>
             ${d.gps?'<span class="badge" style="background:var(--gr);color:#000">GPS</span>':''}
             ${d.isWarn && !overrides[d.id] ?'<span class="badge" style="top:20px;background:var(--red);color:#fff">EDITED</span>':''}
-            ${overrides[d.id] ?'<span class="badge" style="top:20px;background:var(--blue);color:#fff">VALID</span>':''}`;
+            ${overrides[d.id] ?'<span class="badge" style="top:20px;background:var(--gr);color:#000">&#10003; VALID</span>':''}`;
           if (selIds.has(d.id)) card.querySelector('.chk-mark').style.display = 'flex';
           db.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = e => {
             if(e.target.result) card.querySelector('.c-img').innerHTML = `<img src="${URL.createObjectURL(e.target.result)}">`;
@@ -1029,14 +1064,60 @@
           reasons.push(`⚠️ FOTO BLUR — Kualitas tidak memenuhi standar (Score: ${d.blurScore}). Saran: Ambil ulang foto dengan kamera stabil.`);
       }
 
-      // Tampilkan status
-      const ovr = overrides[d.id];
-      const warnDiv = document.getElementById('in-warn');
-      const reasonDiv = document.getElementById('in-warn-reason');
-      const btnOvr = document.getElementById('btn-override');
-      const statusOk = document.getElementById('in-status-ok');
-      const statusOvr = document.getElementById('in-status-override');
-      const ovrReason = document.getElementById('in-override-reason');
+      // --- BUG 2: VERIFIKASI JENIS BIBIT ---
+      const assignedBibit = d.verifiedBibit || "Belum Ditentukan";
+      const filenamePool = (d.name + " " + d.folder).toLowerCase();
+      const typeMatch = assignedBibit !== "Belum Ditentukan" && filenamePool.includes(assignedBibit.toLowerCase());
+      
+      let vScore = 100;
+      const vReasons = [];
+      
+      // A. Validasi Kesesuaian Jenis (Seedling Type Matching)
+      if (assignedBibit === "Belum Ditentukan") {
+        vScore -= 50; vReasons.push("❓ Jenis Bibit Belum Diset");
+      } else if (!typeMatch) {
+        vScore -= 30; vReasons.push(`❌ Ketidakcocokan Jenis: Label "${assignedBibit}" tidak ditemukan di Nama File`);
+      }
+
+      // B. Validasi Lokasi & Metadata (Forensic Bibit)
+      if(!d.gps) { vScore -= 20; vReasons.push("📍 Lokasi GPS Tidak Ada"); }
+      else {
+        const sameGps = allData.filter(x => x.id !== d.id && x.gps && x.gps.lat === d.gps.lat && x.gps.lng === d.gps.lng);
+        if(sameGps.length > 0) { vScore -= 40; vReasons.push(`🚩 GPS Duplikat (${sameGps.length} foto lain)`); }
+      }
+      
+      if(d.isWarn) { vScore -= 20; vReasons.push("⚠️ Anomali Metadata (Manipulasi)"); }
+      
+      vScore = Math.max(0, vScore);
+      let vStatus = 'PASS', vColor = 'var(--gr)';
+      if(vScore < 40) { vStatus = 'FAIL'; vColor = 'var(--red)'; }
+      else if(vScore < 75) { vStatus = 'WARNING'; vColor = 'var(--amber)'; }
+      
+      const vHtml = `
+        <div style="background:rgba(57,211,83,0.05); border:1px solid ${vColor}; padding:12px; border-radius:10px; margin-bottom:15px; position:relative; overflow:hidden;">
+          <div style="position:absolute; top:-10px; right:-10px; font-size:40px; opacity:0.1; color:${vColor}">${vStatus === 'PASS' ? '✓' : '⚠'}</div>
+          <div style="font-size:9px; font-weight:900; color:var(--tx3); text-transform:uppercase; letter-spacing:1px; margin-bottom:5px;">Verifikasi Jenis Bibit</div>
+          <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+            <div>
+              <div style="font-size:18px; font-weight:950; color:${vColor}">${assignedBibit}</div>
+              <div style="font-size:10px; color:var(--tx2)">Hasil: <b style="color:${vColor}">${vStatus}</b></div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:24px; font-weight:950; color:${vColor}">${vScore}%</div>
+              <div style="font-size:8px; color:var(--tx3); font-weight:800;">VERIFICATION SCORE</div>
+            </div>
+          </div>
+          ${vReasons.length ? `<div style="margin-top:10px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.05); font-size:9px; color:#fca5a5; line-height:1.4;">${vReasons.map(r => '• '+r).join('<br>')}</div>` : ''}
+        </div>
+      `;
+
+      // Update Inspector UI
+      const inData = document.getElementById('in-data');
+      if(!inData.querySelector('.v-box')) {
+        const vb = document.createElement('div'); vb.className = 'v-box';
+        inData.insertBefore(vb, inData.firstChild);
+      }
+      inData.querySelector('.v-box').innerHTML = vHtml;
 
       if (ovr) {
         warnDiv.className = 'hide';
@@ -1346,55 +1427,78 @@
       const b = document.getElementById('tab-body');
       let html = '';
       let no = 1;
+      let tTotal = 0, tValid = 0, tInvalid = 0, tScoreSum = 0, tScoreCount = 0;
 
-      // 1. Render data from folders
-      html += Object.keys(folders).map((n, i) => {
-        const folderPhotos = allData.filter(d => d.folder === n);
-        const validCount = folderPhotos.filter(d => !d.isWarn || overrides[d.id]).length;
-        const warnCount  = folderPhotos.filter(d => d.isWarn && !overrides[d.id]).length;
-        const blurCount  = folderPhotos.filter(d => d.isBlur).length;
-        const dupCount   = folderPhotos.filter(d => d.isDup).length;
+      Object.keys(folders).forEach(n => {
+        const fp = allData.filter(d => d.folder === n);
+        const vCount = fp.filter(d => (!d.isWarn && !d.isBlur) || overrides[d.id]).length;
+        const iCount = fp.length - vCount;
         
-        const key = `row_${n}`;
-        const bibit = tabData[key]?.bibit || (folderPhotos[0]?.verifiedBibit) || 'Tidak Diketahui';
-        const ket   = tabData[key]?.ket || '-';
+        // Calculate Avg Verification Score for this folder/seedling item
+        let fScoreSum = 0;
+        fp.forEach(d => {
+           const assignedBibit = d.verifiedBibit || "Belum Ditentukan";
+           const filenamePool = (d.name + " " + d.folder).toLowerCase();
+           const typeMatch = assignedBibit !== "Belum Ditentukan" && filenamePool.includes(assignedBibit.toLowerCase());
+           let s = 100;
+           if (assignedBibit === "Belum Ditentukan") s -= 50; else if (!typeMatch) s -= 30;
+           if(!d.gps) s -= 20; else if(allData.some(x => x.id !== d.id && x.gps && x.gps.lat === d.gps.lat && x.gps.lng === d.gps.lng)) s -= 40;
+           if(d.isWarn) s -= 20;
+           fScoreSum += Math.max(0, s);
+        });
+        const fAvgScore = fp.length > 0 ? Math.round(fScoreSum / fp.length) : 0;
+        
+        tTotal += fp.length; tValid += vCount; tInvalid += iCount;
+        tScoreSum += fScoreSum; tScoreCount += fp.length;
 
-        return `<tr>
+        const key = `row_${n}`;
+        const bibit = tabData[key]?.bibit || (fp[0]?.verifiedBibit) || '—';
+        const status = (fAvgScore >= 75 && (vCount/fp.length) >= 0.8) ? 'LULUS' : 'RE-AUDIT';
+        const sColor = status === 'LULUS' ? 'var(--gr)' : 'var(--red)';
+
+        html += `<tr>
           <td>${no++}</td>
           <td><b>${n}</b></td>
-          <td contenteditable="true" onblur="updateTabData('${key}', 'bibit', this.textContent)" class="editable">${bibit}</td>
-          <td>${folders[n]}</td>
-          <td style="color:var(--gr); font-weight:800">${validCount}</td>
-          <td style="color:var(--red)">${warnCount}</td>
-          <td>${blurCount}</td>
-          <td>${dupCount}</td>
-          <td style="color:var(--amber); font-weight:800">${Math.ceil(validCount*0.1)}</td>
-          <td style="color:var(--amber); font-weight:800">${Math.ceil(validCount*0.2)}</td>
-          <td contenteditable="true" onblur="updateTabData('${key}', 'ket', this.textContent)" class="editable">${ket}</td>
-          <td><button onclick="deleteTabRow('${key}')" style="background:none; border:none; color:var(--red); cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+          <td>${bibit}</td>
+          <td>${fp.length}</td>
+          <td style="color:var(--gr)">${vCount}</td>
+          <td style="color:var(--red)">${iCount}</td>
+          <td style="font-weight:900; color:var(--blue)">${fAvgScore}%</td>
+          <td style="color:${sColor}; font-weight:900">${status}</td>
         </tr>`;
-      }).join('');
-
-      // 2. Render manual inputs
-      const manuals = Object.keys(tabData).filter(k => k.startsWith('manual_'));
-      html += manuals.map(k => {
+      });
+      
+      // Manual entries excluded from complex scoring for simplicity
+      Object.keys(tabData).filter(k => k.startsWith('manual_')).forEach(k => {
         const d = tabData[k];
-        return `<tr style="background:rgba(88,166,255,0.02)">
+        const tot = parseInt(d.total)||0;
+        const val = parseInt(d.valid)||0;
+        const inv = tot - val;
+        const pct = tot > 0 ? Math.round((val / tot) * 100) : 0;
+        tTotal += tot; tValid += val; tInvalid += inv;
+        html += `<tr style="background:rgba(88,166,255,0.02)">
           <td>${no++}</td>
-          <td contenteditable="true" class="editable" style="color:var(--blue);font-weight:700" onblur="updateTabData('${k}','folder',this.textContent)">${d.folder||'Input Manual'}</td>
-          <td contenteditable="true" class="editable" onblur="updateTabData('${k}','bibit',this.textContent)">${d.bibit||'—'}</td>
-          <td contenteditable="true" class="editable" onblur="updateTabData('${k}','total',this.textContent)">${d.total||0}</td>
-          <td contenteditable="true" class="editable" onblur="updateTabData('${k}','valid',this.textContent)" style="color:var(--gr);font-weight:800">${d.valid||0}</td>
-          <td contenteditable="true" class="editable" onblur="updateTabData('${k}','warn',this.textContent)" style="color:var(--red)">${d.warn||0}</td>
-          <td contenteditable="true" class="editable" onblur="updateTabData('${k}','blur',this.textContent)">${d.blur||0}</td>
-          <td contenteditable="true" class="editable" onblur="updateTabData('${k}','dup',this.textContent)">${d.dup||0}</td>
-          <td style="color:var(--amber); font-weight:800">${Math.ceil((parseInt(d.valid)||0)*0.1)}</td>
-          <td style="color:var(--amber); font-weight:800">${Math.ceil((parseInt(d.valid)||0)*0.2)}</td>
-          <td contenteditable="true" class="editable" onblur="updateTabData('${k}','ket',this.textContent)">${d.ket||'—'}</td>
-          <td><button onclick="deleteTabRow('${k}')" style="background:none; border:none; color:var(--red); cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+          <td contenteditable="true" class="editable" onblur="updateTabData('${k}','folder',this.textContent)">${d.folder||'Manual'}</td>
+          <td>${d.bibit||'—'}</td>
+          <td>${tot}</td>
+          <td>${val}</td>
+          <td>${inv}</td>
+          <td>${pct}%</td>
+          <td>${pct >= 80 ? 'LULUS' : 'RE-AUDIT'}</td>
         </tr>`;
-      }).join('');
+      });
 
+      if(tTotal > 0) {
+        const totalAvgScore = tScoreCount > 0 ? Math.round(tScoreSum / tScoreCount) : 0;
+        html += `<tr style="background:var(--bg3); font-weight:900; border-top:2px solid var(--border)">
+          <td colspan="3">TOTAL RINGKASAN AUDIT</td>
+          <td>${tTotal}</td>
+          <td style="color:var(--gr)">${tValid}</td>
+          <td style="color:var(--red)">${tInvalid}</td>
+          <td style="color:var(--blue)">${totalAvgScore}%</td>
+          <td>—</td>
+        </tr>`;
+      }
       b.innerHTML = html;
     }
 
@@ -1487,8 +1591,27 @@
       if(document.getElementById('c-dup'))      document.getElementById('c-dup').textContent = dupCount;
       if(document.getElementById('c-blur'))     document.getElementById('c-blur').textContent = allData.filter(d => d.isBlur).length;
       if(document.getElementById('c-override')) document.getElementById('c-override').textContent = ovr;
-      renderSetTab(); // Sync sidebar bibit stats
-      renderTabulasi(); // Sync tabulation table
+    function renderSetTab() {
+       const list = document.getElementById('sb-bibit-list');
+       if(!list) return;
+       
+       const types = [...new Set(allData.map(d => d.verifiedBibit).filter(Boolean))];
+       if(types.length === 0) {
+         list.innerHTML = '<div style="padding:10px; font-size:10px; opacity:0.5;">Belum ada bibit terdeteksi</div>';
+         return;
+       }
+       
+       list.innerHTML = types.map(t => {
+         const count = allData.filter(d => d.verifiedBibit === t).length;
+         const isActive = bibitFilter === t;
+         return `
+           <div class="sb-item ${isActive ? 'active' : ''}" onclick="filterByBibit('${t}')" style="margin-bottom:2px">
+             <i class="fas fa-seedling" style="margin-right:10px; color:var(--gr)"></i>
+             <span>${t}</span>
+             <span class="count" style="background:rgba(57,211,83,0.1); color:var(--gr); padding:2px 6px; border-radius:10px; font-size:9px; margin-left:auto;">${count}</span>
+           </div>
+         `;
+       }).join('');
     }
 
     function resetApp() {
@@ -1532,23 +1655,24 @@
       const ids = selIds.size > 0 ? Array.from(selIds) : (curInspectorId ? [curInspectorId] : []);
       if (!ids.length) return toast('Pilih minimal satu foto.');
       
-      const count = ids.length;
-      let reason = prompt(count > 1 ? `Alasan validasi manual untuk ${count} foto:` : 'Alasan validasi manual:');
-      if (reason === null) return;
-      if (!reason.trim()) reason = 'Divalidasi manual oleh Admin';
+      const firstId = ids[0];
+      const isRemoving = !!overrides[firstId];
       
-      ids.forEach(id => overrides[id] = reason);
-      localStorage.setItem('siverif_overrides', JSON.stringify(overrides));
-      
-      updateCounters();
-      
-      // Update specific card UI without full re-render if single
-      if (ids.length === 1) {
-         renderGallery(false); // temporary full re-render to ensure badges update correctly
+      if (isRemoving) {
+        if(!confirm(`Batalkan validasi manual untuk ${ids.length} foto?`)) return;
+        ids.forEach(id => delete overrides[id]);
+        toast(`✅ Validasi dibatalkan untuk ${ids.length} foto`);
       } else {
-         pageOffset = 0;
-         renderGallery(false);
+        let reason = prompt(ids.length > 1 ? `Alasan validasi manual untuk ${ids.length} foto:` : 'Alasan validasi manual:');
+        if (reason === null) return;
+        if (!reason.trim()) reason = 'Divalidasi manual oleh Admin';
+        ids.forEach(id => overrides[id] = reason);
+        toast(`✅ ${ids.length} Foto Berhasil Di-Override`);
       }
+      
+      localStorage.setItem('siverif_overrides', JSON.stringify(overrides));
+      updateCounters();
+      renderGallery(false);
       
       if (curInspectorId) {
         const d = allData.find(x => x.id === curInspectorId);
@@ -1556,7 +1680,6 @@
       }
       selIds.clear();
       updateSelCount();
-      toast(`✅ ${count} Foto Berhasil Di-Override`);
     }
 
     function handleSort() {
@@ -1604,14 +1727,19 @@
     }
 
     function filterByBibit(val) {
-       bibitFilter = val;
-       filteredData = allData.filter(d => {
-          const key = d.verifiedBibit || (tabData[`row_${d.folder}`]?.bibit) || 'Tidak Diketahui';
-          return key === val;
-       });
+       if (bibitFilter === val) {
+         bibitFilter = null;
+         filteredData = [...allData];
+         document.querySelectorAll('.sb-item').forEach(x => x.classList.remove('active'));
+         document.querySelector('.sb-item[data-t="all"]').classList.add('active');
+       } else {
+         bibitFilter = val;
+         filteredData = allData.filter(d => d.verifiedBibit === val);
+         document.querySelectorAll('.sb-item').forEach(x => x.classList.remove('active'));
+       }
        pageOffset = 0;
        renderGallery(false);
-       renderSetTab(); // update sidebar active state
+       renderSetTab();
     }
 
     function showPhotoPopup() {
@@ -1752,50 +1880,93 @@
        const list = document.getElementById('active-layers-list');
        if(userLayers.length === 0) { panel.style.display = 'none'; return; }
        panel.style.display = 'block';
-       list.innerHTML = userLayers.map(ul => `
-         <div style="background:var(--bg3); padding:6px; border-radius:4px; border:1px solid var(--border);">
-           <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-             <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:120px;" title="${ul.name}">${ul.name}</span>
-             <button onclick="zoomToUserLayer(${ul.id})" style="background:var(--blue); color:#fff; border:none; border-radius:3px; font-size:8px; cursor:pointer; padding:2px 5px;">ZOOM</button>
+       
+       list.innerHTML = userLayers.map((ul, idx) => `
+         <div class="layer-item" draggable="true" ondragstart="handleLayerDragStart(${idx})" ondragover="event.preventDefault()" ondrop="handleLayerDrop(${idx})" style="background:var(--bg3); padding:8px; border-radius:6px; border:1px solid var(--border); cursor:grab;">
+           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+             <div style="display:flex; align-items:center; gap:8px; flex:1; overflow:hidden;">
+               <input type="checkbox" ${ul.visible !== false ? 'checked' : ''} onchange="toggleLayerVisibility(${ul.id}, this.checked)" style="cursor:pointer">
+               <span style="font-weight:700; font-size:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${ul.name}">${ul.name}</span>
+             </div>
+             <div style="display:flex; gap:4px;">
+               <button onclick="zoomToUserLayer(${ul.id})" style="background:var(--blue); color:#fff; border:none; border-radius:3px; font-size:8px; padding:2px 5px; cursor:pointer;">ZOOM</button>
+               <button onclick="deleteLayer(${ul.id})" style="background:rgba(248,81,73,0.1); color:var(--red); border:1px solid var(--red); border-radius:3px; font-size:8px; padding:2px 5px; cursor:pointer;">🗑️</button>
+             </div>
            </div>
-           <input type="range" min="0" max="1" step="0.1" value="${ul.opacity}" onchange="changeLayerOpacity(${ul.id}, this.value)" style="width:100%;">
+           <input type="range" min="0" max="1" step="0.1" value="${ul.opacity}" onchange="changeLayerOpacity(${ul.id}, this.value)" style="width:100%; height:4px; cursor:pointer;">
          </div>
        `).join('');
     }
 
-    function zoomToUserLayer(id) {
-       const ul = userLayers.find(x => x.id === id);
-       if(ul) _map.fitBounds(ul.layer.getBounds());
+    let _dragIdx = null;
+    function handleLayerDragStart(idx) { _dragIdx = idx; }
+    function handleLayerDrop(targetIdx) {
+      const item = userLayers.splice(_dragIdx, 1)[0];
+      userLayers.splice(targetIdx, 0, item);
+      // Re-order on map (bring to front logic)
+      userLayers.slice().reverse().forEach(ul => {
+        if(ul.visible !== false) ul.layer.bringToFront();
+      });
+      updateLayerControl();
     }
 
-    function changeLayerOpacity(id, val) {
+    function toggleLayerVisibility(id, visible) {
        const ul = userLayers.find(x => x.id === id);
        if(ul) {
-          ul.opacity = val;
-          ul.layer.setStyle({ fillOpacity: val });
+          ul.visible = visible;
+          if(visible) _map.addLayer(ul.layer);
+          else _map.removeLayer(ul.layer);
+       }
+    }
+
+    function deleteLayer(id) {
+       if(!confirm('Hapus layer ini secara permanen?')) return;
+       const idx = userLayers.findIndex(x => x.id === id);
+       if(idx !== -1) {
+          _map.removeLayer(userLayers[idx].layer);
+          userLayers.splice(idx, 1);
+          updateLayerControl();
+          toast('✅ Layer berhasil dihapus');
        }
     }
 
     function exportCSV() {
-      if (!Object.keys(folders).length) return toast('❌ Tidak ada data tabulasi.');
-      const rows = [['No','Nama Kelompok','Jenis Bibit','Total Foto','Foto Valid','Foto Manipulasi','Foto Blur','Foto Duplikat','Target 10%','Target 20%','Keterangan']];
-      Object.keys(folders).forEach((n, i) => {
+      const rows = [['No','Nama Folder','Jenis Bibit','Jumlah Foto','Valid','Invalid','V-Score','Status']];
+      let no = 1;
+      
+      // 1. Folders
+      Object.keys(folders).forEach(n => {
         const fp = allData.filter(d => d.folder === n);
-        const valid = fp.filter(d => !d.isWarn || overrides[d.id]).length;
-        const warn  = fp.filter(d => d.isWarn && !overrides[d.id]).length;
-        const blur  = fp.filter(d => d.isBlur).length;
-        const dup   = fp.filter(d => d.isDup).length;
-        const key   = `row_${n}`;
-        const bibit = tabData[key]?.bibit || (fp[0]?.verifiedBibit) || 'Tidak Diketahui';
-        const ket   = tabData[key]?.ket || '-';
-        rows.push([no++, n, bibit, folders[n], valid, warn, blur, dup, Math.ceil(valid*0.1), Math.ceil(valid*0.2), ket]);
+        const v = fp.filter(d => (!d.isWarn && !d.isBlur) || overrides[d.id]).length;
+        const i = fp.length - v;
+        
+        let fScoreSum = 0;
+        fp.forEach(d => {
+           const assignedBibit = d.verifiedBibit || "Belum Ditentukan";
+           const filenamePool = (d.name + " " + d.folder).toLowerCase();
+           const typeMatch = assignedBibit !== "Belum Ditentukan" && filenamePool.includes(assignedBibit.toLowerCase());
+           let s = 100;
+           if (assignedBibit === "Belum Ditentukan") s -= 50; else if (!typeMatch) s -= 30;
+           if(!d.gps) s -= 20; else if(allData.some(x => x.id !== d.id && x.gps && x.gps.lat === d.gps.lat && x.gps.lng === d.gps.lng)) s -= 40;
+           if(d.isWarn) s -= 20;
+           fScoreSum += Math.max(0, s);
+        });
+        const fAvgScore = fp.length > 0 ? Math.round(fScoreSum / fp.length) : 0;
+        const status = (fAvgScore >= 75 && (v/fp.length) >= 0.8) ? 'LULUS' : 'RE-AUDIT';
+        const bibit = tabData[`row_${n}`]?.bibit || (fp[0]?.verifiedBibit) || '—';
+
+        rows.push([no++, n, bibit, fp.length, v, i, `${fAvgScore}%`, status]);
       });
-      // Add manual entries to CSV
+      
+      // 2. Manual
       Object.keys(tabData).forEach(k => {
         if(k.startsWith('manual_')) {
           const d = tabData[k];
-          const v = parseInt(d.valid)||0;
-          rows.push([no++, d.folder||'Manual', d.bibit||'—', d.total||0, v, d.warn||0, d.blur||0, d.dup||0, Math.ceil(v*0.1), Math.ceil(v*0.2), d.ket||'—']);
+          const tot = parseInt(d.total)||0;
+          const val = parseInt(d.valid)||0;
+          const inv = tot - val;
+          const pct = tot > 0 ? Math.round((val/tot)*100) : 0;
+          rows.push([no++, d.folder||'Manual', d.bibit||'—', tot, val, inv, `${pct}%`, pct >= 80 ? 'LULUS' : 'RE-AUDIT']);
         }
       });
       const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');

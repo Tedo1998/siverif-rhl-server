@@ -52,9 +52,9 @@ app.get('/', (req, res) => {
 
 app.get('/api/system', (req, res) => {
   res.json({
-    current_version: '12.2.6',
-    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.6.zip',
-    changelog: 'v12.2.6 Masterpiece: BULLETPROOF EDITION. Triple-redundancy login, post-process duplication logic, and total core stability.'
+    current_version: '12.2.8',
+    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.8.zip',
+    changelog: 'v12.2.8: Final stability patch, advanced bibit grouping, layer management, and tabulation fixes.'
   });
 });
 
