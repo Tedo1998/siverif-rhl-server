@@ -1,7 +1,7 @@
 {
-  "version": "12.2.1",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.1.zip",
-  "changelog": "v12.2.1 Masterpiece: Fitur Hapus Pendaftaran & Integrasi WhatsApp Fonnte API. [Minor Update]",
+  "version": "12.2.2",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.2.zip",
+  "changelog": "v12.2.2 Masterpiece: FIX TOMBOL SIGN IN, Enter-to-Login, Hapus Pendaftaran & Integrasi WhatsApp.",
   "required": true,
   "released_at": "2026-05-16"
 }

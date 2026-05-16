@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SiVerif RHL v12.2.1 Ultimate — Masterpiece Edition</title>
+  <title>SiVerif RHL v12.2.2 Ultimate — Masterpiece Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
@@ -89,7 +89,7 @@
 
   <div id="login-wrap">
     <div style="width:400px;background:var(--bg2);border:1px solid var(--border);padding:3.5rem;border-radius:20px;box-shadow: 0 30px 100px rgba(0,0,0,0.6)">
-      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.2.1</span></div>
+      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.2.2</span></div>
       <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Masterpiece Auditing Suite</div>
       <input type="text" id="l-user" value="admin" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;font-size:14px">
       <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:1rem;font-size:14px">
@@ -97,7 +97,7 @@
         <input type="checkbox" id="l-rem" style="width:16px;height:16px;cursor:pointer">
         <label style="font-size:12px;color:var(--tx3);cursor:pointer">Ingat Username</label>
       </div>
-      <button id="btn-login-main" onclick="doLogin()" style="width:100%;padding:16px;background:var(--gr);color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer;font-size:14px;transition:0.2s">SIGN IN &rarr;</button>
+      <button id="btn-login-main" style="width:100%;padding:16px;background:var(--gr);color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer;font-size:14px;transition:0.2s">SIGN IN &rarr;</button>
     </div>
   </div>
 
@@ -106,7 +106,7 @@
     <div class="topbar">
       <div style="font-weight:900;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="location.reload()">
         <div style="width:32px;height:32px;background:var(--gr);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;font-weight:950">Si</div>
-        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.2.1</span></span>
+        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.2.2</span></span>
       </div>
       <div style="margin-left:auto;display:flex;gap:20px;align-items:center">
         <div id="instansi-tag" style="font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">LOADING...</div>
@@ -333,7 +333,7 @@
   <input type="file" id="f-add-input" webkitdirectory directory multiple class="hide" onchange="handleAppendFiles(this.files)">
 
   <script>
-    const APP_VERSION = '12.2.1';
+    const APP_VERSION = '12.2.2';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let _map = null, _markerGroup = null;
@@ -411,15 +411,33 @@
       }, 2000);
     }
     
-    window.onload = () => {
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Load saved username
       const savedUser = localStorage.getItem('siverif_saved_user');
       if (savedUser) {
-        document.getElementById('l-user').value = savedUser;
-        document.getElementById('l-rem').checked = true;
+        const uInp = document.getElementById('l-user');
+        const rChk = document.getElementById('l-rem');
+        if(uInp) uInp.value = savedUser;
+        if(rChk) rChk.checked = true;
       }
+      
+      // 2. Bind Login Button
+      const loginBtn = document.getElementById('btn-login-main');
+      if (loginBtn) {
+        loginBtn.addEventListener('click', doLogin);
+      }
+
+      // 3. System Checks
       checkSystemStatus();
-    };
-    setInterval(checkSystemStatus, 60000);
+      setInterval(checkSystemStatus, 60000);
+      
+      // 4. Enter Key Listener
+      document.addEventListener('keydown', e => {
+        if(e.key === 'Enter' && document.getElementById('login-wrap').style.display !== 'none') {
+          doLogin();
+        }
+      });
+    });
 
     async function doLogin() {
       const u = document.getElementById('l-user').value;
