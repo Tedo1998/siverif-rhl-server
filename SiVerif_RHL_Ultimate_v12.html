@@ -89,7 +89,7 @@
 
   <div id="login-wrap">
     <div style="width:400px;background:var(--bg2);border:1px solid var(--border);padding:3.5rem;border-radius:20px;box-shadow: 0 30px 100px rgba(0,0,0,0.6);position:relative;z-index:1000000">
-      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.2.8</span></div>
+      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.2.9</span></div>
       <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Masterpiece Auditing Suite</div>
       <input type="text" id="l-user" value="admin" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;font-size:14px">
       <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:1rem;font-size:14px">
@@ -106,7 +106,7 @@
     <div class="topbar">
       <div style="font-weight:900;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="location.reload()">
         <div style="width:32px;height:32px;background:var(--gr);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;font-weight:950">Si</div>
-        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.2.8</span></span>
+        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.2.9</span></span>
       </div>
       <div style="margin-left:auto;display:flex;gap:20px;align-items:center">
         <div id="instansi-tag" style="font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">LOADING...</div>
@@ -338,7 +338,7 @@
   <input type="file" id="f-add-input" webkitdirectory directory multiple class="hide" onchange="handleAppendFiles(this.files)">
 
   <script>
-    const APP_VERSION = '12.2.8';
+    const APP_VERSION = '12.2.9';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let _map = null, _markerGroup = null;
@@ -1672,24 +1672,31 @@
     }
 
     function overrideStatus() {
-      const ids = selIds.size > 0 ? Array.from(selIds) : (curInspectorId ? [curInspectorId] : []);
-      if (!ids.length) return toast('Pilih minimal satu foto.');
+      // 1. Determine targets: If something is in inspector, prioritize it. Otherwise use selections.
+      let targetIds = [];
+      if (curInspectorId) targetIds = [curInspectorId];
+      else if (selIds.size > 0) targetIds = Array.from(selIds);
+
+      if (!targetIds.length) return toast('⚠️ Pilih foto atau buka detail terlebih dahulu.');
       
-      const firstId = ids[0];
-      const isRemoving = !!overrides[firstId];
-      
-      if (isRemoving) {
-        if(!confirm(`Batalkan validasi manual untuk ${ids.length} foto?`)) return;
-        ids.forEach(id => delete overrides[id]);
-        toast(`✅ Validasi dibatalkan untuk ${ids.length} foto`);
+      const firstId = targetIds[0];
+      const isCurrentlyValid = !!overrides[firstId];
+
+      if (isCurrentlyValid) {
+        // TOGGLE OFF
+        if(targetIds.length > 1 && !confirm(`Batalkan validasi manual untuk ${targetIds.length} foto?`)) return;
+        targetIds.forEach(id => delete overrides[id]);
+        toast(`🔄 Validasi dibatalkan untuk ${targetIds.length} foto`);
       } else {
-        let reason = prompt(ids.length > 1 ? `Alasan validasi manual untuk ${ids.length} foto:` : 'Alasan validasi manual:');
+        // TOGGLE ON
+        let reason = prompt(targetIds.length > 1 ? `Alasan validasi manual untuk ${targetIds.length} foto:` : 'Alasan validasi manual:', 'Kondisi lapangan terkonfirmasi valid');
         if (reason === null) return;
-        if (!reason.trim()) reason = 'Divalidasi manual oleh Admin';
-        ids.forEach(id => overrides[id] = reason);
-        toast(`✅ ${ids.length} Foto Berhasil Di-Override`);
+        if (!reason.trim()) reason = 'Validasi Manual';
+        targetIds.forEach(id => overrides[id] = reason);
+        toast(`✅ ${targetIds.length} Foto ditandai VALID`);
       }
       
+      // Persist & Update UI
       localStorage.setItem('siverif_overrides', JSON.stringify(overrides));
       updateCounters();
       renderGallery(false);
@@ -1698,8 +1705,6 @@
         const d = allData.find(x => x.id === curInspectorId);
         if(d) showInspector(d);
       }
-      selIds.clear();
-      updateSelCount();
     }
 
     function handleSort() {
