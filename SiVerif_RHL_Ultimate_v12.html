@@ -338,7 +338,7 @@
   <input type="file" id="f-add-input" webkitdirectory directory multiple class="hide" onchange="handleAppendFiles(this.files)">
 
   <script>
-    const APP_VERSION = '12.2.6';
+    const APP_VERSION = '12.2.8';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let _map = null, _markerGroup = null;
@@ -1119,29 +1119,45 @@
       }
       inData.querySelector('.v-box').innerHTML = vHtml;
 
+      // Tampilkan status
+      const ovr = overrides[d.id];
+      const warnDiv = document.getElementById('in-warn');
+      const reasonDiv = document.getElementById('in-warn-reason');
+      const btnOvr = document.getElementById('btn-override');
+      const statusOk = document.getElementById('in-status-ok');
+      const statusOvr = document.getElementById('in-status-override');
+      const ovrReason = document.getElementById('in-override-reason');
+
+      // RESET Visibility
+      warnDiv.className = 'hide';
+      reasonDiv.className = 'hide';
+      statusOk.className = 'hide';
+      statusOvr.className = 'hide';
+      ovrReason.className = 'hide';
+      btnOvr.className = ''; // ALWAYS SHOW BUTTON
+
       if (ovr) {
-        warnDiv.className = 'hide';
-        reasonDiv.className = 'hide';
-        statusOk.className = 'hide';
         statusOvr.className = '';
-        btnOvr.className = 'hide';
         ovrReason.className = '';
         ovrReason.innerHTML = `<b>Alasan Validasi:</b><br>${ovr}`;
-      } else if (reasons.length > 0) {
-        warnDiv.className = '';
-        reasonDiv.className = '';
-        reasonDiv.innerHTML = '🔍 Alasan:<br>• ' + reasons.join('<br>• ');
-        statusOk.className = 'hide';
-        statusOvr.className = 'hide';
-        btnOvr.className = '';
-        ovrReason.className = 'hide';
+        btnOvr.innerHTML = '❌ BATALKAN VALIDASI';
+        btnOvr.style.background = 'rgba(248,81,73,0.1)';
+        btnOvr.style.color = 'var(--red)';
+        btnOvr.style.border = '1px solid var(--red)';
       } else {
-        warnDiv.className = 'hide';
-        reasonDiv.className = 'hide';
-        statusOk.className = '';
-        statusOvr.className = 'hide';
-        btnOvr.className = 'hide';
-        ovrReason.className = 'hide';
+        btnOvr.innerHTML = '✅ TANDAI SEBAGAI VALID';
+        btnOvr.style.background = 'var(--blue)';
+        btnOvr.style.color = '#fff';
+        btnOvr.style.border = 'none';
+        btnOvr.className = ''; 
+        
+        if (reasons.length > 0) {
+          warnDiv.className = '';
+          reasonDiv.className = '';
+          reasonDiv.innerHTML = '🔍 Alasan:<br>• ' + reasons.join('<br>• ');
+        } else {
+          statusOk.className = '';
+        }
       }
 
       const img = document.getElementById('in-img'); img.classList.remove('hide');
@@ -1591,6 +1607,10 @@
       if(document.getElementById('c-dup'))      document.getElementById('c-dup').textContent = dupCount;
       if(document.getElementById('c-blur'))     document.getElementById('c-blur').textContent = allData.filter(d => d.isBlur).length;
       if(document.getElementById('c-override')) document.getElementById('c-override').textContent = ovr;
+      renderSetTab(); 
+      renderTabulasi();
+    }
+    
     function renderSetTab() {
        const list = document.getElementById('sb-bibit-list');
        if(!list) return;
