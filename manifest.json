@@ -1,7 +1,7 @@
 {
-  "version": "12.1.4",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.4.zip",
-  "changelog": "FINAL v12.1.4: Fix Layout Sidebar, AI Scan Hyper-Engine, High-Res Zoom, and Admin Panel Controller Sync.",
+  "version": "12.1.5",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.5.zip",
+  "changelog": "Update v12.1.5 (Final Masterpiece): Fixed Layout, AI Scan Engine, Manual Tabulation Persistence, and High-Res Map Export.",
   "required": true,
   "released_at": "2026-05-16"
 }

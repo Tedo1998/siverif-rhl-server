@@ -1,6 +1,6 @@
 {
-  "version": "12.1.4",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.4.zip",
+  "version": "12.1.5",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.1.5.zip",
   "changelog": "FINAL v12.1.4 (Update 11:10 AM): Perbaikan Layout Sidebar, AI Scan Hyper-Engine, dan High-Resolution Zoom Photo.",
   "required": true,
   "released_at": "2026-05-16"
