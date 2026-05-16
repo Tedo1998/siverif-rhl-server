@@ -1,7 +1,7 @@
 {
-  "version": "12.5.0",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.5.0.zip",
-  "changelog": "v12.5.0 Master Stabilization Release: Complete Branding Purge, Forensic Accuracy Audit & UI Interaction Mastery.",
+  "version": "12.6.0",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.6.0.zip",
+  "changelog": "v12.6.0 PROFESSIONAL AI EDITION: Restored Deep AI Pixel Scan, Bulk Species ID, and Advanced Forensic Engine.",
   "required": true,
   "released_at": "2026-05-16"
 }

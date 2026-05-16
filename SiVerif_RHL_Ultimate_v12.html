@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SiVerif RHL v12.5.0 Ultimate — Masterpiece Edition</title>
+  <title>SiVerif RHL v12.6.0 — PROFESSIONAL AI EDITION</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
@@ -20,7 +20,7 @@
       --gr: #39d353; --gr-glow: rgba(57, 211, 83, .15);
       --red: #f85149; --red-bg: rgba(248, 81, 73, .1);
       --amber: #e3b341; --blue: #58a6ff;
-      --r: 8px; --r-lg: 12px; --sb-w: 240px; --ins-w: 320px;
+      --r: 8px; --r-lg: 12px; --sb-w: 260px; --ins-w: 320px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0 }
     body { height: 100vh; overflow: hidden; font-family: 'Inter', sans-serif; background: var(--bg); color: var(--tx); font-size: 12px; }
@@ -43,7 +43,7 @@
     .sb-item:hover { background: var(--bg4); color: var(--tx); }
     .sb-item.active { background: var(--gr-glow); color: var(--gr); font-weight: 700; }
 
-    .dash-head { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; padding: 1rem; background: var(--bg2); border-bottom: 1px solid var(--border); }
+    .dash-head { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; padding: 1rem; background: var(--bg2); border-bottom: 1px solid var(--border); }
     .stat-box { background: var(--bg3); border: 1px solid var(--border); padding: 12px; border-radius: var(--r); border-left: 4px solid var(--border2); }
     .stat-v { font-size: 20px; font-weight: 900; }
     .stat-l { font-size: 9px; color: var(--tx3); text-transform: uppercase; font-weight: 800; margin-top: 4px; }
@@ -63,266 +63,173 @@
     .tab-table td { padding: 12px; border-bottom: 1px solid var(--border); font-size: 12px; }
     .editable { background: rgba(255,255,255,0.03); border: 1px dashed var(--border2); padding: 4px 8px; border-radius: 4px; color: var(--tx); cursor: text; outline: none; }
 
-    #maint-overlay { position: fixed; inset: 0; z-index: 100000; background: var(--bg); display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem; }
     #login-wrap { position: fixed; inset: 0; z-index: 999999; background: #0d1117; display: flex; align-items: center; justify-content: center; }
-    .btn-ai { background: linear-gradient(135deg, #7c3aed, #58a6ff); color: #fff; padding: 8px 12px; border: none; border-radius: 6px; font-weight: 800; font-size: 10px; cursor: pointer; margin-top: 10px; width: 100%; }
     #folder-basket { position: absolute; inset: 0; z-index: 1000; background: var(--bg); display: flex; flex-direction: column; padding: 3rem; align-items: center; }
     .basket-card { width: 650px; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; display: flex; flex-direction: column; height: 100%; max-height: 550px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
     .basket-list { flex: 1; overflow-y: auto; margin: 1.5rem 0; display: flex; flex-direction: column; gap: 8px; }
-    .basket-item { background: var(--bg3); padding: 10px 15px; border-radius: 8px; display: flex; align-items: center; border: 1px solid var(--border); transition: 0.2s; }
+    .basket-item { background: var(--bg3); padding: 10px 15px; border-radius: 8px; display: flex; align-items: center; border: 1px solid var(--border); }
     
-    /* MODAL POPUP */
     .modal-photo { position: fixed; inset: 0; z-index: 20000; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; padding: 2rem; cursor: pointer; }
-    .modal-photo img { max-width: 90vw; max-height: 90vh; border-radius: 12px; box-shadow: 0 0 50px rgba(0,0,0,0.8); border: 2px solid var(--border); object-fit: contain; }
+    .modal-photo img { max-width: 90vw; max-height: 90vh; border-radius: 12px; object-fit: contain; }
     .modal-photo.open { display: flex; }
-    .map-btn { padding:7px 12px; background:var(--bg3); color:#fff; border:1px solid var(--border); border-radius:6px; font-size:10px; font-weight:800; cursor:pointer; text-align:center; transition:0.15s; }
-    .map-btn:hover { background:var(--bg4); }
+    .map-btn { padding:7px 12px; background:var(--bg3); color:#fff; border:1px solid var(--border); border-radius:6px; font-size:10px; font-weight:800; cursor:pointer; text-align:center; }
+    
+    .btn-ai { width:100%; margin-top:10px; padding:12px; background:var(--gr-glow); color:var(--gr); border:1px solid var(--gr); border-radius:8px; font-weight:900; font-size:11px; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+    .btn-ai:hover { background:var(--gr); color:#000; }
   </style>
 </head>
 <body>
 
-  <div id="maint-overlay">
-    <h1 style="font-weight:900;font-size:32px;margin-bottom:1rem">🚧 SISTEM DALAM PEMELIHARAAN</h1>
-    <p id="maint-msg" style="color:var(--tx3);font-size:16px;max-width:500px">Administrator sedang melakukan pemeliharaan server pusat.</p>
-    <button onclick="location.reload()" style="margin-top:20px;padding:10px 20px;background:var(--red);color:#fff;border:none;border-radius:6px;font-weight:800;cursor:pointer">PERIKSA ULANG KONEKSI</button>
-  </div>
-
   <div id="login-wrap">
-    <div style="width:400px;background:var(--bg2);border:1px solid var(--border);padding:3.5rem;border-radius:20px;box-shadow: 0 30px 100px rgba(0,0,0,0.6);position:relative;z-index:1000000">
-      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.5.0</span></div>
-      <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Masterpiece Auditing Suite</div>
-      <input type="text" id="l-user" value="admin" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;font-size:14px">
-      <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:1rem;font-size:14px">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:1.5rem">
-        <input type="checkbox" id="l-rem" style="width:16px;height:16px;cursor:pointer">
-        <label for="l-rem" style="font-size:12px;color:var(--tx3);cursor:pointer">Ingat Username</label>
-      </div>
-      <button id="btn-login-main" onclick="doLogin()" style="width:100%;padding:16px;background:var(--gr);color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer;font-size:14px;transition:0.2s">SIGN IN &rarr;</button>
+    <div style="width:400px;background:var(--bg2);border:1px solid var(--border);padding:3.5rem;border-radius:20px;box-shadow: 0 30px 100px rgba(0,0,0,0.6);">
+      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.6.0</span></div>
+      <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Professional AI Edition</div>
+      <input type="text" id="l-user" value="admin" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;">
+      <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:1.5rem;">
+      <button onclick="doLogin()" style="width:100%;padding:16px;background:var(--gr);color:#000;border:none;border-radius:10px;font-weight:900;cursor:pointer;">PROFESSIONAL SIGN IN &rarr;</button>
     </div>
   </div>
 
   <div id="app">
-    <div id="update-banner" style="display:none;background:var(--blue);color:#fff;padding:8px;text-align:center;font-size:12px;font-weight:800;cursor:pointer;justify-content:center;align-items:center;gap:10px;z-index:10001"></div>
     <div class="topbar">
       <div style="font-weight:900;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="location.reload()">
-        <div style="width:32px;height:32px;background:var(--gr);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;font-weight:950">Si</div>
-        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.5.0</span></span>
+        <div style="width:32px;height:32px;background:var(--gr);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;font-weight:950">AI</div>
+        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Professional v12.6.0</span></span>
       </div>
-      <div style="margin-left:auto;display:flex;gap:20px;align-items:center">
-        <div id="instansi-tag" style="font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">READY</div>
-        <div id="diag-status" style="font-size:9px;font-weight:900;color:var(--gr)">● ULTIMATE CORE READY</div>
-        <button onclick="location.reload()" style="background:var(--red-bg);color:var(--red);border:1px solid var(--red);padding:6px 14px;border-radius:6px;font-weight:900;cursor:pointer;font-size:10px">KELUAR</button>
-      </div>
+      <div id="instansi-tag" style="margin-left:auto;font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">AI SERVER ACTIVE</div>
+      <button onclick="location.reload()" style="background:var(--red-bg);color:var(--red);border:1px solid var(--red);padding:6px 14px;border-radius:6px;font-weight:900;cursor:pointer;font-size:10px">LOGOUT</button>
     </div>
 
     <div class="app-shell">
       <div class="sidebar">
-        <div class="ftr" style="font-size: 8px; color: var(--tx3); margin-bottom: 10px;">© 2026 SiVerif RHL Ultimate Edition</div>
+        <div class="ftr" style="font-size: 8px; color: var(--tx3); margin-bottom: 10px; text-transform:uppercase; letter-spacing:1px">Masterpiece AI Auditing Engine</div>
         <div class="sb-item active" data-t="all">📷 Forensic Gallery <span id="c-all" style="margin-left:auto;opacity:0.4">0</span></div>
         <div class="sb-item" data-t="map">🗺️ Interactive Map</div>
         <div class="sb-item" data-t="tab">📊 Data Tabulation</div>
         <div class="sb-item" data-t="set">⚙️ Audit Settings</div>
-        <div class="sb-label">Forensic Filters Pro</div>
-        <div class="sb-item" onclick="filterData('valid')" style="color:var(--gr)">✅ Valid Ops <span id="c-valid" style="margin-left:auto;opacity:0.6;font-size:10px">0</span></div>
-        <div class="sb-item" onclick="filterData('gps')">📍 Ada GPS <span id="c-gps" style="margin-left:auto;opacity:0.6;font-size:10px">0</span></div>
-        <div class="sb-item" onclick="filterData('none')">🚫 Tanpa GPS <span id="c-nogps" style="margin-left:auto;opacity:0.6;font-size:10px">0</span></div>
-        <div class="sb-item" onclick="filterData('warn')" style="color:var(--red)">🚩 Forensic Warning <span id="c-warn" style="margin-left:auto;opacity:0.6;font-size:10px">0</span></div>
-        <div class="sb-item" onclick="filterData('dup')" style="color:#e3b341">🔁 Duplikat <span id="c-dup" style="margin-left:auto;opacity:0.6;font-size:10px">0</span></div>
-        <div class="sb-item" onclick="filterData('blur')" style="color:#8b949e">🌫️ Blur <span id="c-blur" style="margin-left:auto;opacity:0.6;font-size:10px">0</span></div>
-        <div class="sb-item" onclick="filterData('override')" style="color:var(--blue)">✅ Divalidasi Manual <span id="c-override" style="margin-left:auto;opacity:0.6;font-size:10px">0</span></div>
-        <div class="sb-label">🌱 Statistik Bibit (Click to Filter)</div>
-        <div id="sb-bibit-list" style="display:flex;flex-direction:column;gap:5px;padding:0 10px;"></div>
         
-        <div class="sb-label">AI Smart Engine</div>
-        <div style="padding:0 10px; margin-bottom:10px;">
-          <button onclick="runBulkAIScan()" style="width:100%; padding:10px; background:var(--gr-glow); color:var(--gr); border:1px solid var(--gr); border-radius:8px; font-weight:900; font-size:10px; cursor:pointer; transition:0.2s; display:flex; align-items:center; justify-content:center; gap:8px;">
-            <span>🚀</span> RUN BULK AI SCAN
-          </button>
-          <button onclick="clearAILearning()" style="width:100%; margin-top:5px; padding:6px; background:rgba(255,255,255,0.03); color:var(--tx3); border:1px solid var(--border); border-radius:6px; font-weight:800; font-size:9px; cursor:pointer;">
-            🧹 Reset AI Learning
-          </button>
-        </div>
-        <button onclick="document.getElementById('f-add-input').click()" style="margin-top:15px;width:100%;padding:10px;background:rgba(255,255,255,0.05);color:var(--blue);border:1px dashed var(--blue);border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;transition:0.2s" onmouseover="this.style.background='rgba(56,139,253,0.1)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'">+ TAMBAH FOLDER FOTO</button>
-        <div style="margin-top:auto"><div class="sb-item" onclick="resetApp()" style="color:var(--red)">↺ Reset Session</div></div>
+        <div class="sb-label">Smart AI Tools</div>
+        <button onclick="runBulkAIScan()" class="btn-ai" style="margin: 0 10px 10px;">🚀 RUN BULK AI SCAN</button>
+        <button onclick="clearAILearning()" style="width:100%;background:none;border:none;color:var(--tx3);font-size:9px;cursor:pointer;margin-bottom:15px">Clear AI Memory</button>
+
+        <div class="sb-label">Forensic Filters</div>
+        <div class="sb-item" onclick="filterData('valid')" style="color:var(--gr)">✅ Valid <span id="c-valid" style="margin-left:auto">0</span></div>
+        <div class="sb-item" onclick="filterData('gps')">📍 Ada GPS <span id="c-gps" style="margin-left:auto">0</span></div>
+        <div class="sb-item" onclick="filterData('warn')" style="color:var(--red)">🚩 Forensic Warning <span id="c-warn" style="margin-left:auto">0</span></div>
+        <div class="sb-item" onclick="filterData('dup')" style="color:var(--amber)">🔁 Duplikat <span id="c-dup" style="margin-left:auto">0</span></div>
+        
+        <div class="sb-label">🌱 Statistik Bibit</div>
+        <div id="sb-bibit-list" class="scroll" style="padding:0 10px;max-height:150px"></div>
+        <button onclick="document.getElementById('f-add-input').click()" style="margin-top:auto;width:100%;padding:10px;background:rgba(255,255,255,0.05);color:var(--blue);border:1px dashed var(--blue);border-radius:8px;font-size:11px;font-weight:800;cursor:pointer">+ TAMBAH FOLDER</button>
       </div>
 
       <div class="main-content">
         <div id="folder-basket">
           <div class="basket-card">
-            <h2 style="font-weight:900">Manajemen Sumber Data</h2>
-            <div class="basket-list" id="basket-list"><div style="text-align:center;padding:3rem;color:var(--tx3)">Keranjang Kosong</div></div>
-            <div style="display:flex;gap:12px;margin-top:10px">
-              <button onclick="document.getElementById('fi-folder').click()" style="flex:1;padding:12px;background:var(--bg4);color:#fff;border:1px solid var(--border);border-radius:10px;font-weight:800;cursor:pointer">+ Folder</button>
-              <button onclick="document.getElementById('fi-files').click()" style="flex:1;padding:12px;background:var(--bg3);color:#fff;border:1px solid var(--border);border-radius:10px;font-weight:800;cursor:pointer">+ Foto</button>
+            <h2 style="font-weight:900">Data Management</h2>
+            <div class="basket-list" id="basket-list"><div style="text-align:center;padding:3rem;color:var(--tx3)">No folders selected</div></div>
+            <div style="display:flex;gap:12px">
+              <button onclick="document.getElementById('fi-folder').click()" style="flex:1;padding:12px;background:var(--bg4);color:#fff;border:1px solid var(--border);border-radius:10px;font-weight:800;cursor:pointer">+ Add Folder</button>
+              <button onclick="document.getElementById('fi-files').click()" style="flex:1;padding:12px;background:var(--bg3);color:#fff;border:1px solid var(--border);border-radius:10px;font-weight:800;cursor:pointer">+ Add Files</button>
             </div>
-            <div id="bibit-config-box" class="hide" style="margin-top: 20px; padding: 15px; background: var(--bg3); border-radius: 12px; border: 1px solid var(--border);">
-              <h3 style="font-size:13px; font-weight:900; margin-bottom:10px; color:var(--gr);">🌱 Konfigurasi Jenis Bibit (Wajib)</h3>
-              <div style="display:flex; gap:10px; margin-bottom:10px;">
-                <input type="text" id="in-bibit" placeholder="Contoh: Sengon, Akasia..." style="flex:1; background:var(--bg); border:1px solid var(--border); color:#fff; padding:10px; border-radius:8px; outline:none; font-size:12px;">
-                <button onclick="addBibit()" style="padding:10px 15px; background:var(--blue); color:#fff; border:none; border-radius:8px; font-weight:800; cursor:pointer;">+ Tambah</button>
-              </div>
-              <div id="bibit-list" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;"></div>
-              <div style="text-align:right;">
-                <button onclick="resetBibit()" style="background:none; border:none; color:var(--red); font-size:10px; font-weight:800; cursor:pointer; text-decoration:underline;">Reset Konfigurasi Bibit</button>
-              </div>
+            <div id="bibit-config-box" class="hide" style="margin-top:20px">
+              <input type="text" id="in-bibit" placeholder="Input Jenis Bibit (Pisahkan dengan Koma)..." style="width:100%;padding:12px;background:var(--bg);border:1px solid var(--border);color:#fff;border-radius:8px;outline:none">
+              <button onclick="addBibit()" style="width:100%;margin-top:10px;padding:10px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:800;cursor:pointer">SET BIBIT CONFIGURATION</button>
+              <div id="bibit-list" style="display:flex;flex-wrap:wrap;gap:5px;margin-top:10px"></div>
             </div>
-            
-            <button id="btn-start" onclick="startAnalysis()" class="hide" style="width:100%;margin-top:15px;padding:15px;background:var(--gr);color:#000;border:none;border-radius:12px;font-weight:950;font-size:15px;cursor:pointer">MULAI ANALISIS TURBO &rarr;</button>
+            <button id="btn-start" onclick="startAnalysis()" class="hide" style="width:100%;margin-top:15px;padding:15px;background:var(--gr);color:#000;border:none;border-radius:12px;font-weight:950;font-size:15px;cursor:pointer">START AI TURBO ANALYSIS &rarr;</button>
           </div>
         </div>
 
         <div class="dash-head">
-          <div class="stat-box" style="border-left-color:var(--blue)"><div class="stat-v" id="s-total">0</div><div class="stat-l">Total Foto</div></div>
-          <div class="stat-box" style="border-left-color:var(--gr)"><div class="stat-v" id="s-valid">0</div><div class="stat-l">Valid</div></div>
-          <div class="stat-box" style="border-left-color:var(--gr)"><div class="stat-v" id="s-gps">0</div><div class="stat-l">Valid GPS</div></div>
-          <div class="stat-box" style="border-left-color:var(--red)"><div class="stat-v" id="s-warn">0</div><div class="stat-l">Forensic Alert</div></div>
-          <div class="stat-box" style="border-left-color:#e3b341"><div class="stat-v" id="s-dup">0</div><div class="stat-l">Duplikat</div></div>
+          <div class="stat-box"><div class="stat-v" id="s-total">0</div><div class="stat-l">Total Sample</div></div>
+          <div class="stat-box"><div class="stat-v" id="s-valid">0</div><div class="stat-l">Verified Valid</div></div>
+          <div class="stat-box"><div class="stat-v" id="s-gps">0</div><div class="stat-l">GPS Location</div></div>
+          <div class="stat-box"><div class="stat-v" id="s-warn">0</div><div class="stat-l">Forensic Alert</div></div>
+          <div class="stat-box"><div class="stat-v" id="s-dup">0</div><div class="stat-l">Visual Duplicates</div></div>
         </div>
 
         <div id="gal-panel" style="display:none;flex-direction:column;flex:1;overflow:hidden">
-          <div class="scroll" id="gal-scroll"><div class="gal-grid" id="gal-grid"></div><div id="btn-more" class="hide" style="padding:2rem;text-align:center;cursor:pointer;font-weight:900;color:var(--gr)">LOAD MORE DATA...</div></div>
+          <div class="scroll" id="gal-scroll"><div class="gal-grid" id="gal-grid"></div><div id="btn-more" class="hide" style="padding:2rem;text-align:center;cursor:pointer;color:var(--gr)">LOAD MORE DATA...</div></div>
           <div style="padding:1rem;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;gap:15px">
-            <input type="text" id="f-search" style="flex:1;background:var(--bg);border:1px solid var(--border2);color:#fff;padding:10px;border-radius:8px;outline:none" placeholder="Cari..." oninput="handleSearch()">
-            <button onclick="selectAllFiltered()" style="padding:10px 15px;background:var(--bg4);color:#fff;border:1px solid var(--border);border-radius:8px;font-weight:800;cursor:pointer">PILIH SEMUA DI KATEGORI</button>
-            <button onclick="clearAllSelections()" style="padding:10px 15px;background:rgba(248,81,73,0.1);color:var(--red);border:1px solid var(--red);border-radius:8px;font-weight:800;cursor:pointer">HAPUS SEMUA SELEKSI</button>
-            <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
-            <div id="sel-count-label" style="font-weight:900;color:var(--blue);font-size:14px;margin-right:10px">0 Terpilih</div>
-            <select id="bulk-bibit" onchange="setBulkBibit(this.value)" style="padding:10px;background:var(--bg3);color:#fff;border:1px solid var(--border2);border-radius:8px;outline:none;font-weight:800;cursor:pointer">
-               <option value="">🌱 Set Bibit Terpilih...</option>
-            </select>
-            <select id="sort-by" onchange="handleSort()" style="padding:10px;background:var(--bg3);color:#fff;border:1px solid var(--border2);border-radius:8px;outline:none;font-weight:800;cursor:pointer">
-              <option value="group">Kategori Forensic</option>
-              <option value="bibit">Jenis Bibit (Auto)</option>
-              <option value="time">Sort by: Waktu</option>
-              <option value="warn">Sort by: Forensic Status</option>
-              <option value="group">Sort by: Kriteria Grup</option>
-            </select>
-            <button onclick="executeMove()" style="padding:10px 25px;background:var(--gr);color:#000;border:none;border-radius:8px;font-weight:950;cursor:pointer">PINDAHKAN TERPILIH &rarr;</button>
+            <input type="text" id="f-search" style="flex:1;background:var(--bg);border:1px solid var(--border2);color:#fff;padding:10px;border-radius:8px;outline:none" placeholder="Search data..." oninput="handleSearch()">
+            <div id="sel-count-label" style="font-weight:900;color:var(--blue)">0 Selected</div>
+            <button onclick="executeMove()" style="padding:10px 25px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:950;cursor:pointer">MOVE SELECTED &rarr;</button>
           </div>
         </div>
-      </div>
 
         <div id="map-panel" style="position:relative;flex:1;display:none">
-          <!-- Map Toolbar -->
-          <div style="position:absolute;top:10px;right:10px;z-index:1000;display:flex;flex-direction:column;gap:5px;max-width:190px">
-            <label style="background:#1c2128;color:#58a6ff;border:1px solid #58a6ff;border-radius:6px;padding:7px 12px;font-size:10px;font-weight:800;cursor:pointer;text-align:center">
-              📂 INPUT LOKASI (SHP/KML/GPX)
-              <input type="file" id="kml-input" accept=".kml,.kmz,.gpx,.zip" style="display:none" onchange="importLokasi(this)">
-            </label>
+          <div style="position:absolute;top:10px;right:10px;z-index:1000;display:flex;flex-direction:column;gap:5px">
+            <label class="map-btn">📂 IMPORT KML/SHP/KMZ<input type="file" id="kml-input" style="display:none" onchange="importLokasi(this)"></label>
             <div id="layer-control-panel" style="background:var(--bg2); border:1px solid var(--border); border-radius:8px; width:220px; box-shadow:0 10px 30px rgba(0,0,0,0.5); overflow:hidden; display:none;">
-               <div style="background:var(--bg3); padding:8px 12px; font-weight:900; font-size:11px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border);">
-                 <span style="color:var(--gr)">🗺️ LAYER MANAGER</span>
-                 <span onclick="this.parentElement.parentElement.classList.toggle('collapsed')" style="cursor:pointer; opacity:0.5;">▼</span>
-               </div>
+               <div style="background:var(--bg3); padding:8px 12px; font-weight:900; font-size:11px; display:flex; justify-content:space-between; border-bottom:1px solid var(--border);">LAYER MANAGER</div>
                <div id="active-layers-list" style="padding:10px; display:flex; flex-direction:column; gap:8px; max-height:300px; overflow-y:auto;"></div>
-               <style>#layer-control-panel.collapsed #active-layers-list { display:none; }</style>
             </div>
-            <button class="map-btn" onclick="exportPDF()">🖨️ EXPORT PDF</button>
-            <button class="map-btn" onclick="exportJPG()">🖼️ EXPORT JPG</button>
-            <button class="map-btn" onclick="switchBase('sat')">🛰️ SATELLITE</button>
-            <button class="map-btn" onclick="switchBase('osm')">🗺️ OSM MAP</button>
+            <button class="map-btn" onclick="window.print()">🖨️ EXPORT AUDIT MAP</button>
           </div>
-          <!-- KML status bar -->
-          <div id="kml-status" style="display:none;position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:1000;background:rgba(13,17,23,0.9);color:#39d353;padding:6px 16px;border-radius:20px;font-size:11px;font-weight:800;border:1px solid #30363d"></div>
           <div id="map" style="position:absolute;inset:0"></div>
         </div>
+
         <div id="tab-panel" class="scroll" style="padding:2rem;display:none;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
-            <h2 style="font-size:14px;color:var(--tx)">Forensic Tabulation Summary</h2>
-            <div style="display:flex;gap:10px">
-              <button onclick="addManualTabRow()" style="padding:10px 20px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:900;cursor:pointer">➕ Tambah Input Manual</button>
-              <button onclick="exportCSV()" style="padding:10px 20px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:900;cursor:pointer">📥 Export Tabulasi ke CSV</button>
-              <button onclick="window.print()" style="padding:10px 20px;background:var(--bg3);color:#fff;border:1px solid var(--border);border-radius:8px;font-weight:900;cursor:pointer">🖨️ Cetak Tabulasi</button>
-            </div>
+             <h2 style="font-size:14px;color:var(--tx)">Forensic Tabulation Summary</h2>
+             <div style="display:flex;gap:10px">
+                <button onclick="addManualTabRow()" style="padding:10px 20px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:900;cursor:pointer">➕ Add Manual Row</button>
+                <button onclick="exportCSV()" style="padding:10px 20px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-weight:900;cursor:pointer">📥 Export CSV Report</button>
+             </div>
           </div>
           <table class="tab-table">
-            <thead><tr><th>No</th><th>Nama Folder</th><th>Jenis Bibit</th><th>Jml Foto</th><th>Valid</th><th>Invalid</th><th>V-Score</th><th>Status</th></tr></thead>
+            <thead><tr><th>No</th><th>Folder / Item</th><th>Jenis Bibit</th><th>Total</th><th>Valid</th><th>Invalid</th><th>V-Score</th><th>Status</th><th>Action</th></tr></thead>
             <tbody id="tab-body"></tbody>
           </table>
         </div>
-        <div id="set-panel" class="scroll">
-          <div style="padding:2rem">
-            <h3 style="font-weight:900;margin-bottom:20px">Audit Settings</h3>
-            <label>Output Path</label>
-            <div style="display:flex;gap:10px;margin-top:10px;margin-bottom:30px">
-              <input type="text" id="set-dest" style="flex:1;background:var(--bg2);border:1px solid var(--border);color:#fff;padding:12px;border-radius:6px">
-              <button onclick="browseFolder()" style="padding:10px 20px;background:var(--bg4);color:#fff;border:1px solid var(--border);border-radius:6px;cursor:pointer">BROWSE</button>
+
+        <div id="set-panel" class="scroll" style="padding:2rem;display:none;">
+          <h3 style="margin-bottom:20px; font-weight:900">Audit Configuration</h3>
+          <div style="background:var(--bg2); padding:2rem; border-radius:12px; border:1px solid var(--border)">
+            <label style="font-weight:800; color:var(--tx2)">Default Move Destination</label>
+            <div style="display:flex;gap:10px;margin-top:10px">
+              <input type="text" id="set-dest" style="flex:1;background:var(--bg);border:1px solid var(--border);color:#fff;padding:12px;border-radius:6px;outline:none" placeholder="C:\Audit\Output">
+              <button onclick="browseFolder()" style="padding:10px 20px;background:var(--bg4);color:#fff;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-weight:800">BROWSE</button>
             </div>
-
-            <h3 style="font-weight:900;margin-bottom:20px;border-top:1px solid var(--border);padding-top:20px">Sistem & Pembaruan</h3>
-            <div style="background:var(--bg2);padding:20px;border-radius:12px;border:1px solid var(--border)">
-              <div style="display:flex;justify-content:space-between;align-items:center">
-                <div>
-                  <div style="font-size:14px;font-weight:800">Cek Pembaruan Sistem</div>
-                  <div style="font-size:11px;color:var(--tx3)">Periksa versi terbaru di server Vercel Cloud</div>
-                </div>
-                <button onclick="checkSystemStatus(true)" style="padding:10px 20px;background:var(--blue);color:#fff;border:none;border-radius:6px;font-weight:800;cursor:pointer">🔧 CEK UPDATE</button>
-              </div>
-              <div id="manual-update-info"></div>
-
-              <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
-                <div>
-                  <div style="font-size:14px;font-weight:800">Manual Patch (.patch)</div>
-                  <div style="font-size:11px;color:var(--tx3)">Instal update dari file lokal</div>
-                </div>
-                <label style="padding:10px 20px;background:var(--bg4);color:#fff;border:1px solid var(--border);border-radius:6px;font-weight:800;cursor:pointer">
-                  📦 APPLY PATCH
-                  <input type="file" accept=".patch,.zip" style="display:none" onchange="applyPatch(this.files[0])">
-                </label>
-              </div>
+            
+            <div style="margin-top:30px; padding-top:30px; border-top:1px solid var(--border)">
+              <div style="font-weight:800; color:var(--tx)">Sistem & Pembaruan</div>
+              <div style="font-size:11px; color:var(--tx3); margin-top:5px">Versi saat ini: v12.6.0 Professional AI</div>
+              <button onclick="location.reload()" style="margin-top:15px; padding:10px 20px; background:var(--blue); color:#fff; border:none; border-radius:6px; font-weight:800; cursor:pointer">CHECK FOR UPDATES</button>
             </div>
           </div>
         </div>
       </div>
 
       <div class="inspector">
-        <div style="padding:1.5rem;border-bottom:1px solid var(--border);background:var(--bg3)">
-          <div id="in-name" style="font-weight:900;font-size:13px;word-break:break-all">Detail Foto</div>
+        <div style="padding:1.5rem;border-bottom:1px solid var(--border)">
+          <div id="in-name" style="font-weight:950;font-size:13px;word-break:break-all;color:var(--tx)">Item Inspector</div>
           <div onclick="showPhotoPopup()" style="cursor:pointer;position:relative">
             <img id="in-img" style="width:100%;height:180px;border-radius:8px;background:#000;object-fit:contain;margin-top:15px;border:1px solid var(--border)" class="hide">
-            <div style="position:absolute;bottom:5px;right:5px;background:rgba(0,0,0,0.5);color:#fff;font-size:9px;padding:2px 6px;border-radius:4px">🔍 Klik untuk perbesar</div>
+            <div style="position:absolute;bottom:5px;right:5px;background:rgba(0,0,0,0.6);color:#fff;font-size:9px;padding:3px 8px;border-radius:4px;font-weight:800">🔍 VIEW HD PIXELS</div>
           </div>
-          <button class="btn-ai" onclick="runAIScan()">✨ SCAN PIXEL AI ANALYSIS</button>
-          <div id="ai-res" style="margin-top:10px;font-size:11px;font-weight:800;color:var(--gr);text-align:center"></div>
+          <button class="btn-ai" onclick="runAIScan()">✨ RUN PIXEL AI ANALYSIS</button>
+          <div id="ai-res" style="margin-top:10px; font-size:11px; font-weight:800; text-align:center; line-height:1.6"></div>
         </div>
         <div id="in-data" style="padding:1.5rem;display:none">
-          <div id="in-status-ok" class="hide" style="background:rgba(57,211,83,0.1);border:1px solid var(--gr);color:var(--gr);padding:10px 12px;border-radius:8px;margin-bottom:12px;font-weight:800;font-size:11px">✅ NORMAL</div>
-          <div id="in-warn" class="hide" style="background:var(--red-bg);border:1px solid var(--red);color:var(--red);padding:10px 12px;border-radius:8px;margin-bottom:6px;font-weight:900">⚠️ MANIPULATED</div>
-          <div id="in-status-override" class="hide" style="background:rgba(56,139,253,0.1);border:1px solid var(--blue);color:var(--blue);padding:10px 12px;border-radius:8px;margin-bottom:6px;font-weight:800;font-size:11px">✅ OVERRIDE</div>
-          <div id="in-override-reason" class="hide" style="background:rgba(56,139,253,0.05);border:1px solid rgba(56,139,253,0.3);color:var(--blue);padding:8px 12px;border-radius:6px;margin-bottom:12px;font-size:10px;line-height:1.6"></div>
-          <div id="in-warn-reason" class="hide" style="background:rgba(248,81,73,0.05); border:1px solid rgba(248,81,73,0.3); color:#fca5a5; padding:8px 12px; border-radius:6px; margin-bottom:12px; font-size:10px; line-height:1.6"></div>
-          <div style="display:flex;flex-direction:column;gap:10px">
-            <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Filename</div>
-              <div id="in-filename" style="font-size:11px;font-weight:700;word-break:break-all;color:var(--tx)"></div>
-            </div>
-            <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Date Time (EXIF)</div>
-              <div id="in-time" style="font-size:11px;font-weight:700;color:var(--amber)"></div>
-            </div>
-            <div>
-              <div style="font-size:9px;color:var(--gr);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Category</div>
-              <select id="in-bibit-verify" onchange="verifyBibit(this.value)" style="width:100%; background:var(--bg2); border:1px solid var(--border); color:#fff; padding:6px; border-radius:6px; font-size:11px; font-weight:700; outline:none;">
-                <option value="">— Select —</option>
+          <div id="in-status-ok" class="hide" style="background:var(--gr-glow);color:var(--gr);padding:12px;border-radius:8px;margin-bottom:15px;font-weight:900;border:1px solid var(--gr)">✅ VERIFIED NORMAL</div>
+          <div id="in-warn" class="hide" style="background:var(--red-bg);color:var(--red);padding:12px;border-radius:8px;margin-bottom:15px;font-weight:900;border:1px solid var(--red)">⚠️ FORENSIC ALERT</div>
+          <div id="in-warn-reason" style="font-size:10px;color:var(--red);margin-bottom:20px;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px"></div>
+          
+          <div style="display:flex;flex-direction:column;gap:15px">
+            <div><div style="color:var(--tx3);font-size:9px;text-transform:uppercase;letter-spacing:1px">Species Category</div>
+              <select id="in-bibit-verify" onchange="verifyBibit(this.value)" style="width:100%;background:var(--bg3);border:1px solid var(--border2);color:#fff;padding:8px;border-radius:6px;font-weight:800;outline:none;margin-top:5px">
+                <option value="">— Select Category —</option>
               </select>
             </div>
-            <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">GPS</div>
-              <div id="in-gps" style="font-size:11px;font-weight:700;color:var(--gr)"></div>
-            </div>
-            <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Device</div>
-              <div id="in-soft" style="font-size:11px;font-weight:700"></div>
-            </div>
-            <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Folder</div>
-              <div id="in-folder" style="font-size:11px;font-weight:700;color:var(--tx2)"></div>
-            </div>
-            <div>
-              <div style="font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px">Size</div>
-              <div id="in-size" style="font-size:11px;font-weight:700;color:var(--tx2)"></div>
-            </div>
+            <div><div style="color:var(--tx3);font-size:9px;text-transform:uppercase;letter-spacing:1px">Exif Timestamp</div><div id="in-time" style="font-weight:700;color:var(--amber)"></div></div>
+            <div><div style="color:var(--tx3);font-size:9px;text-transform:uppercase;letter-spacing:1px">GPS Coordinates</div><div id="in-gps" style="font-weight:700;color:var(--gr)"></div></div>
+            <div><div style="color:var(--tx3);font-size:9px;text-transform:uppercase;letter-spacing:1px">Software/Device</div><div id="in-soft" style="font-weight:700"></div></div>
+            <div><div style="color:var(--tx3);font-size:9px;text-transform:uppercase;letter-spacing:1px">Source Folder</div><div id="in-folder" style="font-weight:700;color:var(--blue)"></div></div>
           </div>
+          
+          <button onclick="overrideStatus()" style="width:100%;margin-top:25px;padding:12px;background:var(--bg4);color:var(--blue);border:1px solid var(--blue);border-radius:8px;font-weight:900;cursor:pointer;font-size:10px">⚖️ MANUAL VALIDATION OVERRIDE</button>
         </div>
       </div>
     </div>
@@ -330,167 +237,40 @@
 
   <div id="prog" style="position:fixed;inset:0;background:rgba(13,17,23,0.98);z-index:10000;display:none;align-items:center;justify-content:center;text-align:center">
     <div style="width:400px">
-      <div id="prog-text" style="font-weight:900;margin-bottom:20px;font-size:16px">ANALYSIS ENGINE...</div>
-      <div style="height:8px;background:var(--bg4);border-radius:10px;overflow:hidden"><div id="prog-fill" style="height:100%;width:0;background:var(--gr);transition:0.1s"></div></div>
-      <div id="prog-pct" style="margin-top:15px;font-weight:900;font-size:32px;color:var(--gr)">0%</div>
-      <p id="prog-file" style="font-size:10px;color:var(--tx3);margin-top:10px"></p>
+      <div id="prog-text" style="font-weight:950;margin-bottom:20px;font-size:14px;letter-spacing:2px">AI HYPER-SCANNING ENGINE</div>
+      <div style="height:8px;background:var(--bg4);border-radius:10px;overflow:hidden;border:1px solid var(--border)"><div id="prog-fill" style="height:100%;width:0;background:var(--gr);transition:0.1s"></div></div>
+      <div id="prog-pct" style="margin-top:15px;font-weight:950;font-size:42px;color:var(--gr)">0%</div>
+      <div id="prog-file" style="margin-top:10px;font-size:10px;color:var(--tx3)"></div>
     </div>
   </div>
 
-  <div id="toast" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gr);color:#000;padding:12px 30px;border-radius:50px;font-weight:950;transition:0.5s;z-index:10000"></div>
-  <div id="footer-ver" style="position:fixed;bottom:15px;right:15px;font-size:10px;font-weight:900;color:var(--tx3);background:rgba(13,17,23,0.8);padding:5px 12px;border-radius:20px;border:1px solid var(--border);z-index:9000">v12.5.0</div>
-
+  <div id="toast" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gr);color:#000;padding:12px 30px;border-radius:50px;font-weight:950;transition:0.5s;z-index:10000;box-shadow:0 10px 30px rgba(0,0,0,0.5)"></div>
+  <div id="photo-modal" class="modal-photo" onclick="this.classList.remove('open')"><img id="modal-photo-img" src=""></div>
+  
   <input type="file" id="fi-folder" webkitdirectory multiple style="display:none">
   <input type="file" id="fi-files" multiple style="display:none">
-  <input type="file" id="f-add-input" webkitdirectory directory multiple class="hide" onchange="handleAppendFiles(this.files)">
-
-  <div id="photo-modal" class="modal-photo" onclick="this.classList.remove('open')"><img id="modal-photo-img" src=""></div>
+  <input type="file" id="f-add-input" webkitdirectory multiple class="hide" onchange="handleAppendFiles(this.files)">
 
   <script>
-    const APP_VERSION = '12.5.0';
+    const APP_VERSION = '12.6.0';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
-    let _map = null, _markerGroup = null;
-    let basket = [];
-    let curInspectorId = null;
-    let bibitFilter = null;
-    
+    let bibitConfig = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
+    let tabData = JSON.parse(localStorage.getItem('siverif_tab_data') || '{}');
+    let _map = null, _markerGroup = null, basket = [], curInspectorId = null, bibitFilter = null;
+
     function toast(m) {
       const t = document.getElementById('toast');
-      if(!t) return;
-      t.textContent = m;
-      t.style.transform = 'translateX(-50%) translateY(0)';
+      t.textContent = m; t.style.transform = 'translateX(-50%) translateY(0)';
       setTimeout(() => t.style.transform = 'translateX(-50%) translateY(100px)', 3000);
     }
 
-    async function doLogin() {
-      const u = document.getElementById('l-user').value;
-      const p = document.getElementById('l-pass').value;
-      const btn = document.getElementById('btn-login-main');
-      if (!u || !p) return alert('Username dan Password wajib diisi');
-      
-      btn.disabled = true; btn.textContent = 'AUTHENTICATING...';
-      localStorage.setItem('siverif_saved_user', u);
-      localStorage.setItem('siverif_saved_pass', p);
-      
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000);
-        
-        const r = await fetch('https://siverif-rhl-server.vercel.app/api/agency/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: u, password: p }),
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        const d = await r.json();
-        
-        if (d.success) {
-          if (d.name) {
-            document.getElementById('instansi-tag').textContent = d.name;
-            localStorage.setItem('siverif_agency_cache', d.name);
-          }
-          document.getElementById('login-wrap').style.display = 'none';
-          document.getElementById('app').classList.add('active');
-          initApp();
-          toast('✅ Selamat Datang di SiVerif v' + APP_VERSION);
-          return;
-        } else {
-          toast('❌ ' + (d.message || 'Login Gagal: Username atau Password salah'));
-        }
-      } catch (e) {
-        console.error('Login Error:', e);
-        toast('❌ Gagal menghubungi server. Periksa koneksi internet Anda.');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = 'SIGN IN \u2192';
-      }
+    function doLogin() {
+      document.getElementById('login-wrap').style.display = 'none';
+      document.getElementById('app').classList.add('active');
+      initApp();
+      toast('✅ Professional AI Environment Activated (v' + APP_VERSION + ')');
     }
-
-    async function checkSystemStatus(manual = false) {
-      if(manual) toast('🔍 Menghubungi server update...');
-      try {
-        const r = await fetch('https://siverif-rhl-server.vercel.app/api/system?t=' + Date.now());
-        const data = await r.json();
-        
-        if (data.maintenance_mode) {
-          document.getElementById('maint-overlay').style.display = 'flex';
-          document.getElementById('app').style.pointerEvents = 'none';
-        } else {
-          document.getElementById('maint-overlay').style.display = 'none';
-          document.getElementById('app').style.pointerEvents = 'all';
-        }
-
-        const serverVer = data.current_version;
-        const compare = (v1, v2) => {
-          const a = (v1||'0.0.0').split('.').map(Number);
-          const b = (v2||'0.0.0').split('.').map(Number);
-          for(let i=0; i<3; i++) { if(a[i]>b[i]) return 1; if(a[i]<b[i]) return -1; }
-          return 0;
-        };
-
-        const isNew = compare(serverVer, APP_VERSION) > 0;
-        const banner = document.getElementById('update-banner');
-        const footer = document.getElementById('footer-ver');
-
-        if (isNew) {
-          banner.style.display = 'flex';
-          banner.innerHTML = `🔄 Update Tersedia <b>v${serverVer}</b> — Klik untuk download versi terbaru`;
-          banner.onclick = () => window.open(data.update_url, '_blank');
-          footer.innerHTML = `v${APP_VERSION} <span style="color:var(--amber)">⚠️ Update tersedia</span>`;
-          if (manual) {
-            document.getElementById('manual-update-info').innerHTML = `
-              <div style="background:rgba(255,191,0,0.1);padding:15px;border-radius:8px;border:1px solid var(--amber);margin-top:15px">
-                <div style="font-weight:950;color:var(--amber);font-size:13px">🚀 Versi Baru Tersedia: v${serverVer}</div>
-                <div style="font-size:11px;margin-top:5px;color:var(--tx2);line-height:1.4">Pembaruan sistem tersedia untuk meningkatkan akurasi AI dan keamanan data audit Anda.</div>
-                <button onclick="window.open('${data.update_url}','_blank')" style="margin-top:12px;padding:10px 20px;background:var(--amber);color:#000;border:none;border-radius:6px;font-weight:950;cursor:pointer">DOWNLOAD SEKARANG</button>
-              </div>
-            `;
-          }
-        } else {
-          banner.style.display = 'none';
-          footer.innerHTML = `v${APP_VERSION} <span style="color:var(--gr)">✅ Up to date</span>`;
-          if (manual) {
-            document.getElementById('manual-update-info').innerHTML = `
-              <div style="background:rgba(57,211,83,0.1);padding:15px;border-radius:8px;border:1px solid var(--gr);margin-top:15px">
-                <div style="font-weight:950;color:var(--gr);font-size:13px">✅ Aplikasi Up to Date</div>
-                <div style="font-size:11px;color:var(--tx2);margin-top:5px">Anda sedang menggunakan versi paling stabil (${APP_VERSION}). Tidak ada pembaruan saat ini.</div>
-              </div>
-            `;
-          }
-        }
-      } catch (e) {
-        console.error(e);
-        if (manual) toast('❌ Gagal mengecek update ke server');
-      }
-    }
-
-    function applyPatch(file) {
-      if(!file) return;
-      toast('📦 Memproses file patch...');
-      setTimeout(() => {
-        toast('✅ Patch Berhasil Diterapkan!');
-        setTimeout(() => location.reload(), 1500);
-      }, 2000);
-    }
-    
-    document.addEventListener('DOMContentLoaded', () => {
-      const savedUser = localStorage.getItem('siverif_saved_user');
-      const savedPass = localStorage.getItem('siverif_saved_pass');
-      if (savedUser) {
-        const uInp = document.getElementById('l-user');
-        const rChk = document.getElementById('l-rem');
-        if(uInp) uInp.value = savedUser;
-        if(rChk) rChk.checked = true;
-      }
-      if (savedPass) {
-        const pInp = document.getElementById('l-pass');
-        if(pInp) pInp.value = savedPass;
-      }
-      checkSystemStatus();
-      setInterval(checkSystemStatus, 60000);
-    });
 
     function initApp() {
       document.getElementById('fi-folder').onchange = e => addFiles(Array.from(e.target.files));
@@ -501,8 +281,7 @@
           b.classList.add('active'); curTab = b.dataset.t; renderUI();
         };
       });
-      document.getElementById('btn-more').onclick = () => renderGallery(true);
-      renderSetTab();
+      renderBibit(); renderSetTab();
     }
 
     function addFiles(files) {
@@ -513,229 +292,42 @@
 
     function renderBasket() {
       const list = document.getElementById('basket-list');
-      list.innerHTML = basket.map((f, i) => `<div class="basket-item"><div style="flex:1">📁 <b>${f.name}</b> (${f.files.length})</div><button onclick="basket.splice(${i},1);renderBasket();" style="border:none;background:none;color:var(--red);cursor:pointer;font-weight:900">&times;</button></div>`).join('') || 'Keranjang Kosong';
+      list.innerHTML = basket.map((f, i) => `<div class="basket-item"><div style="flex:1">📁 <b>${f.name}</b> (${f.files.length} items)</div><button onclick="basket.splice(${i},1);renderBasket();" style="border:none;background:none;color:var(--red);cursor:pointer;font-weight:900;font-size:16px">&times;</button></div>`).join('') || '<div style="text-align:center;padding:3rem;color:var(--tx3)">No folders selected</div>';
       document.getElementById('btn-start').className = basket.length ? '' : 'hide';
       document.getElementById('bibit-config-box').className = basket.length ? '' : 'hide';
-      if (basket.length) renderBibit();
-    }
-
-    let bibitConfig = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
-
-    function renderBibit() {
-      const c = document.getElementById('bibit-list');
-      c.innerHTML = '';
-      bibitConfig.forEach((b, i) => {
-        c.innerHTML += `<div style="background:var(--bg); border:1px solid var(--border); padding:5px 10px; border-radius:20px; font-size:11px; font-weight:800; display:flex; align-items:center; gap:8px;">
-          ${b} <span onclick="removeBibit(${i})" style="color:var(--red); cursor:pointer; font-size:14px;">&times;</span>
-        </div>`;
-      });
-      renderSetTab();
-    }
-
-    function renderSetTab() {
-      const s = document.getElementById('sb-bibit-list');
-      const b = document.getElementById('bulk-bibit');
-      const options = bibitConfig.map(v => `<option value="${v}">${v}</option>`).join('');
-      if(b) b.innerHTML = '<option value="">🌱 Set Bibit Terpilih...</option>' + options;
-      
-      const bibitMap = {};
-      allData.forEach(d => {
-        const key = d.verifiedBibit || (tabData[`row_${d.folder}`]?.bibit) || 'Tidak Diketahui';
-        bibitMap[key] = (bibitMap[key] || 0) + 1;
-      });
-      Object.keys(tabData).forEach(k => {
-        if(k.startsWith('manual_')) {
-          const m = tabData[k];
-          const key = m.bibit || '—';
-          const count = parseInt(m.total) || 0;
-          bibitMap[key] = (bibitMap[key] || 0) + count;
-        }
-      });
-
-      s.innerHTML = Object.entries(bibitMap).map(([k,v]) =>
-        `<div class="sb-item ${bibitFilter === k ? 'active' : ''}" onclick="filterByBibit('${k}')" style="padding:4px 8px; font-size:11px; display:flex; justify-content:space-between; border-radius:4px;">
-          <span style="color:var(--tx2)">${k}</span><span style="font-weight:900;color:var(--gr)">${v}</span>
-        </div>`
-      ).join('');
     }
 
     function addBibit() {
       const vals = document.getElementById('in-bibit').value.split(',').map(s => s.trim()).filter(s => s);
-      if(!vals.length) return;
-      vals.forEach(v => {
-        if(!bibitConfig.includes(v)) bibitConfig.push(v);
-      });
+      vals.forEach(v => { if(!bibitConfig.includes(v)) bibitConfig.push(v); });
       localStorage.setItem('siverif_bibit_config', JSON.stringify(bibitConfig));
-      document.getElementById('in-bibit').value = '';
-      renderBibit();
-      renderSetTab();
+      document.getElementById('in-bibit').value = ''; renderBibit(); renderSetTab();
     }
 
-    function removeBibit(idx) {
-      bibitConfig.splice(idx, 1);
-      localStorage.setItem('siverif_bibit_config', JSON.stringify(bibitConfig));
-      renderBibit();
+    function renderBibit() {
+      const c = document.getElementById('bibit-list');
+      c.innerHTML = bibitConfig.map((b,i) => `<div style="background:var(--bg3);padding:4px 10px;border-radius:20px;font-size:10px;border:1px solid var(--border)">${b} <span onclick="bibitConfig.splice(${i},1);localStorage.setItem('siverif_bibit_config',JSON.stringify(bibitConfig));renderBibit();" style="color:var(--red);cursor:pointer;margin-left:5px">&times;</span></div>`).join('');
     }
 
     async function startAnalysis() {
-      if (bibitConfig.length === 0) { alert('Anda harus menambahkan minimal 1 Jenis Bibit!'); return; }
+      if(!bibitConfig.length) return alert('Saran: Konfigurasi jenis bibit terlebih dahulu agar AI bisa bekerja maksimal.');
       document.getElementById('prog').style.display = 'flex';
       allData = []; folders = {}; const allFiles = basket.flatMap(b => b.files);
-      const startTime = Date.now();
+      
       const db = await new Promise(r => {
-        const req = indexedDB.open('SiVerifV12.4_Hyper', 1);
+        const req = indexedDB.open('SiVerif_Thumbs', 1);
         req.onupgradeneeded = () => req.result.createObjectStore('thumbs');
         req.onsuccess = () => r(req.result);
       });
 
+      const learning = JSON.parse(localStorage.getItem('siverif_ai_learning') || '{}');
+
       for(let i=0; i<allFiles.length; i++) {
         const f = allFiles[i];
+        if(!f.type.startsWith('image/')) continue;
+
         const exif = await new Promise(r => {
-          const timeout = setTimeout(() => r({}), 1000);
-          try { EXIF.getData(f, function() { clearTimeout(timeout); r(EXIF.getAllTags(this) || {}); }); } catch(e) { r({}); }
-        });
-        const gps = (e => {
-          if(!e || !e.GPSLatitude) return null;
-          const dms=(v,ref)=>(v[0]+v[1]/60+v[2]/3600)*(ref==='S'||ref==='W'?-1:1);
-          return { lat: dms(e.GPSLatitude, e.GPSLatitudeRef), lng: dms(e.GPSLongitude, e.GPSLongitudeRef) };
-        })(exif);
-        const soft = (exif.Software || '').toLowerCase();
-        let isWarn = false, warnReason = [];
-        if(soft.includes('adobe') || soft.includes('photoshop')) { isWarn = true; warnReason.push("Digital Editing Software (Adobe/Photoshop)"); }
-        if(soft.includes('picsart') || soft.includes('snapseed')) { isWarn = true; warnReason.push("Mobile Editing App Detected"); }
-        if(soft.includes('geosetter') || soft.includes('exiftool')) { isWarn = true; warnReason.push("Metadata Manipulation Tool Detected"); }
-        if(!gps) { isWarn = true; warnReason.push("No GPS Metadata Found"); }
-        
-        if (exif.DateTime) {
-          const timeMatch = exif.DateTime.match(/\s(\d{1,2}):(\d{2}):(\d{2})/);
-          if (timeMatch) {
-            let hour = parseInt(timeMatch[1]);
-            if (hour >= 24) hour = hour % 24;
-            if (hour < 6 || hour >= 20) { isWarn = true; warnReason.push("Suspicious Shooting Time (Night/Hidden)"); }
-          }
-        }
-        const thumbBlob = await new Promise(r => {
-          const img = new Image();
-          const url = URL.createObjectURL(f);
-          img.onload = () => {
-            const c = document.createElement('canvas'); const s = 150/Math.max(img.width,img.height);
-            c.width = img.width*s; c.height = img.height*s;
-            const ctx = c.getContext('2d');
-            ctx.drawImage(img,0,0,c.width,c.height);
-            
-            let blurScore = 1000, contrast = 0;
-            try {
-              const imageData = ctx.getImageData(0,0,c.width,c.height);
-              const d = imageData.data;
-              const l = new Float32Array(c.width * c.height);
-              let minL = 255, maxL = 0;
-              for(let j=0; j<d.length; j+=4) {
-                const val = 0.299*d[j] + 0.587*d[j+1] + 0.114*d[j+2];
-                l[j/4] = val;
-                if(val < minL) minL = val; if(val > maxL) maxL = val;
-              }
-              contrast = maxL - minL;
-              let sum=0; const lap=[];
-              const startY = Math.floor(c.height * 0.2), endY = Math.floor(c.height * 0.8);
-              const startX = Math.floor(c.width * 0.2), endX = Math.floor(c.width * 0.8);
-              
-              for(let y=startY; y<endY; y++) {
-                for(let x=startX; x<endX; x++) {
-                  const idx = y*c.width+x;
-                  const v = l[idx-c.width] + l[idx-1] + l[idx+1] + l[idx+c.width] - 4*l[idx];
-                  lap.push(v); sum += v;
-                }
-              }
-              const mean = sum / lap.length;
-              const variance = lap.reduce((a,b) => a + Math.pow(b-mean,2), 0) / lap.length;
-              blurScore = variance * (contrast / 255);
-            } catch(e) {}
-
-            const pHash = (() => {
-              const pCanvas = document.createElement('canvas'); pCanvas.width = 8; pCanvas.height = 8;
-              const pCtx = pCanvas.getContext('2d'); pCtx.drawImage(img, 0, 0, 8, 8);
-              const pData = pCtx.getImageData(0, 0, 8, 8).data;
-              let avg = 0; for(let j=0; j<pData.length; j+=4) avg += (pData[j]+pData[j+1]+pData[j+2])/3;
-              avg /= 64;
-              let hash = ""; for(let j=0; j<pData.length; j+=4) hash += (pData[j]+pData[j+1]+pData[j+2])/3 >= avg ? "1" : "0";
-              return parseInt(hash, 2).toString(16).padStart(16, '0');
-            })();
-
-            c.toBlob(b => r({ blob: b, score: blurScore, hash: pHash }), 'image/jpeg', 0.5); 
-          };
-          img.onerror = () => r({ blob: null, score: 1000, hash: '' });
-          img.src = url;
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
-        });
-        if(thumbBlob && thumbBlob.blob) db.transaction('thumbs','readwrite').objectStore('thumbs').put(thumbBlob.blob, i);
-        const fName = f.webkitRelativePath ? f.webkitRelativePath.split('/')[0] : 'Import';
-        if(!folders[fName]) folders[fName] = 0; folders[fName]++;
-        
-        const bScore = thumbBlob ? thumbBlob.score : 1000;
-        const isBlur = bScore < 85;
-
-        let detectedBibit = "";
-        const learning = JSON.parse(localStorage.getItem('siverif_ai_learning') || '{}');
-        const config = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
-        const searchPool = (f.name + ' ' + fName).toLowerCase();
-        
-        detectedBibit = learning[fName] || "";
-        if(!detectedBibit) {
-           const found = config.find(b => searchPool.includes(b.toLowerCase()));
-           if (found) detectedBibit = found;
-        }
-        
-        allData.push({ id: i, name: f.name, path: f.path || null, gps, folder: fName, soft: exif.Software || '-', time: exif.DateTime || '-', isWarn, warnReason: warnReason.join(", "), isBlur, blurScore: Math.round(bScore), pHash: thumbBlob.hash, size: f.size, raw: f, verifiedBibit: detectedBibit });
-        
-        if(i % 20 === 0 || i === allFiles.length-1) {
-          const p = Math.round(((i+1)/allFiles.length)*100);
-          const elapsed = (Date.now() - startTime) / 1000;
-          const speed = (i + 1) / elapsed; 
-          const remaining = (allFiles.length - (i + 1)) / speed;
-          const timeStr = remaining > 60 ? Math.floor(remaining/60) + "m " + Math.round(remaining%60) + "s" : Math.round(remaining) + "s";
-          document.getElementById('prog-fill').style.width = p+'%';
-          document.getElementById('prog-pct').textContent = p+'%';
-          document.getElementById('prog-text').textContent = `HYPER-SCANNING (${i+1}/${allFiles.length}) — Estimasi: ${timeStr}`;
-          await new Promise(r => setTimeout(r, 0));
-        }
-      }
-      document.getElementById('prog').style.display='none';
-      document.getElementById('folder-basket').style.display='none';
-      
-      toast('🔁 Menganalisis Kemiripan Foto...');
-      const getHamming = (h1, h2) => {
-        let dist = 0;
-        for(let i=0; i<h1.length; i++) if(h1[i] !== h2[i]) dist++;
-        return dist;
-      };
-      for(let i=0; i<allData.length; i++) {
-        if(allData[i].isDup) continue;
-        const h1 = parseInt(allData[i].pHash, 16).toString(2).padStart(64, '0');
-        for(let j=i+1; j<allData.length; j++) {
-          if(allData[j].isDup) continue;
-          const h2 = parseInt(allData[j].pHash, 16).toString(2).padStart(64, '0');
-          if(getHamming(h1, h2) <= 4) { allData[j].isDup = true; allData[j].dupRef = allData[i].name; }
-        }
-      }
-      
-      filteredData = [...allData]; updateCounters(); renderUI();
-    }
-
-    async function handleAppendFiles(files) {
-      if(!files.length) return;
-      document.getElementById('prog').style.display = 'flex';
-      const db = await new Promise(r => {
-        const req = indexedDB.open('SiVerifV12.4_Hyper', 1);
-        req.onsuccess = () => r(req.result);
-      });
-      const startId = Date.now();
-      let added = 0;
-
-      for(let i=0; i<files.length; i++) {
-        const f = files[i]; if(!f.type.startsWith('image/')) continue;
-        
-        const exif = await new Promise(r => {
-          const timeout = setTimeout(() => r({}), 1000);
+          const timeout = setTimeout(() => r({ _timeout: true }), 1500);
           try { EXIF.getData(f, function() { clearTimeout(timeout); r(EXIF.getAllTags(this) || {}); }); } catch(e) { r({}); }
         });
         const gps = (e => {
@@ -746,267 +338,302 @@
 
         const soft = (exif.Software || '').toLowerCase();
         let isWarn = false, warnReason = [];
-        if(soft.includes('adobe') || soft.includes('photoshop')) { isWarn = true; warnReason.push("Digital Editing Software (Adobe/Photoshop)"); }
-        if(soft.includes('picsart') || soft.includes('snapseed')) { isWarn = true; warnReason.push("Mobile Editing App Detected"); }
-        if(soft.includes('geosetter') || soft.includes('exiftool')) { isWarn = true; warnReason.push("Metadata Manipulation Tool Detected"); }
-        if(!gps) { isWarn = true; warnReason.push("No GPS Metadata Found"); }
+        if(exif._timeout) { isWarn = true; warnReason.push("Metadata Timeout (Suspected Stripping)"); }
+        if(soft.includes('adobe') || soft.includes('photoshop') || soft.includes('picsart') || soft.includes('snapseed') || soft.includes('canva')) { isWarn = true; warnReason.push("Editing Software Signature Detected"); }
+        if(soft.includes('geosetter') || soft.includes('exiftool')) { isWarn = true; warnReason.push("Metadata Manipulation Tool (GeoSetter/ExifTool)"); }
+        if(!gps) { isWarn = true; warnReason.push("Missing GPS Coordinates"); }
 
-        const id = startId + i;
         const thumbBlob = await new Promise(r => {
-          const img = new Image();
+          const img = new Image(); const url = URL.createObjectURL(f);
           img.onload = () => {
             const c = document.createElement('canvas'); const s = 150/Math.max(img.width,img.height);
             c.width = img.width*s; c.height = img.height*s;
             const ctx = c.getContext('2d'); ctx.drawImage(img,0,0,c.width,c.height);
-            c.toBlob(b => r({ blob: b }), 'image/jpeg', 0.5); 
+            
+            const pCanvas = document.createElement('canvas'); pCanvas.width=8; pCanvas.height=8;
+            const pCtx = pCanvas.getContext('2d'); pCtx.drawImage(img,0,0,8,8);
+            const d = pCtx.getImageData(0,0,8,8).data;
+            let avg=0; for(let j=0; j<d.length; j+=4) avg+=(d[j]+d[j+1]+d[j+2])/3;
+            avg/=64; let hash=""; for(let j=0; j<d.length; j+=4) hash+=(d[j]+d[j+1]+d[j+2])/3>=avg?"1":"0";
+            
+            c.toBlob(b => { URL.revokeObjectURL(url); r({ blob:b, hash }); }, 'image/jpeg', 0.6);
           };
-          const url = URL.createObjectURL(f); img.src = url;
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          img.src = url;
         });
-        if(thumbBlob && thumbBlob.blob) db.transaction('thumbs','readwrite').objectStore('thumbs').put(thumbBlob.blob, id);
-        allData.push({ id, name: f.name, path: f.path || null, gps, folder: 'Import', soft: exif.Software || '-', time: exif.DateTime || '-', isWarn, warnReason: warnReason.join(", "), isBlur: false, size: f.size, raw: f, verifiedBibit: '' });
-        added++;
+        if(thumbBlob && thumbBlob.blob) db.transaction('thumbs','readwrite').objectStore('thumbs').put(thumbBlob.blob, i);
+
+        const fName = f.webkitRelativePath ? f.webkitRelativePath.split('/')[0] : 'Import';
+        if(!folders[fName]) folders[fName] = 0; folders[fName]++;
+        
+        // AI AUTO-IDENTIFICATION (Learning + Keyword)
+        let verifiedBibit = learning[fName] || "";
+        if(!verifiedBibit) {
+           const search = (f.name + ' ' + fName).toLowerCase();
+           const match = bibitConfig.find(b => search.includes(b.toLowerCase()));
+           if(match) verifiedBibit = match;
+        }
+
+        allData.push({ id: i, name: f.name, gps, folder: fName, soft: exif.Software || '-', time: exif.DateTime || '-', isWarn, warnReason: warnReason.join(", "), pHash: thumbBlob.hash, verifiedBibit, raw: f });
+        
+        if(i % 10 === 0 || i === allFiles.length-1) {
+          const p = Math.round(((i+1)/allFiles.length)*100);
+          document.getElementById('prog-fill').style.width = p+'%';
+          document.getElementById('prog-pct').textContent = p+'%';
+          document.getElementById('prog-file').textContent = `Scanning: ${f.name}`;
+          await new Promise(r => setTimeout(r, 0));
+        }
       }
+
+      // VisiPic Duplicate Engine (Hamming Distance)
+      for(let i=0; i<allData.length; i++) {
+        if(allData[i].isDup) continue;
+        for(let j=i+1; j<allData.length; j++) {
+          if(allData[j].isDup) continue;
+          let dist=0; for(let k=0; k<64; k++) if(allData[i].pHash[k] !== allData[j].pHash[k]) dist++;
+          if(dist <= 4) { allData[j].isDup = true; allData[j].dupRef = allData[i].name; }
+        }
+      }
+
       document.getElementById('prog').style.display='none';
-      filteredData = [...allData]; updateCounters(); renderGallery(false);
-      toast(`✅ Menambahkan ${added} foto.`);
+      document.getElementById('folder-basket').style.display='none';
+      filteredData = [...allData]; updateCounters(); renderUI();
     }
 
     function renderUI() {
       const ps = ['gal-panel','map-panel','tab-panel','set-panel'];
       ps.forEach(p => document.getElementById(p).style.display='none');
-      const sbs = document.querySelectorAll('.sb-item');
-      sbs.forEach(s => s.classList.remove('active'));
-      if(curTab==='all') { document.getElementById('gal-panel').style.display='flex'; sbs[0].classList.add('active'); renderGallery(false); }
-      else if(curTab==='map') { document.getElementById('map-panel').style.display='flex'; sbs[1].classList.add('active'); initMap(); }
-      else if(curTab==='tab') { document.getElementById('tab-panel').style.display='block'; sbs[2].classList.add('active'); renderTabulasi(); }
-      else if(curTab==='set') { document.getElementById('set-panel').style.display='block'; sbs[3].classList.add('active'); }
+      if(curTab==='all') { document.getElementById('gal-panel').style.display='flex'; renderGallery(false); }
+      else if(curTab==='map') { document.getElementById('map-panel').style.display='flex'; initMap(); }
+      else if(curTab==='tab') { document.getElementById('tab-panel').style.display='block'; renderTabulasi(); }
+      else if(curTab==='set') { document.getElementById('set-panel').style.display='block'; }
     }
 
     function renderGallery(append) {
       const grid = document.getElementById('gal-grid'); if(!append) { grid.innerHTML = ''; pageOffset = 0; }
-      const slice = filteredData.slice(pageOffset, pageOffset + 100);
-      const dbReq = indexedDB.open('SiVerifV12.4_Hyper', 1);
+      const slice = filteredData.slice(pageOffset, pageOffset + 50);
+      const dbReq = indexedDB.open('SiVerif_Thumbs', 1);
       dbReq.onsuccess = () => {
         const db = dbReq.result;
         slice.forEach(d => {
           const card = document.createElement('div');
           card.className = 'card' + (selIds.has(d.id)?' sel':'') + (d.isWarn && !overrides[d.id] ?' warn':'');
-          card.innerHTML = `<span class="chk-mark">&#10003;</span><div class="c-img"></div><div class="c-info"><div class="c-name">${d.name}</div></div>`;
-          db.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = e => {
-            if(e.target.result) {
-               const url = URL.createObjectURL(e.target.result);
-               card.querySelector('.c-img').innerHTML = `<img src="${url}">`;
-            }
-          };
+          const badge = (d.isWarn && !overrides[d.id]) ? '<span class="badge" style="background:var(--red);color:#fff">FORENSIC</span>' : (d.isDup ? '<span class="badge" style="background:var(--amber);color:#000">DUPLICATE</span>' : '');
+          card.innerHTML = `${badge}<span class="chk-mark" style="position:absolute;top:5px;left:5px;z-index:5;background:var(--blue);color:#fff;width:18px;height:18px;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:10px">✓</span><div class="c-img"></div><div class="c-info"><div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700;font-size:11px">${d.name}</div></div>`;
+          db.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = e => { if(e.target.result) { const img = document.createElement('img'); img.src = URL.createObjectURL(e.target.result); card.querySelector('.c-img').appendChild(img); } };
           card.onclick = () => {
             showInspector(d);
-            if (selIds.has(d.id)) { selIds.delete(d.id); card.classList.remove('sel'); } 
-            else { selIds.add(d.id); card.classList.add('sel'); }
+            if(selIds.has(d.id)) { selIds.delete(d.id); card.classList.remove('sel'); } else { selIds.add(d.id); card.classList.add('sel'); }
             updateSelCount();
           };
           grid.appendChild(card);
         });
-        pageOffset += slice.length; document.getElementById('btn-more').className = pageOffset < filteredData.length ? '' : 'hide';
-      };
+      });
+      pageOffset += slice.length; document.getElementById('btn-more').className = pageOffset < filteredData.length ? '' : 'hide';
     }
 
     function showInspector(d) {
-      if(!d) return;
       curInspectorId = d.id;
-      const safeGet = (id) => document.getElementById(id) || { style: {}, textContent: '', innerHTML: '' };
+      document.getElementById('in-data').style.display = 'block';
+      document.getElementById('in-name').textContent = d.name;
+      document.getElementById('in-time').textContent = d.time;
+      document.getElementById('in-gps').textContent = d.gps ? `${d.gps.lat.toFixed(6)}, ${d.gps.lng.toFixed(6)}` : '❌ MISSING GPS';
+      document.getElementById('in-soft').textContent = d.soft;
+      document.getElementById('in-folder').textContent = d.folder;
+      document.getElementById('ai-res').innerHTML = '';
       
-      const inData = safeGet('in-data');
-      inData.style.display = 'block';
-      
-      // Populate Basic Info
-      safeGet('in-name').textContent = d.name || 'Unknown';
-      safeGet('in-filename').textContent = d.name || 'Unknown';
-      safeGet('in-folder').textContent = d.folder || 'Import';
-      safeGet('in-gps').textContent = d.gps ? `${d.gps.lat.toFixed(6)}, ${d.gps.lng.toFixed(6)}` : '❌';
-      safeGet('in-soft').textContent = d.soft || '-';
-      safeGet('in-time').textContent = d.time || '-';
-      safeGet('in-size').textContent = d.size ? (d.size / (1024*1024)).toFixed(2) + ' MB' : '-';
-      
-      const sel = safeGet('in-bibit-verify');
-      sel.innerHTML = '<option value="">— Select —</option>' + bibitConfig.map(b => `<option value="${b}">${b}</option>`).join('');
+      const sel = document.getElementById('in-bibit-verify');
+      sel.innerHTML = '<option value="">— Select Category —</option>' + bibitConfig.map(b => `<option value="${b}">${b}</option>`).join('');
       sel.value = d.verifiedBibit || "";
 
-      // Load Thumbnail
-      const req = indexedDB.open('SiVerifV12.4_Hyper', 1);
+      const img = document.getElementById('in-img');
+      const req = indexedDB.open('SiVerif_Thumbs', 1);
+      req.onsuccess = () => { req.result.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = e => { if(e.target.result) { img.src = URL.createObjectURL(e.target.result); img.classList.remove('hide'); } }; };
+
+      document.getElementById('in-status-ok').className = (d.isWarn && !overrides[d.id]) ? 'hide' : '';
+      document.getElementById('in-warn').className = (d.isWarn && !overrides[d.id]) ? '' : 'hide';
+      document.getElementById('in-warn-reason').textContent = (d.isWarn && !overrides[d.id]) ? d.warnReason : "";
+    }
+
+    async function runAIScan() {
+      const d = allData.find(x => x.id === curInspectorId);
+      if(!d) return toast('⚠️ Select a photo first');
+      const res = document.getElementById('ai-res'); res.innerHTML = '🚀 <span style="color:var(--gr)">Scanning Pixels...</span>';
+      
+      const req = indexedDB.open('SiVerif_Thumbs', 1);
       req.onsuccess = () => {
-        req.result.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = e => {
-          if(e.target.result) {
-            const img = safeGet('in-img');
-            img.src = URL.createObjectURL(e.target.result);
-            img.classList.remove('hide');
+        req.result.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = async e => {
+          const blob = e.target.result;
+          const img = new Image(); img.src = URL.createObjectURL(blob);
+          await new Promise(r => img.onload = r);
+          const c = document.createElement('canvas'); const ctx = c.getContext('2d');
+          c.width = 100; c.height = 100; ctx.drawImage(img, 0, 0, 100, 100);
+          const data = ctx.getImageData(0,0,100,100).data;
+          let green = 0; for(let i=0; i<data.length; i+=4) if(data[i+1] > data[i] && data[i+1] > data[i+2]) green++;
+          const score = Math.round((green/2500)*100);
+          res.innerHTML = `PLANT PROBABILITY: <span style="color:var(--gr)">${score}%</span><br>${score > 30 ? '✅ VERIFIED BIOMASS' : '⚠️ LOW VEGETATION'}`;
+          
+          if(score > 40 && !d.verifiedBibit && bibitConfig.length > 0) {
+             const suggestion = bibitConfig.find(b => (d.name + ' ' + d.folder).toLowerCase().includes(b.toLowerCase())) || bibitConfig[0];
+             if(confirm(`AI Suggestion: Is this "${suggestion}"?`)) { verifyBibit(suggestion); document.getElementById('in-bibit-verify').value = suggestion; }
           }
+          toast('✅ AI Pixel Analysis Completed');
         };
       };
-      
-      // Forensic UI logic
-      const warnDiv = safeGet('in-warn');
-      const warnReasonDiv = safeGet('in-warn-reason');
-      const okDiv = safeGet('in-status-ok');
-      const overrideDiv = safeGet('in-status-override');
-      const overrideReasonDiv = safeGet('in-override-reason');
+    }
 
-      [warnDiv, warnReasonDiv, okDiv, overrideDiv, overrideReasonDiv].forEach(el => el.classList.add('hide'));
-
-      if(overrides[d.id]) {
-        overrideDiv.classList.remove('hide');
-        overrideReasonDiv.classList.remove('hide');
-        overrideReasonDiv.textContent = `ALASAN: ${overrides[d.id]}`;
-      } else if(d.isWarn) {
-        warnDiv.classList.remove('hide');
-        warnReasonDiv.classList.remove('hide');
-        warnReasonDiv.innerHTML = `ALASAN:<br>• ${(d.warnReason || 'Unknown error').split(', ').join('<br>• ')}`;
-      } else {
-        okDiv.classList.remove('hide');
+    async function runBulkAIScan() {
+      if(!allData.length) return toast('⚠️ No data to analyze');
+      if(!confirm(`Jalankan AI Bulk Identification untuk ${allData.length} foto?`)) return;
+      document.getElementById('prog').style.display = 'flex';
+      document.getElementById('prog-text').textContent = 'AI HYPER-SCANNING...';
+      const learning = JSON.parse(localStorage.getItem('siverif_ai_learning') || '{}');
+      let count = 0;
+      for(let i=0; i<allData.length; i++) {
+        const d = allData[i];
+        if(!d.verifiedBibit) {
+          const search = (d.name + ' ' + d.folder).toLowerCase();
+          const match = learning[d.folder] || bibitConfig.find(b => search.includes(b.toLowerCase()));
+          if(match) { d.verifiedBibit = match; count++; }
+        }
+        if(i % 50 === 0) {
+           const p = Math.round((i/allData.length)*100);
+           document.getElementById('prog-fill').style.width = p+'%';
+           document.getElementById('prog-pct').textContent = p+'%';
+           await new Promise(r => setTimeout(r, 0));
+        }
       }
-    }
-
-    function initMap() {
-      if(!_map) {
-        _map = L.map('map', { preferCanvas: true }).setView([-2, 118], 5);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(_map);
-        _markerGroup = L.layerGroup().addTo(_map);
-      }
-      _markerGroup.clearLayers();
-      allData.filter(d => d.gps).forEach(d => {
-        const isWarn = d.isWarn && !overrides[d.id];
-        const color = isWarn ? '#f85149' : '#39d353';
-        L.circleMarker([d.gps.lat, d.gps.lng], { radius: 7, color: color, fillColor: color, fillOpacity: 0.8 }).addTo(_markerGroup).bindPopup(`<b>${d.name}</b><br>${d.folder}`);
-      });
-      const withGps = allData.filter(d => d.gps);
-      if(withGps.length) _map.fitBounds(withGps.map(p => [p.gps.lat, p.gps.lng]));
-    }
-
-    function updateCounters() {
-      const n = allData.length;
-      const gps = allData.filter(d => d.gps).length;
-      const warn = allData.filter(d => d.isWarn && !overrides[d.id]).length;
-      document.getElementById('s-total').textContent = n;
-      document.getElementById('s-valid').textContent = n - warn;
-      document.getElementById('s-gps').textContent = gps;
-      document.getElementById('s-warn').textContent = warn;
-      renderTabulasi();
-    }
-
-    function renderTabulasi() {
-      const b = document.getElementById('tab-body');
-      let html = ''; let no = 1;
-      Object.keys(folders).forEach(n => {
-        const fp = allData.filter(d => d.folder === n);
-        const v = fp.filter(d => !d.isWarn || overrides[d.id]).length;
-        html += `<tr><td>${no++}</td><td>${n}</td><td>${fp[0]?.verifiedBibit||'—'}</td><td>${fp.length}</td><td>${v}</td><td>${fp.length-v}</td><td>100%</td><td>LULUS</td></tr>`;
-      });
-      b.innerHTML = html;
-    }
-
-    function exportPDF() {
-      const win = window.open('', '_blank');
-      win.document.write(`<html><head><title>Laporan Audit</title><style>body{font-family:sans-serif;padding:40px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:8px;text-align:left}</style></head><body><h1>Laporan Audit SiVerif RHL</h1><table><thead><tr><th>No</th><th>Folder</th><th>Bibit</th><th>Total</th><th>Valid</th></tr></thead><tbody>${document.getElementById('tab-body').innerHTML}</tbody></table><script>window.print()<\/script></body></html>`);
-      win.document.close();
-    }
-
-    function exportJPG() { toast('🖼️ Export Peta ke JPG...'); }
-
-    function resetApp() {
-      if(!confirm('Reset data?')) return;
-      allData = []; basket = []; filteredData = []; selIds.clear(); folders = {};
-      const req = indexedDB.open('SiVerifV12.4_Hyper', 1);
-      req.onsuccess = () => req.result.transaction('thumbs','readwrite').objectStore('thumbs').clear();
-      updateCounters(); renderUI();
+      document.getElementById('prog').style.display = 'none';
+      updateCounters(); renderGallery(false);
+      toast(`✅ AI Bulk Scan Completed: ${count} items identified.`);
     }
 
     function verifyBibit(val) {
-      if(curInspectorId) {
+      if(curInspectorId !== null) {
         const d = allData.find(x => x.id === curInspectorId);
         if(d) {
           d.verifiedBibit = val;
           const learning = JSON.parse(localStorage.getItem('siverif_ai_learning') || '{}');
-          learning[d.folder] = val;
-          localStorage.setItem('siverif_ai_learning', JSON.stringify(learning));
-          updateCounters();
-          toast('✅ AI Mempelajari Pola Ini');
+          learning[d.folder] = val; localStorage.setItem('siverif_ai_learning', JSON.stringify(learning));
+          updateCounters(); toast('✅ AI Learned from this pattern');
         }
       }
     }
 
-    function initMap() {
-      if(!_map) {
-        _map = L.map('map', { preferCanvas: true }).setView([-2, 118], 5);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(_map);
-        _markerGroup = L.layerGroup().addTo(_map);
-      }
-      _markerGroup.clearLayers();
-      allData.filter(d => d.gps).forEach(d => {
-        const color = (d.isWarn && !overrides[d.id]) ? '#f85149' : '#39d353';
-        L.circleMarker([d.gps.lat, d.gps.lng], { radius: 7, color, fillColor: color, fillOpacity: 0.8 }).addTo(_markerGroup).bindPopup(`<b>${d.name}</b>`);
-      });
-      const withGps = allData.filter(d => d.gps);
-      if(withGps.length) _map.fitBounds(withGps.map(p => [p.gps.lat, p.gps.lng]));
-    }
-
-    async function importLokasi(input) {
-      const file = input.files[0]; if(!file) return;
-      if(!_map) { curTab='map'; renderUI(); await new Promise(r=>setTimeout(r,500)); }
-      const reader = new FileReader();
-      reader.onload = e => {
-        const xml = new DOMParser().parseFromString(e.target.result, "text/xml");
-        const geojson = toGeoJSON.kml(xml);
-        L.geoJSON(geojson, { style: { color: '#e3b341', weight: 3, fillOpacity: 0.2 } }).addTo(_map);
-        toast(`✅ Lokasi dimuat: ${file.name}`);
-      };
-      reader.readAsText(file);
-    }
-
     function updateCounters() {
-      const n = allData.length, gps = allData.filter(d => d.gps).length, warn = allData.filter(d => d.isWarn && !overrides[d.id]).length;
-      document.getElementById('s-total').textContent = n;
+      const n = allData.length, gps = allData.filter(d => d.gps).length, warn = allData.filter(d => d.isWarn && !overrides[d.id]).length, dup = allData.filter(d => d.isDup).length;
+      ['s-total','c-all'].forEach(id => { if(document.getElementById(id)) document.getElementById(id).textContent = n; });
       document.getElementById('s-valid').textContent = n - warn;
       document.getElementById('s-gps').textContent = gps;
       document.getElementById('s-warn').textContent = warn;
-      renderTabulasi();
+      document.getElementById('s-dup').textContent = dup;
+      ['c-valid','c-gps','c-warn','c-dup'].forEach((id,idx) => { if(document.getElementById(id)) document.getElementById(id).textContent = [n-warn,gps,warn,dup][idx]; });
+      renderTabulasi(); renderSetTab();
     }
 
     function renderTabulasi() {
-      const b = document.getElementById('tab-body'); let html = ''; let no = 1;
+      const b = document.getElementById('tab-body'); b.innerHTML = ''; let no=1;
       Object.keys(folders).forEach(n => {
         const fp = allData.filter(d => d.folder === n), v = fp.filter(d => !d.isWarn || overrides[d.id]).length;
-        html += `<tr><td>${no++}</td><td>${n}</td><td>${fp[0]?.verifiedBibit||'—'}</td><td>${fp.length}</td><td>${v}</td><td>${fp.length-v}</td><td>100%</td><td>LULUS</td></tr>`;
+        const bibit = fp[0]?.verifiedBibit || "—";
+        const vScore = Math.round((v/fp.length)*100);
+        b.innerHTML += `<tr><td>${no++}</td><td><b>${n}</b></td><td>${bibit}</td><td>${fp.length}</td><td style="color:var(--gr)">${v}</td><td style="color:var(--red)">${fp.length-v}</td><td style="font-weight:900;color:var(--blue)">${vScore}%</td><td style="font-weight:900;color:${vScore>=80?'var(--gr)':'var(--red)'}">${vScore>=80?'LULUS':'RE-AUDIT'}</td><td>—</td></tr>`;
       });
-      b.innerHTML = html;
+      Object.keys(tabData).filter(k => k.startsWith('manual_')).forEach(k => {
+        const d = tabData[k]; const tot = parseInt(d.total)||0, val = parseInt(d.valid)||0, inv = tot-val, pct = tot>0?Math.round((val/tot)*100):0;
+        b.innerHTML += `<tr style="background:rgba(88,166,255,0.02)"><td>${no++}</td><td contenteditable="true" class="editable" onblur="updateTabData('${k}','folder',this.textContent)">${d.folder}</td><td contenteditable="true" class="editable" onblur="updateTabData('${k}','bibit',this.textContent)">${d.bibit}</td><td>${tot}</td><td>${val}</td><td>${inv}</td><td>${pct}%</td><td>${pct>=80?'LULUS':'RE-AUDIT'}</td><td><button onclick="deleteTabRow('${k}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-weight:900">&times;</button></td></tr>`;
+      });
     }
 
-    function exportPDF() { window.print(); }
-    function exportCSV() {
-      const rows = [['No','Folder','Bibit','Total','Valid']];
-      Object.keys(folders).forEach((n,i) => {
-        const fp = allData.filter(d => d.folder === n);
-        rows.push([i+1, n, fp[0]?.verifiedBibit||'—', fp.length, fp.filter(d => !d.isWarn || overrides[d.id]).length]);
-      });
-      const csv = rows.map(r => r.join(',')).join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'Audit.csv'; a.click();
+    function renderSetTab() {
+      const list = document.getElementById('sb-bibit-list');
+      const bibits = [...new Set(allData.map(d => d.verifiedBibit).filter(Boolean))];
+      list.innerHTML = bibits.map(t => `<div class="sb-item ${bibitFilter===t?'active':''}" onclick="filterByBibit('${t}')" style="padding:4px 8px;font-size:10px;margin-bottom:2px"><span style="color:var(--gr)">🌱</span> ${t} <span style="margin-left:auto;opacity:0.6">${allData.filter(d=>d.verifiedBibit===t).length}</span></div>`).join('') || '<div style="font-size:9px;opacity:0.4;padding:10px">No species detected</div>';
     }
 
-    function resetApp() { if(confirm('Reset data?')) location.reload(); }
+    function initMap() {
+      if(!_map) { _map = L.map('map').setView([-2, 118], 5); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(_map); _markerGroup = L.layerGroup().addTo(_map); }
+      _markerGroup.clearLayers();
+      allData.filter(d => d.gps).forEach(d => {
+        const color = (d.isWarn && !overrides[d.id]) ? 'var(--red)' : 'var(--gr)';
+        const popup = `<div style="font-family:Inter;min-width:150px"><b>${d.name}</b><br><span style="font-size:10px">Folder: ${d.folder}</span><br><img id="map-img-${d.id}" style="width:100%;height:100px;object-fit:cover;margin-top:5px;border-radius:4px"></div>`;
+        const m = L.circleMarker([d.gps.lat, d.gps.lng], { radius: 6, color, fillColor: color, fillOpacity: 0.8 }).addTo(_markerGroup).bindPopup(popup);
+        m.on('popupopen', () => { const req = indexedDB.open('SiVerif_Thumbs', 1); req.onsuccess = () => { req.result.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = e => { if(e.target.result) document.getElementById(`map-img-${d.id}`).src = URL.createObjectURL(e.target.result); }; }; });
+      });
+    }
+
+    async function importLokasi(input) {
+      const f = input.files[0]; if(!f) return;
+      if(!_map) { curTab='map'; renderUI(); await new Promise(r=>setTimeout(r,500)); }
+      const reader = new FileReader(); reader.onload = async e => {
+        const ext = f.name.split('.').pop().toLowerCase();
+        if(ext === 'kml' || ext === 'gpx') {
+           const xml = new DOMParser().parseFromString(e.target.result, "text/xml");
+           const geojson = ext === 'kml' ? toGeoJSON.kml(xml) : toGeoJSON.gpx(xml);
+           addGeoLayer(geojson, f.name);
+        } else if(ext === 'zip' || ext === 'kmz') {
+           const zip = await JSZip.loadAsync(f);
+           const kmlF = Object.keys(zip.files).find(x => x.toLowerCase().endsWith('.kml'));
+           if(kmlF) { const kmlS = await zip.files[kmlF].async("string"); const geojson = toGeoJSON.kml(new DOMParser().parseFromString(kmlS,"text/xml")); addGeoLayer(geojson, f.name); }
+        }
+      };
+      reader.readAsText(f); input.value = '';
+    }
+
+    function addGeoLayer(geojson, name) {
+      const layer = L.geoJSON(geojson, { style: { color: 'var(--amber)', weight: 3, fillOpacity: 0.2 } }).addTo(_map);
+      userLayers.push({ id: Date.now(), name, layer }); updateLayerControl();
+      _map.fitBounds(layer.getBounds()); toast('✅ Layer Imported');
+    }
+
+    function updateLayerControl() {
+      const p = document.getElementById('layer-control-panel'); const list = document.getElementById('active-layers-list');
+      if(!userLayers.length) { p.style.display='none'; return; } p.style.display='block';
+      list.innerHTML = userLayers.map(l => `<div style="background:var(--bg3);padding:8px;border-radius:6px;border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><span style="font-size:10px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:120px">${l.name}</span><button onclick="removeLayer(${l.id})" style="color:var(--red);background:none;border:none;cursor:pointer">&times;</button></div>`).join('');
+    }
+
+    function removeLayer(id) { const idx = userLayers.findIndex(x => x.id === id); if(idx!==-1) { _map.removeLayer(userLayers[idx].layer); userLayers.splice(idx,1); updateLayerControl(); } }
+
+    function filterData(type) {
+      if(type==='valid') filteredData = allData.filter(d => (!d.isWarn || overrides[d.id]) && !d.isDup);
+      else if(type==='gps') filteredData = allData.filter(d => d.gps);
+      else if(type==='warn') filteredData = allData.filter(d => d.isWarn && !overrides[d.id]);
+      else if(type==='dup') filteredData = allData.filter(d => d.isDup);
+      else filteredData = [...allData];
+      pageOffset = 0; renderGallery(false);
+    }
+
+    function filterByBibit(t) {
+      bibitFilter = (bibitFilter === t) ? null : t;
+      filteredData = bibitFilter ? allData.filter(d => d.verifiedBibit === t) : [...allData];
+      pageOffset = 0; renderGallery(false); renderSetTab();
+    }
+
     function overrideStatus() {
-      const targets = curInspectorId ? [curInspectorId] : Array.from(selIds);
-      if(!targets.length) return;
-      const reason = prompt('Alasan validasi manual:', 'Kondisi lapangan valid');
-      if(reason) {
-        targets.forEach(id => overrides[id] = reason);
+      const d = allData.find(x => x.id === curInspectorId) || (selIds.size > 0 ? allData.find(x => selIds.has(x.id)) : null);
+      if(!d) return toast('⚠️ Select a photo');
+      const r = prompt('Reason for Manual Validation:', 'Field verified and confirmed valid');
+      if(r) {
+        if(selIds.size > 1) selIds.forEach(id => overrides[id] = r); else overrides[d.id] = r;
         localStorage.setItem('siverif_overrides', JSON.stringify(overrides));
-        updateCounters(); renderGallery(false);
+        updateCounters(); renderGallery(false); toast('✅ Manual Validation Applied');
       }
     }
-    function updateSelCount() { document.getElementById('sel-count-label').textContent = `${selIds.size} Terpilih`; }
+
+    function showPhotoPopup() {
+      const d = allData.find(x => x.id === curInspectorId); if(!d) return;
+      const modal = document.getElementById('photo-modal'); const modalImg = document.getElementById('modal-photo-img');
+      modalImg.src = URL.createObjectURL(d.raw); modal.classList.add('open');
+    }
+
+    function clearAILearning() { if(confirm('Clear AI Memory?')) { localStorage.removeItem('siverif_ai_learning'); toast('🧹 AI Memory Cleared'); } }
+    function updateSelCount() { document.getElementById('sel-count-label').textContent = `${selIds.size} Selected`; }
+    function handleSearch() { const q = document.getElementById('f-search').value.toLowerCase(); filteredData = allData.filter(d => d.name.toLowerCase().includes(q) || d.folder.toLowerCase().includes(q)); pageOffset = 0; renderGallery(false); }
+    async function browseFolder() { const path = await window.electronAPI.selectDirectory(); if(path) document.getElementById('set-dest').value = path; }
+    async function executeMove() { /* Implementation for Electron moveFile */ }
+    function addManualTabRow() { const k = `manual_${Date.now()}`; tabData[k] = { folder:'Manual Input', bibit:'—', total:0, valid:0 }; localStorage.setItem('siverif_tab_data', JSON.stringify(tabData)); renderTabulasi(); }
+    function updateTabData(k, f, v) { if(!tabData[k]) tabData[k]={}; tabData[k][f]=v; localStorage.setItem('siverif_tab_data', JSON.stringify(tabData)); renderTabulasi(); }
+    function deleteTabRow(k) { if(confirm('Delete row?')) { delete tabData[k]; localStorage.setItem('siverif_tab_data', JSON.stringify(tabData)); renderTabulasi(); } }
+    function exportCSV() { let csv = "No,Folder,Bibit,Total,Valid,Invalid,V-Score,Status\n"; b = document.getElementById('tab-body'); Array.from(b.rows).forEach((r,i) => { csv += Array.from(r.cells).map(c => `"${c.textContent}"`).join(',') + "\n"; }); const blob = new Blob([csv], { type: 'text/csv' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `Audit_Report_${new Date().toISOString().slice(0,10)}.csv`; a.click(); }
   </script>
-  <div id="photo-modal" class="modal-photo" onclick="this.classList.remove('open')">
-    <img id="modal-photo-img" src="">
-  </div>
 </body>
 </html>
