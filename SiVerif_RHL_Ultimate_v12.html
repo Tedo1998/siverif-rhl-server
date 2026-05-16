@@ -1234,23 +1234,23 @@ ${forensicContext}`
 
         // 5. Tampilkan hasil
         const rekColor = result.rekomendasi === 'VALID' ? 'var(--gr)' : result.rekomendasi === 'DITOLAK' ? 'var(--red)' : 'var(--amber)';
-        res.innerHTML = \`
+        res.innerHTML = `
           <div style="text-align:left;line-height:1.8;font-size:10px">
-            <div style="font-size:12px;font-weight:900;color:\${rekColor};margin-bottom:6px">🤖 \${result.rekomendasi}</div>
-            <div>🌿 Probabilitas Tanaman: <b style="color:var(--gr)">\${result.probabilitas_tanaman}%</b></div>
-            <div>🌱 Jenis Terdeteksi: <b>\${result.jenis_bibit_terdeteksi}</b></div>
-            <div>💚 Kondisi: <b>\${result.kondisi_tanaman}</b></div>
-            <div>🔍 Kecurigaan: <b style="color:\${result.kecurigaan_manipulasi==='Tinggi'?'var(--red)':result.kecurigaan_manipulasi==='Sedang'?'var(--amber)':'var(--gr)'}">\${result.kecurigaan_manipulasi}</b></div>
-            \${result.alasan_kecurigaan ? \`<div style="color:var(--amber);font-size:9px">⚠️ \${result.alasan_kecurigaan}</div>\` : ''}
-            <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);color:var(--tx3);font-size:9px">\${result.catatan}</div>
+            <div style="font-size:12px;font-weight:900;color:${rekColor};margin-bottom:6px">🤖 ${result.rekomendasi}</div>
+            <div>🌿 Probabilitas Tanaman: <b style="color:var(--gr)">${result.probabilitas_tanaman}%</b></div>
+            <div>🌱 Jenis Terdeteksi: <b>${result.jenis_bibit_terdeteksi}</b></div>
+            <div>💚 Kondisi: <b>${result.kondisi_tanaman}</b></div>
+            <div>🔍 Kecurigaan: <b style="color:${result.kecurigaan_manipulasi==='Tinggi'?'var(--red)':result.kecurigaan_manipulasi==='Sedang'?'var(--amber)':'var(--gr)'}">${result.kecurigaan_manipulasi}</b></div>
+            ${result.alasan_kecurigaan ? `<div style="color:var(--amber);font-size:9px">⚠️ ${result.alasan_kecurigaan}</div>` : ''}
+            <div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);color:var(--tx3);font-size:9px">${result.catatan}</div>
           </div>
-        \`;
+        `;
 
         // 6. Auto-apply bibit jika terdeteksi dan belum diset
         if(result.jenis_bibit_terdeteksi && result.jenis_bibit_terdeteksi !== 'Tidak Terdeteksi' && !d.verifiedBibit) {
           const match = config.find(b => result.jenis_bibit_terdeteksi.toLowerCase().includes(b.toLowerCase()));
           if(match) {
-            if(confirm(\`Claude AI mendeteksi jenis bibit "\${match}". Terapkan otomatis?\`)) {
+            if(confirm(`Claude AI mendeteksi jenis bibit "${match}". Terapkan otomatis?`)) {
               verifyBibit(match);
               document.getElementById('in-bibit-verify').value = match;
             }
