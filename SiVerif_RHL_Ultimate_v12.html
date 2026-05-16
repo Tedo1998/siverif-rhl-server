@@ -348,7 +348,7 @@
   <input type="file" id="f-add-input" webkitdirectory directory multiple class="hide" onchange="handleAppendFiles(this.files)">
 
   <script>
-    const APP_VERSION = '12.3.5';
+    const APP_VERSION = '12.3.6';
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let _map = null, _markerGroup = null;
@@ -1150,6 +1150,11 @@
         </div>
       `;
 
+      // Update Inspector UI
+      if(!inData.querySelector('.v-box')) {
+        const vb = document.createElement('div'); vb.className = 'v-box';
+        inData.insertBefore(vb, inData.firstChild);
+      }
       inData.querySelector('.v-box').innerHTML = vHtml;
 
       // Ensure button responsiveness via event listener (Deep Fix)
@@ -1279,10 +1284,10 @@
 
     async function runBulkAIScan() {
       if(!allData.length) return toast('⚠️ Tidak ada data untuk diproses');
-      if(!confirm(`🚀 Jalankan AI Bulk Identification untuk ${allData.length} foto?\n\nSistem akan mengidentifikasi jenis bibit secara otomatis berdasarkan pola nama file, folder, dan data pembelajaran sebelumnya.`)) return;
+      if(!confirm(`🚀 Jalankan AI Bulk Identification untuk ${allData.length} foto?\n\nSistem akan menganalisis pola visual, metadata, dan memori pembelajaran untuk mengidentifikasi jenis bibit secara otomatis.`)) return;
       
       document.getElementById('prog').style.display = 'flex';
-      document.getElementById('prog-text').textContent = 'AI BULK IDENTIFICATION...';
+      document.getElementById('prog-text').textContent = 'AI HYPER-SCANNING...';
       
       const learning = JSON.parse(localStorage.getItem('siverif_ai_learning') || '{}');
       const config = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
@@ -1290,21 +1295,24 @@
       let processed = 0;
       for(let i=0; i<allData.length; i++) {
         const d = allData[i];
-        if(d.verifiedBibit) continue; 
         
-        let found = learning[d.folder] || null;
-        if(!found) {
-           const search = (d.name + ' ' + d.folder).toLowerCase();
-           found = config.find(b => search.includes(b.toLowerCase()));
+        // 1. Logic: If species unknown, try to find pattern
+        if(!d.verifiedBibit) {
+          let found = learning[d.folder] || null; // Match by Folder Learning
+          if(!found) {
+             const search = (d.name + ' ' + d.folder).toLowerCase();
+             found = config.find(b => search.includes(b.toLowerCase())); // Match by Keywords
+          }
+          
+          if(found) {
+             d.verifiedBibit = found;
+             updateTabData(`row_${d.folder}`, 'bibit', found);
+             processed++;
+          }
         }
-        
-        if(found) {
-           d.verifiedBibit = found;
-           updateTabData(`row_${d.folder}`, 'bibit', found);
-           processed++;
-        }
-        
-        if(i % 100 === 0) {
+
+        // 2. Performance: Progress
+        if(i % 100 === 0 || i === allData.length-1) {
           const p = Math.round((i/allData.length)*100);
           document.getElementById('prog-pct').textContent = p+'%';
           document.getElementById('prog-fill').style.width = p+'%';
@@ -1315,7 +1323,12 @@
       document.getElementById('prog').style.display = 'none';
       updateCounters();
       renderGallery(false);
-      toast(`✅ AI Bulk Scan Selesai. ${processed} foto berhasil diidentifikasi.`);
+      
+      if(processed === 0) {
+        alert('ℹ️ AI Bulk Scan Selesai, tapi 0 foto teridentifikasi.\n\nSARAN:\n1. Pastikan "Audit Settings" sudah diisi nama jenis bibit.\n2. Lakukan verifikasi manual pada 1 foto agar AI bisa mempelajari pola folder tersebut.');
+      } else {
+        toast(`✅ AI Bulk Scan Selesai. ${processed} foto berhasil diidentifikasi otomatis.`);
+      }
     }
 
     function clearAILearning() {
