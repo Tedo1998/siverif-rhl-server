@@ -1,7 +1,7 @@
 @echo off
 set BASE=d:\SOFTWARE\DATABASE VERIFIKASI RHL\NEW VERSION\files_v7.2\Suite_v7_2_0\siverif_build
 set TMP=%BASE%\_patch_temp
-set VER=12.6.0
+set VER=12.6.1
 set ZIP=%BASE%\patch_v%VER%.zip
 
 if exist "%TMP%" rmdir /s /q "%TMP%"
