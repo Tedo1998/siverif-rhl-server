@@ -1,6 +1,7 @@
 {
   "version": "12.7.5",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.7.2.zip",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.7.5.zip",
   "required": true,
-  "release_notes": "WA Payment Info, License Tier Restriction, Bug Fixes"
+  "release_notes": "WA Payment Info, License Tier Restriction, Bug Fixes",
+  "changelog": "v12.7.5 FINAL EDITION: Offline AI Engine w/ 14 Pre-trained Memory, Device Lock Fix, Max Photos limit."
 }
