@@ -1,7 +1,8 @@
 {
-  "version": "12.7.5",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.7.5.zip",
+  "version": "12.7.6",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.7.6.zip",
+  "changelog": "v12.7.6 TURBO EDITION: BigInt VisiPic algorithm to handle 50.000+ photos without freezing.",
   "required": true,
-  "release_notes": "WA Payment Info, License Tier Restriction, Bug Fixes",
-  "changelog": "v12.7.5 FINAL EDITION: Offline AI Engine w/ 14 Pre-trained Memory, Device Lock Fix, Max Photos limit."
+  "released_at": "2026-05-18",
+  "release_notes": "WA Payment Info, License Tier Restriction, Bug Fixes"
 }
