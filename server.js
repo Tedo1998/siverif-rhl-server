@@ -55,10 +55,10 @@ let systemConfig = {
   maintenance_mode: false,
   maintenance_message: 'Sistem sedang dalam pemeliharaan.',
   maintenance_eta: '',
-  current_version: '13.0.0',
+  current_version: '13.0.2',
   min_version: '12.0.0',
-  update_url: 'https://github.com/Tedo1998/siverif-rhl-server/releases/download/v13.0.0/SiVerif_RHL_Ultimate_v13.0.0_Installer.exe',
-  update_message: 'Versi baru v13.0.0 tersedia! Support 100K+ foto dan auto-update.',
+  update_url: 'https://github.com/Tedo1998/siverif-rhl-server/releases/download/v13.0.2/SiVerif_RHL_Ultimate_v13.0.2_Installer.exe',
+  update_message: 'Versi baru v13.0.2 tersedia! Support 100K+ foto dan auto-update penuh.',
   update_mandatory: false,
   announcement: ''
 };
