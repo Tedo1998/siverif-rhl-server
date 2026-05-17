@@ -43,19 +43,52 @@ app.get('/', (req, res) => {
   const uptime = Math.floor((Date.now() - START_TIME) / 1000);
   res.json({
     status: 'ok',
-    version: '12.2.6',
+    version: '13.0.0',
     uptime_seconds: uptime,
     uptime_human: `${Math.floor(uptime/3600)}j ${Math.floor((uptime%3600)/60)}m`,
     connected: !!supabase
   });
 });
 
+// In-memory system config (persists until Vercel restarts)
+let systemConfig = {
+  maintenance_mode: false,
+  maintenance_message: 'Sistem sedang dalam pemeliharaan.',
+  maintenance_eta: '',
+  current_version: '13.0.0',
+  min_version: '12.0.0',
+  update_url: 'https://github.com/Tedo1998/siverif-rhl-server/releases/download/v13.0.0/SiVerif_RHL_Ultimate_v13.0.0_Installer.exe',
+  update_message: 'Versi baru v13.0.0 tersedia! Support 100K+ foto dan auto-update.',
+  update_mandatory: false,
+  announcement: ''
+};
+
 app.get('/api/system', (req, res) => {
   res.json({
-    current_version: '12.3.9',
-    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.3.9.zip',
-    changelog: 'v12.3.9: Emergency fix for login regression and manual validation button stability.'
+    current_version: systemConfig.current_version,
+    min_version: systemConfig.min_version,
+    update_url: systemConfig.update_url,
+    update_message: systemConfig.update_message,
+    update_mandatory: systemConfig.update_mandatory,
+    maintenance_mode: systemConfig.maintenance_mode,
+    maintenance_message: systemConfig.maintenance_message,
+    announcement: systemConfig.announcement,
+    changelog: 'v13.0.0: electron-updater, VISIPICS 100K+, fix tabulasi, fix waktu.'
   });
+});
+
+app.post('/api/admin/system', verifyAdmin, (req, res) => {
+  try {
+    const fields = ['maintenance_mode','maintenance_message','maintenance_eta','current_version','min_version','update_url','update_message','update_mandatory','announcement'];
+    fields.forEach(f => { if (req.body[f] !== undefined) systemConfig[f] = req.body[f]; });
+    res.json({ success: true, state: systemConfig });
+  } catch(e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/admin/system', verifyAdmin, (req, res) => {
+  res.json({ success: true, state: systemConfig });
 });
 
 // ── ADMIN: DASHBOARD ──
