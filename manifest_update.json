@@ -1,6 +1,6 @@
 {
-  "version": "12.7.6",
-  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.7.6.zip",
+  "version": "12.7.7",
+  "patch_url": "https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.7.7.zip",
   "changelog": "v12.7.6 TURBO EDITION: BigInt VisiPic algorithm to handle 50.000+ photos without freezing.",
   "required": true,
   "released_at": "2026-05-18",
