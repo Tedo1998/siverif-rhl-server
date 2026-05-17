@@ -71,7 +71,7 @@
             <h1>SiVerif RHL Suite Ultimate</h1>
             <p>Professional Forestry Photo Forensic & Auditing System</p>
         </div>
-        <div class="ver" id="launcher-ver">v12.2.6 ✅ Stable</div>
+        <div class="ver" id="launcher-ver">v12.6.3 ✅ Professional Ultimate Edition</div>
     </div>
 
     <div id="lic-status" class="status-badge"></div>
@@ -98,7 +98,7 @@
     </div>
 
     <div class="ftr">
-        <span>© 2026 Kementerian Kehutanan RI — SiVerif RHL Ultimate Edition</span>
+        <span>© 2026 SiVerif RHL Ultimate Edition</span>
         <span style="display:flex;gap:15px;align-items:center">
             <label style="cursor:pointer;background:var(--blue);color:#fff;padding:5px 12px;border-radius:8px;border:1px solid var(--border);font-weight:800;font-size:10px;transition:0.2s">
                 📦 INSTALL PATCH
@@ -127,7 +127,7 @@
                 </div>
                 <div class="form-g">
                     <label>Instansi / Dinas</label>
-                    <input type="text" id="reg-instansi" placeholder="Contoh: BPDAS Agam Kuantan">
+                    <input type="text" id="reg-instansi" placeholder="Contoh: SiVerif Agam Kuantan">
                 </div>
                 <div class="form-g">
                     <label>Alamat Email</label>
@@ -312,6 +312,8 @@
                     // Backup ke localStorage
                     localStorage.setItem('siverif_license_key', key);
                     localStorage.setItem('siverif_license_valid', 'true');
+                    localStorage.setItem('siverif_tier', d.tier || 'full');
+                    localStorage.setItem('siverif_max_photos', d.max_photos || 0);
                     localStorage.setItem('siverif_user_name', d.user_name || '');
                     localStorage.setItem('siverif_instansi', d.instansi || '');
                     alert(`✅ Aktivasi Berhasil!\n\nSelamat datang, ${d.user_name || ''}!\nAplikasi siap digunakan.`);
@@ -349,7 +351,7 @@
                 };
 
                 // Get current app version dynamically
-                let currentVer = '12.2.6';
+                let currentVer = '12.5.1';
                 if (window.electronAPI && window.electronAPI.getDiagnostics) {
                    const diag = await window.electronAPI.getDiagnostics();
                    currentVer = diag.version;
