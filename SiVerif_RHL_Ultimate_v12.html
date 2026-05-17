@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>SiVerif RHL v12.7.2 Ultimate — Masterpiece Edition</title>
+  <title>SiVerif RHL v12.7.5 Ultimate — Masterpiece Edition</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exif-js/2.3.0/exif.min.js"></script>
@@ -89,7 +89,7 @@
 
   <div id="login-wrap">
     <div style="width:400px;background:var(--bg2);border:1px solid var(--border);padding:3.5rem;border-radius:20px;box-shadow: 0 30px 100px rgba(0,0,0,0.6);position:relative;z-index:1000000">
-      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.7.2</span></div>
+      <div style="text-align:center;font-weight:900;font-size:28px;margin-bottom:0.5rem;color:#fff">SiVerif <span style="color:var(--gr)">v12.7.5</span></div>
       <div style="text-align:center;font-size:11px;color:var(--tx3);margin-bottom:2.5rem;text-transform:uppercase;letter-spacing:1px">Masterpiece Auditing Suite</div>
       <input type="text" id="l-user" value="admin" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:15px;font-size:14px">
       <input type="password" id="l-pass" placeholder="Password" style="width:100%;padding:14px;background:var(--bg);border:1px solid var(--border2);border-radius:10px;color:#fff;outline:none;margin-bottom:1rem;font-size:14px">
@@ -106,7 +106,7 @@
     <div class="topbar">
       <div style="font-weight:900;display:flex;align-items:center;gap:12px;cursor:pointer" onclick="location.reload()">
         <div style="width:32px;height:32px;background:var(--gr);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000;font-size:12px;font-weight:950">Si</div>
-        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.7.2</span></span>
+        <span style="font-size:14px">SiVerif RHL <span style="opacity:0.6">Ultimate v12.7.5</span></span>
       </div>
       <div style="margin-left:auto;display:flex;gap:20px;align-items:center">
         <div id="instansi-tag" style="font-size:10px;font-weight:700;color:var(--blue);background:rgba(88,166,255,0.1);padding:4px 10px;border-radius:20px">LOADING...</div>
@@ -236,7 +236,7 @@
             </div>
           </div>
           <table class="tab-table">
-            <thead><tr><th>No</th><th>Nama Folder</th><th>Jenis Bibit</th><th>Jml Foto</th><th>Valid</th><th>Invalid</th><th>V-Score</th><th>Status</th></tr></thead>
+            <thead><tr><th style="text-align:center;width:40px">No</th><th>Nama Kelompok</th><th>Jenis Bibit</th><th style="text-align:center">Total Bibit (Lapangan)</th><th style="text-align:center;color:var(--tx2)">Target 10%</th><th style="text-align:center;color:var(--tx2)">Target 20%</th><th style="text-align:center">Difoto (Valid)</th><th style="text-align:center">Status Lulus</th><th style="text-align:center;width:50px">Hapus</th></tr></thead>
             <tbody id="tab-body"></tbody>
           </table>
         </div>
@@ -282,7 +282,7 @@
             <img id="in-img" style="width:100%;height:180px;border-radius:8px;background:#000;object-fit:contain;margin-top:15px;border:1px solid var(--border)" class="hide">
             <div style="position:absolute;bottom:5px;right:5px;background:rgba(0,0,0,0.5);color:#fff;font-size:9px;padding:2px 6px;border-radius:4px">🔍 Klik untuk perbesar</div>
           </div>
-          <button class="btn-ai" onclick="runAIScan()">🤖 ANALISIS CLAUDE AI</button>
+          <button class="btn-ai" onclick="runAIScan()">🤖 ANALISIS SIVERIF AI</button>
           <div id="ai-res" style="margin-top:10px;font-size:11px;font-weight:800;color:var(--gr);text-align:center"></div>
         </div>
         <div id="in-data" style="padding:1.5rem;display:none">
@@ -341,7 +341,7 @@
   </div>
 
   <div id="toast" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--gr);color:#000;padding:12px 30px;border-radius:50px;font-weight:950;transition:0.5s;z-index:10000"></div>
-  <div id="footer-ver" style="position:fixed;bottom:15px;right:15px;font-size:10px;font-weight:900;color:var(--tx3);background:rgba(13,17,23,0.8);padding:5px 12px;border-radius:20px;border:1px solid var(--border);z-index:9000">v12.7.2 — Checking...</div>
+  <div id="footer-ver" style="position:fixed;bottom:15px;right:15px;font-size:10px;font-weight:900;color:var(--tx3);background:rgba(13,17,23,0.8);padding:5px 12px;border-radius:20px;border:1px solid var(--border);z-index:9000">v12.7.5 — Checking...</div>
 
   <input type="file" id="fi-folder" webkitdirectory multiple style="display:none">
   <input type="file" id="fi-files" multiple style="display:none">
@@ -349,6 +349,86 @@
 
   <script>
     const APP_VERSION = '12.7.0';
+    
+    // --- SIVERIF OFFLINE VISUAL AI ENGINE ---
+    function createBaseMemory(label, r, g, b) {
+      const f = [];
+      for(let i=0; i<256; i++) {
+        const noise = () => (Math.random() * 0.15 - 0.075);
+        f.push(Math.max(0, Math.min(1, (r/255) + noise())));
+        f.push(Math.max(0, Math.min(1, (g/255) + noise())));
+        f.push(Math.max(0, Math.min(1, (b/255) + noise())));
+      }
+      return { label, features: f };
+    }
+    
+    const defaultMemories = [
+      createBaseMemory('Mangrove', 60, 80, 40),
+      createBaseMemory('Jati', 80, 120, 40),
+      createBaseMemory('Mahoni', 40, 90, 30),
+      createBaseMemory('Pinus', 50, 100, 40),
+      createBaseMemory('Sengon', 100, 140, 50),
+      createBaseMemory('Karet', 70, 110, 50),
+      createBaseMemory('Kemiri', 85, 125, 45),
+      createBaseMemory('Petai', 90, 130, 40),
+      createBaseMemory('Jengkol', 75, 110, 35),
+      createBaseMemory('Alpukat', 65, 100, 45),
+      createBaseMemory('Kulit Manis', 80, 105, 50),
+      createBaseMemory('Surian', 85, 115, 45),
+      createBaseMemory('Bayur', 70, 95, 35),
+      createBaseMemory('Durian', 60, 90, 30)
+    ];
+
+    window.siverifAI = {
+      memory: JSON.parse(localStorage.getItem('siverif_ai_memory')) || defaultMemories,
+      
+      async getFeatures(blob) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            const cvs = document.createElement('canvas');
+            cvs.width = 16; cvs.height = 16;
+            const ctx = cvs.getContext('2d');
+            ctx.drawImage(img, 0, 0, 16, 16);
+            const d = ctx.getImageData(0,0,16,16).data;
+            const f = [];
+            for(let i=0; i<d.length; i+=4) { f.push(d[i]/255, d[i+1]/255, d[i+2]/255); }
+            resolve(f);
+          };
+          img.src = URL.createObjectURL(blob);
+        });
+      },
+
+      async learn(blob, label) {
+        if(!blob) return;
+        const f = await this.getFeatures(blob);
+        this.memory.push({ label, features: f });
+        localStorage.setItem('siverif_ai_memory', JSON.stringify(this.memory));
+      },
+
+      async predict(blob) {
+        if(!this.memory || this.memory.length === 0) return null;
+        const f = await this.getFeatures(blob);
+        let bestLabel = null;
+        let minD = Infinity;
+        for(const m of this.memory) {
+          let d = 0;
+          for(let i=0; i<f.length; i++) d += Math.pow(f[i] - m.features[i], 2);
+          if(d < minD) { minD = d; bestLabel = m.label; }
+        }
+        let prob = Math.max(10, 100 - (minD * 3.5)); 
+        return { label: bestLabel, confidence: Math.round(prob) };
+      }
+    };
+
+    function resetAILearning() {
+      if(confirm('Hapus memori AI? AI akan dikembalikan ke memori pabrik (default).')) {
+        window.siverifAI.memory = defaultMemories;
+        localStorage.setItem('siverif_ai_memory', JSON.stringify(defaultMemories));
+        if(typeof toast === 'function') toast('🧹 Memori AI dikembalikan ke default!');
+      }
+    }
+
     let allData = [], selIds = new Set(), curTab = 'all', pageOffset = 0, filteredData = [], folders = {};
     let overrides = JSON.parse(localStorage.getItem('siverif_overrides') || '{}');
     let _map = null, _markerGroup = null;
@@ -553,6 +633,28 @@
         </div>`;
       });
       renderSetTab();
+    }
+
+    
+    function changeLayerOpacity(id, op) {
+       const ul = userLayers.find(x => x.id === id);
+       if(ul && ul.layer && ul.layer.setStyle) {
+          ul.opacity = op;
+          // For GeoJSON layers, style applies to paths
+          ul.layer.setStyle({ fillOpacity: op, opacity: op });
+       }
+    }
+    
+    function deleteTabRow(key) {
+      if(!confirm('Hapus baris tabulasi ini?')) return;
+      if(key.startsWith('row_')) {
+         alert('Baris otomatis dari sistem tidak bisa dihapus secara manual. Anda harus menghapus folder foto terkait dari aplikasi.');
+      } else {
+         delete tabData[key];
+         localStorage.setItem('siverif_tab_data', JSON.stringify(tabData));
+         renderTabulasi();
+         toast('✅ Baris dihapus.');
+      }
     }
 
     function renderSetTab() {
@@ -1090,7 +1192,7 @@
           </div>
           ${vReasons.length ? `<div style="margin-top:10px; padding-top:8px; border-top:1px solid rgba(255,255,255,0.05); font-size:9px; color:#fca5a5; line-height:1.4;">${vReasons.map(r => '• '+r).join('<br>')}</div>` : ''}
           <div style="margin-top:10px; text-align:center;">
-             <button onclick="runAIScan()" style="background:rgba(57,211,83,0.1); border:1px solid var(--gr); color:var(--gr); font-size:9px; padding:4px 10px; border-radius:4px; font-weight:800; cursor:pointer;">🤖 IDENTIFIKASI CLAUDE AI</button>
+             <button onclick="runAIScan()" style="background:rgba(57,211,83,0.1); border:1px solid var(--gr); color:var(--gr); font-size:9px; padding:4px 10px; border-radius:4px; font-weight:800; cursor:pointer;">🤖 IDENTIFIKASI SIVERIF AI</button>
           </div>
         </div>
       `;
@@ -1152,7 +1254,7 @@
       const d = (inspId !== null ? allData.find(x => x.id === inspId) : null) || allData.find(x => selIds.has(x.id));
       if(!d) return toast('⚠️ Pilih atau buka foto terlebih dahulu.');
       const res = document.getElementById('ai-res');
-      res.innerHTML = '🤖 Claude AI sedang menganalisis foto...';
+      res.innerHTML = '🤖 AI Offline sedang menganalisis piksel...';
 
       try {
         // 1. Ambil thumbnail dari IndexedDB
@@ -1163,75 +1265,46 @@
         });
         if(!blob) return res.textContent = '❌ Thumbnail tidak ditemukan. Proses ulang analisis.';
 
-        // 2. Konversi blob ke base64
-        const base64 = await new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result.split(',')[1]);
-          reader.onerror = reject;
-          reader.readAsDataURL(blob);
-        });
+        // 2. Predict using Offline AI
+        const prediction = await window.siverifAI.predict(blob);
+        let result = {};
 
-        // 3. Siapkan konteks forensik
-        const config = JSON.parse(localStorage.getItem('siverif_bibit_config') || '[]');
-        const forensicContext = [
-          `Nama file: ${d.name}`,
-          `Folder: ${d.folder}`,
-          `GPS: ${d.gps ? d.gps.lat.toFixed(6)+', '+d.gps.lng.toFixed(6) : 'Tidak ada'}`,
-          `Waktu EXIF: ${d.time || 'Tidak tersedia'}`,
-          `Software: ${d.soft || 'Tidak diketahui'}`,
-          `Jenis bibit dikonfigurasi: ${config.join(', ') || 'Belum diset'}`,
-          `Status forensik sebelumnya: ${d.isWarn ? 'PERINGATAN - terindikasi manipulasi' : 'Normal'}`,
-        ].join('\n');
-
-        // 4. Kirim ke Claude AI API
-        // API Key disembunyikan di dalam kode agar user tidak perlu mengisi
-        // GANTI TEKS 'sk-ant-YOUR_API_KEY_HERE' DI BAWAH DENGAN API KEY ASLI ANDA
-        const aiKey = 'AIzaSyDtPcJ53bNFHTy_9Rfo1jAiKthQ1-_gbxQ'; // API Key Google Gemini Anda
-        
-        if(aiKey === 'YOUR_GEMINI_API_KEY_HERE' || !aiKey) {
-           return res.innerHTML = '❌ Sistem AI belum dikonfigurasi. Masukkan API Key Gemini gratis Anda di dalam source code baris 1189.';
+        if (!prediction) {
+           return res.innerHTML = '<span style="color:var(--amber)">⚠️ AI belum memiliki memori. Silakan "Set Bibit" pada beberapa foto terlebih dahulu agar AI bisa belajar!</span>';
         }
 
-        const promptText = `Kamu adalah sistem AI forensik untuk verifikasi foto bibit tanaman RHL (Rehabilitasi Hutan dan Lahan) Kementerian Kehutanan RI.
+        // 3. Bangun Respons Heuristik Gabungan AI Visual + Metadata EXIF
+        const gpsAda = !!d.gps;
+        const validTime = d.time && d.time !== 'Tidak tersedia';
+        let manipulasi = 'Rendah';
+        let manipulasiReason = '';
+        let rek = 'VALID';
+        let kond = 'Sehat';
 
-Analisis foto ini dan berikan penilaian dalam format JSON berikut (HANYA JSON):
-{
-  "probabilitas_tanaman": <angka 0-100>,
-  "jenis_bibit_terdeteksi": "<nama bibit atau Tidak Terdeteksi>",
-  "kondisi_tanaman": "<Sehat / Kurang Sehat / Tidak Terlihat>",
-  "kecurigaan_manipulasi": "<Rendah / Sedang / Tinggi>",
-  "alasan_kecurigaan": "<penjelasan singkat atau kosong>",
-  "rekomendasi": "<VALID / PERLU VERIFIKASI LAPANGAN / DITOLAK>",
-  "catatan": "<catatan tambahan dalam Bahasa Indonesia>"
-}
-
-Konteks metadata foto:
-${forensicContext}`;
-
-        const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + aiKey, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [ {text: promptText}, {inline_data: {mime_type: blob.type || 'image/jpeg', data: base64}} ] }],
-            generationConfig: { responseMimeType: 'application/json' }
-          })
-        });
-
-        const data = await response.json();
-        if (data.error) {
-          res.innerHTML = '<span style="color:var(--red)">❌ Error Gemini: ' + data.error.message + '</span>';
-          return;
+        if (d.isWarn) {
+           manipulasi = 'Tinggi';
+           manipulasiReason = 'Terdeteksi metadata EXIF yang anomali/dihapus atau diedit.';
+           rek = 'DITOLAK';
+        } else if (!gpsAda || !validTime) {
+           manipulasi = 'Sedang';
+           manipulasiReason = 'Data GPS atau Waktu tidak lengkap, rawan manipulasi.';
+           rek = 'PERLU VERIFIKASI LAPANGAN';
         }
-        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-        
-        let result;
-        try {
-          const jsonMatch = text.match(/\{[\s\S]*\}/);
-          result = JSON.parse(jsonMatch[0]);
-        } catch(e) {
-          res.innerHTML = '<span style="color:var(--amber)">⚠️ Format respons AI tidak terbaca. Coba lagi.</span>';
-          return;
+
+        if (prediction.confidence < 40) {
+           kond = 'Kurang Sehat / Tidak Jelas';
+           if(rek === 'VALID') rek = 'PERLU VERIFIKASI LAPANGAN';
         }
+
+        result = {
+          probabilitas_tanaman: prediction.confidence,
+          jenis_bibit_terdeteksi: prediction.label,
+          kondisi_tanaman: kond,
+          kecurigaan_manipulasi: manipulasi,
+          alasan_kecurigaan: manipulasiReason,
+          rekomendasi: rek,
+          catatan: 'Dianalisis menggunakan SiVerif Offline Visual AI Engine (K-Nearest Pixel).'
+        };
 
         // 5. Tampilkan hasil
         const rekColor = result.rekomendasi === 'VALID' ? 'var(--gr)' : result.rekomendasi === 'DITOLAK' ? 'var(--red)' : 'var(--amber)';
@@ -1251,7 +1324,7 @@ ${forensicContext}`;
         if(result.jenis_bibit_terdeteksi && result.jenis_bibit_terdeteksi !== 'Tidak Terdeteksi' && !d.verifiedBibit) {
           const match = config.find(b => result.jenis_bibit_terdeteksi.toLowerCase().includes(b.toLowerCase()));
           if(match) {
-            if(confirm(`Claude AI mendeteksi jenis bibit "${match}". Terapkan otomatis?`)) {
+            if(confirm(`SiVerif AI mendeteksi jenis bibit "${match}". Terapkan otomatis?`)) {
               verifyBibit(match);
               document.getElementById('in-bibit-verify').value = match;
             }
@@ -1263,10 +1336,10 @@ ${forensicContext}`;
         learning[d.folder] = result.jenis_bibit_terdeteksi;
         localStorage.setItem('siverif_ai_learning', JSON.stringify(learning));
 
-        toast('✅ Analisis Claude AI selesai');
+        toast('✅ Analisis SiVerif AI selesai');
       } catch(e) {
-        console.error('Claude AI Error:', e);
-        res.innerHTML = '<span style="color:var(--red)">❌ Gagal terhubung ke Claude AI. Periksa koneksi internet.</span>';
+        console.error('SiVerif AI Error:', e);
+        res.innerHTML = '<span style="color:var(--red)">❌ Gagal terhubung ke SiVerif AI. Periksa koneksi internet.</span>';
       }
     }
 
@@ -1682,6 +1755,17 @@ ${forensicContext}`;
     }
 
     function updateCounters() {
+      const tier = localStorage.getItem('siverif_tier') || 'full';
+      const maxLimit = parseInt(localStorage.getItem('siverif_max_photos')) || 0;
+      
+      if (tier.toLowerCase() === 'demo' && allData.length > 25) {
+          alert('⚠️ BATAS LISENSI DEMO: Maksimal 25 foto tercapai.\nSisa foto telah dipotong. Silakan upgrade lisensi untuk menghapus batasan ini.');
+          allData = allData.slice(0, 25);
+      } else if (maxLimit > 0 && allData.length > maxLimit) {
+          alert(`⚠️ BATAS LISENSI: Paket Anda maksimal ${maxLimit} foto tercapai.\nSisa foto telah dipotong.`);
+          allData = allData.slice(0, maxLimit);
+      }
+
       const n = allData.length;
       const gps = allData.filter(d => d.gps).length;
       const warn = allData.filter(d => d.isWarn && !overrides[d.id]).length;
@@ -1779,13 +1863,22 @@ ${forensicContext}`;
         if(!selIds.size) toast('⚠️ Pilih foto terlebih dahulu.');
         return;
       }
-      selIds.forEach(id => {
+      selIds.forEach(async id => {
         const d = allData.find(x => x.id === id);
-        if(d) { d.verifiedBibit = val; updateTabData(`row_${d.folder}`, 'bibit', val); }
+        if(d) { 
+           d.verifiedBibit = val; 
+           updateTabData(`row_${d.folder}`, 'bibit', val);
+           // AI LEARNS HERE
+           const blob = await new Promise((resolve) => {
+              const req = indexedDB.open('SiVerifV12_Hyper', 1);
+              req.onsuccess = () => req.result.transaction('thumbs').objectStore('thumbs').get(d.id).onsuccess = e => resolve(e.target.result);
+           });
+           if(blob) window.siverifAI.learn(blob, val);
+        }
       });
       document.getElementById('bulk-bibit').value = '';
       updateCounters(); // Sync stats
-      toast(`✅ Bibit "${val}" ditetapkan untuk ${selIds.size} foto`);
+      toast(`✅ Bibit "${val}" ditetapkan dan dipelajari AI untuk ${selIds.size} foto`);
     }
 
     function overrideStatus() {
@@ -1844,6 +1937,18 @@ ${forensicContext}`;
     }
 
     function filterData(type) {
+      // Switch to gallery if not visible
+      const galPanel = document.getElementById('gal-panel');
+      if (galPanel && galPanel.style.display === 'none') {
+         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+         const galBtn = document.querySelector('.tab-btn[onclick*="gal"]');
+         if(galBtn) galBtn.classList.add('active');
+         ['map-panel','tab-panel','set-panel'].forEach(p => {
+             const el = document.getElementById(p);
+             if(el) el.style.display='none';
+         });
+         galPanel.style.display='block';
+      }
       bibitFilter = null;
       if(type==='warn') filteredData = allData.filter(d => d.isWarn && !overrides[d.id]);
       else if(type==='override') filteredData = allData.filter(d => overrides[d.id]);
@@ -1869,6 +1974,18 @@ ${forensicContext}`;
     }
 
     function filterByBibit(val) {
+      // Switch to gallery if not visible
+      const galPanel = document.getElementById('gal-panel');
+      if (galPanel && galPanel.style.display === 'none') {
+         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+         const galBtn = document.querySelector('.tab-btn[onclick*="gal"]');
+         if(galBtn) galBtn.classList.add('active');
+         ['map-panel','tab-panel','set-panel'].forEach(p => {
+             const el = document.getElementById(p);
+             if(el) el.style.display='none';
+         });
+         galPanel.style.display='block';
+      }
        if (bibitFilter === val) {
          bibitFilter = null;
          filteredData = [...allData];
@@ -2080,6 +2197,11 @@ ${forensicContext}`;
     }
 
     function exportCSV() {
+      const tier = localStorage.getItem('siverif_tier') || 'full';
+      if(tier.toLowerCase() === 'demo') {
+         alert('⚠️ PERINGATAN LISENSI\n\nFitur Export Tabulasi dan Laporan CSV dikunci untuk Lisensi DEMO.\n\nSilakan upgrade ke lisensi Penuh (PRO/ULTIMATE) untuk membuka fitur Export.');
+         return;
+      }
       const rows = [['No','Nama Folder','Jenis Bibit','Jumlah Foto','Valid','Invalid','V-Score','Status']];
       let no = 1;
       

@@ -52,9 +52,9 @@ app.get('/', (req, res) => {
 
 app.get('/api/system', (req, res) => {
   res.json({
-    current_version: '12.2.8',
-    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.2.8.zip',
-    changelog: 'v12.2.8: Final stability patch, advanced bibit grouping, layer management, and tabulation fixes.'
+    current_version: '12.3.9',
+    update_url: 'https://raw.githubusercontent.com/Tedo1998/siverif-rhl-server/main/patch_v12.3.9.zip',
+    changelog: 'v12.3.9: Emergency fix for login regression and manual validation button stability.'
   });
 });
 
@@ -157,7 +157,7 @@ app.get('/api/admin/agency/settings', verifyAdmin, async (req, res) => {
     .order('created_at', { ascending: false });
   if (error) return res.status(500).json({ error: error.message });
   const admins = data.map(a => ({ ...a, agency: a.instansi }));
-  res.json({ success: true, admins, agency_name: 'Kementerian Lingkungan Hidup dan Kehutanan' });
+  res.json({ success: true, admins, agency_name: 'SiVerif RHL Ultimate Edition' });
 });
 
 app.post('/api/admin/agency/admins', verifyAdmin, async (req, res) => {
@@ -318,7 +318,7 @@ app.post('/api/validate', async (req, res) => {
       if (data.device_locked && data.device_id && data.device_id !== device_id) return res.json({ valid: false, error: 'Lisensi terkunci di perangkat lain' });
       await supabase.from('activity_log').insert([{ action: 'VALIDATE_OK', license_key, info: 'Validasi Berhasil' }]);
       await supabase.from('licenses').update({ check_count: (data.check_count || 0) + 1, last_check: new Date() }).eq('id', data.id);
-      return res.json({ valid: true, user_name: data.user_name, instansi: data.instansi });
+      return res.json({ valid: true, user_name: data.user_name, instansi: data.instansi, tier: data.tier, max_photos: data.max_photos, valid_until: data.valid_until, device_locked: data.device_locked, device_id: data.device_id });
     }
     res.json({ valid: false, error: 'Lisensi Tidak Valid' });
   } catch (e) { res.json({ valid: false, error: 'Koneksi database terputus' }); }
