@@ -1,7 +1,7 @@
 {
-  "version": "13.0.0",
-  "patch_url": "https://github.com/Tedo1998/siverif-rhl-server/releases/download/v13.0.0/SiVerif_RHL_Ultimate_v13.0.0_Installer.exe",
+  "version": "13.0.1",
+  "patch_url": "https://github.com/Tedo1998/siverif-rhl-server/releases/download/v13.0.1/SiVerif_RHL_Ultimate_v13.0.1_Installer.exe",
   "type": "installer",
-  "changelog": "v13.0.0 ENTERPRISE EDITION: electron-updater auto-update, UI v13, VISIPICS BigInt, fix tabulasi, fix waktu 00:xx, scroll galeri otomatis.",
+  "changelog": "v13.0.1: Fix patch cache - versi sekarang tampil benar setelah update.",
   "force_installer": true
 }
