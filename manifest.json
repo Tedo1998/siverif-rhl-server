@@ -1,7 +1,7 @@
 {
-  "version": "13.0.2",
-  "patch_url": "https://github.com/Tedo1998/siverif-rhl-server/releases/download/v13.0.2/SiVerif_RHL_Ultimate_v13.0.2_Installer.exe",
+  "version": "13.0.4",
+  "patch_url": "https://github.com/Tedo1998/siverif-rhl-server/releases/download/v13.0.4/SiVerif_RHL_Ultimate_v13.0.4_Installer.exe",
   "type": "installer",
-  "changelog": "v13.0.2: Fix patch cache and update audit UI version text.",
-  "force_installer": true
+  "changelog": "v13.0.4: Fully expanded Forestry Dendrology Encyclopedia with 35 key RHL/Timber/MPTS/Coastal species offline visual AI DNA profiles, auto-migration, and optimized performance.",
+  "force_installer": false
 }
