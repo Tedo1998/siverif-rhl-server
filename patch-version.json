@@ -1,1 +1,5 @@
-{"version":"12.7.7"}
+{
+  "version": "13.0.6",
+  "notes": "v13.0.6: Fix koneksi server (auto https), kalibrasi ulang deteksi bibit Nangka/Petai, tuning GPS threshold, VisiPics loose matching untuk duplikasi angle berbeda.",
+  "date": "2026-06-09"
+}

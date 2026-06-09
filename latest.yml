@@ -1,8 +1,8 @@
-version: 13.0.5
+version: 13.0.6
 files:
-  - url: SiVerif_RHL_Ultimate_v13.0.5_Installer.exe
-    sha512: klmcQ5kS/WzV9tf1vdOJmbeH/uU5duRicXg/+QcPvVviprh/Yb4O66ef0z+mnC4zWicTvIt7TQqit3cQ/hr8oA==
-    size: 76535199
-path: SiVerif_RHL_Ultimate_v13.0.5_Installer.exe
-sha512: klmcQ5kS/WzV9tf1vdOJmbeH/uU5duRicXg/+QcPvVviprh/Yb4O66ef0z+mnC4zWicTvIt7TQqit3cQ/hr8oA==
-releaseDate: '2026-05-18T17:20:11.775Z'
+  - url: SiVerif_RHL_Ultimate_v13.0.6_Installer.exe
+    sha512: 5rUGbNaTJAMZcqq8LaSEJuJGixF9F2rpnYAO5iNkz19+HoyoLmpTyQRMXZHzLnEgYlrByrvgXYubR2YvIXGjMA==
+    size: 76535149
+path: SiVerif_RHL_Ultimate_v13.0.6_Installer.exe
+sha512: 5rUGbNaTJAMZcqq8LaSEJuJGixF9F2rpnYAO5iNkz19+HoyoLmpTyQRMXZHzLnEgYlrByrvgXYubR2YvIXGjMA==
+releaseDate: '2026-06-09T16:29:54.308Z'
