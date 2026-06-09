@@ -1,7 +1,7 @@
 {
   "version": "13.0.6",
-  "patch_url": "https://github.com/Tedo1998/siverif-rhl-server/releases/download/v13.0.6/SiVerif_RHL_Ultimate_v13.0.6_Installer.exe",
-  "type": "installer",
+  "patch_url": "https://github.com/Tedo1998/siverif-rhl-server/releases/download/v13.0.6/patch_v13.0.6.zip",
+  "type": "zip",
   "changelog": "v13.0.6: Fix koneksi server (auto https), kalibrasi ulang deteksi bibit Nangka/Petai, tuning GPS threshold, VisiPics loose matching untuk duplikasi angle berbeda.",
   "force_installer": false
 }
